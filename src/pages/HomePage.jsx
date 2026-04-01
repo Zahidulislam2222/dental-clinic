@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -11,6 +12,7 @@ import {
   Monitor, Shield, Heart,
   CalendarPlus, ClipboardCheck, FileText, CheckCircle,
   ChevronLeft, ChevronRight, Phone, Mail, ArrowRight, Play,
+  Stethoscope, ScanLine, HeartPulse,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useScrollReveal, useStaggerReveal, useParallax } from '../hooks/useGsapAnimations';
@@ -20,12 +22,19 @@ import TiltCard from '../components/ui/TiltCard';
 import MagneticButton from '../components/ui/MagneticButton';
 import CursorGlow from '../components/ui/CursorGlow';
 import PageTransition from '../components/ui/PageTransition';
+import DentalBackground from '../components/ui/DentalBackground';
+import RunningTooth from '../components/ui/RunningTooth';
+import DentalDivider, { DentalDividerWave } from '../components/ui/DentalDivider';
+import { HappyTooth, ToothBrushing, ToothParade } from '../components/ui/ToothAnimation';
+import { GlassTooth, GlassImplant, DentalMorph, DarkSection } from '../components/ui/Dental3DObject';
+import { ScrollParallax3D } from '../components/ui/ToothReveal';
+import ScrollStory from '../components/ui/ScrollStory';
 
 gsap.registerPlugin(ScrollTrigger);
 
 /* ── Stock Photo URLs (Unsplash) ── */
 const PHOTOS = {
-  doctor: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&q=85&fit=crop',
+  doctor: '/images/doctor-hero.webp',
   clinic: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=85&fit=crop',
   smileAfter: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85&fit=crop',
   smileBefore: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=800&q=85&fit=crop',
@@ -76,6 +85,51 @@ const steps = [
   { icon: CheckCircle, title: 'Treatment & Follow-up', titleBn: 'চিকিৎসা এবং ফলো-আপ', desc: 'Expert treatment followed by attentive aftercare.', descBn: 'বিশেষজ্ঞ চিকিৎসার পরে মনোযোগী পরবর্তী যত্ন।' },
 ];
 
+const scrollStorySections = [
+  {
+    icon: Stethoscope,
+    tag: { en: 'Precision Care', bn: 'নির্ভুল যত্ন' },
+    title: { en: 'Every Treatment Backed by 15+ Years of Expertise', bn: '১৫+ বছরের দক্ষতায় প্রতিটি চিকিৎসা সমর্থিত' },
+    description: {
+      en: 'Our team of specialists brings over a decade of hands-on experience in implantology, orthodontics, and oral surgery. From your first consultation to the final follow-up, every step is guided by evidence-based protocols and genuine care for your comfort.',
+      bn: 'আমাদের বিশেষজ্ঞ দল ইমপ্লান্টোলজি, অর্থোডন্টিক্স এবং ওরাল সার্জারিতে এক দশকেরও বেশি অভিজ্ঞতা নিয়ে এসেছে। প্রথম পরামর্শ থেকে চূড়ান্ত ফলো-আপ পর্যন্ত প্রতিটি পদক্ষেপ প্রমাণ-ভিত্তিক প্রটোকল দ্বারা পরিচালিত।',
+    },
+    highlights: [
+      { en: 'Board-Certified Specialists', bn: 'বোর্ড-প্রত্যয়িত বিশেষজ্ঞ' },
+      { en: '10,000+ Successful Cases', bn: '১০,০০০+ সফল কেস' },
+      { en: 'International Training', bn: 'আন্তর্জাতিক প্রশিক্ষণ' },
+    ],
+  },
+  {
+    icon: ScanLine,
+    tag: { en: 'Latest Technology', bn: 'সর্বশেষ প্রযুক্তি' },
+    title: { en: 'Digital Diagnostics for Accurate, Painless Results', bn: 'সঠিক, ব্যথাহীন ফলাফলের জন্য ডিজিটাল ডায়াগনস্টিকস' },
+    description: {
+      en: 'We use 3D CBCT imaging, digital X-rays with 90% less radiation, and intraoral scanners that replace messy impressions. Our laser-assisted surgeries mean minimal bleeding, faster healing, and a dramatically more comfortable experience.',
+      bn: 'আমরা 3D CBCT ইমেজিং, ৯০% কম রেডিয়েশনে ডিজিটাল এক্স-রে এবং ইন্ট্রাওরাল স্ক্যানার ব্যবহার করি। লেজার-সহায়তা সার্জারি মানে ন্যূনতম রক্তপাত, দ্রুত নিরাময় এবং অনেক বেশি আরামদায়ক অভিজ্ঞতা।',
+    },
+    highlights: [
+      { en: '3D CBCT Imaging', bn: '3D CBCT ইমেজিং' },
+      { en: 'Laser Surgery', bn: 'লেজার সার্জারি' },
+      { en: 'Digital Impressions', bn: 'ডিজিটাল ইম্প্রেশন' },
+    ],
+  },
+  {
+    icon: HeartPulse,
+    tag: { en: 'Patient First', bn: 'রোগী প্রথম' },
+    title: { en: 'Affordable World-Class Care, Zero Compromises', bn: 'সাশ্রয়ী বিশ্বমানের যত্ন, শূন্য আপোষ' },
+    description: {
+      en: 'Premium dental treatments should not break the bank. We offer transparent pricing, interest-free installment plans, and the same materials used by top clinics worldwide — because your family deserves the best without financial stress.',
+      bn: 'প্রিমিয়াম ডেন্টাল চিকিৎসায় আর্থিক চাপ থাকা উচিত নয়। আমরা স্বচ্ছ মূল্য নির্ধারণ, সুদমুক্ত কিস্তি পরিকল্পনা এবং বিশ্বের শীর্ষ ক্লিনিকগুলোর মতো একই উপকরণ অফার করি।',
+    },
+    highlights: [
+      { en: 'Transparent Pricing', bn: 'স্বচ্ছ মূল্য' },
+      { en: 'Interest-Free EMI', bn: 'সুদমুক্ত কিস্তি' },
+      { en: 'Premium Materials', bn: 'প্রিমিয়াম উপকরণ' },
+    ],
+  },
+];
+
 /* ──────────────────────────────────────────────
    Component: HomePage
    ────────────────────────────────────────────── */
@@ -91,33 +145,33 @@ const HomePage = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Headline words
+      // Headline words — start visible, animate FROM current position (no opacity:0 start)
       const words = heroHeadlineRef.current?.querySelectorAll('.hero-word');
       if (words) {
         gsap.fromTo(words,
-          { y: 80, opacity: 0, rotateX: 40 },
-          { y: 0, opacity: 1, rotateX: 0, duration: 1, stagger: 0.12, ease: 'power4.out', delay: 0.3 }
+          { y: 30, opacity: 0.6 },
+          { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: 'power3.out', delay: 0.1 }
         );
       }
-      // Subtitle
+      // Subtitle — visible immediately, subtle entrance only
       if (heroSubRef.current) {
         gsap.fromTo(heroSubRef.current,
-          { y: 30, opacity: 0, filter: 'blur(10px)' },
-          { y: 0, opacity: 1, filter: 'blur(0px)', duration: 0.8, delay: 1.2, ease: 'power3.out' }
+          { y: 15, opacity: 0.7 },
+          { y: 0, opacity: 1, duration: 0.5, delay: 0.2, ease: 'power3.out' }
         );
       }
       // CTA buttons
       if (heroCtaRef.current) {
         gsap.fromTo(heroCtaRef.current.children,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, stagger: 0.15, delay: 1.5, ease: 'power3.out' }
+          { y: 10, opacity: 0.6 },
+          { y: 0, opacity: 1, duration: 0.4, stagger: 0.1, delay: 0.3, ease: 'power3.out' }
         );
       }
       // Doctor image
       if (heroImageRef.current) {
         gsap.fromTo(heroImageRef.current,
-          { x: 100, opacity: 0, scale: 0.9 },
-          { x: 0, opacity: 1, scale: 1, duration: 1.2, delay: 0.5, ease: 'power3.out' }
+          { x: 40, opacity: 0.5, scale: 0.95 },
+          { x: 0, opacity: 1, scale: 1, duration: 0.8, delay: 0.15, ease: 'power3.out' }
         );
       }
     }, heroRef);
@@ -196,6 +250,14 @@ const HomePage = () => {
 
   return (
     <PageTransition>
+      <Helmet>
+        <title>Everyday Dental Surgery & Implant Center | Dr. Arman Hossain — Dhaka</title>
+        <meta name="description" content="Dhaka's most trusted dental surgeon. 15+ years of painless dental care — implants, root canals, braces, whitening & more. Book your appointment today." />
+        <link rel="canonical" href="https://dental-clinic-anq.pages.dev/" />
+        <meta property="og:title" content="Everyday Dental Surgery & Implant Center | Dr. Arman Hossain" />
+        <meta property="og:description" content="Dhaka's most trusted dental surgeon. 15+ years of painless dental care — implants, root canals, braces, whitening & more." />
+        <meta property="og:type" content="website" />
+      </Helmet>
       {/* ═══════════════════════════════════════════
           1. HERO SECTION — Premium with GSAP
           ═══════════════════════════════════════════ */}
@@ -245,7 +307,7 @@ const HomePage = () => {
               </h1>
 
               {/* Subtitle */}
-              <p ref={heroSubRef} className="text-gray text-lg md:text-xl mb-10 max-w-lg leading-relaxed opacity-0">
+              <p ref={heroSubRef} className="text-gray text-lg md:text-xl mb-10 max-w-lg leading-relaxed">
                 {t({
                   en: 'Dr. Arman Hossain (Rafi) — BDS, FCPS | Oral & Maxillofacial Surgery | 15+ Years of Painless Care',
                   bn: 'ডা. আরমান হোসেন (রফি) — বিডিএস, এফসিপিএস | ওরাল ও ম্যাক্সিলোফেসিয়াল সার্জারি | ১৫+ বছরের ব্যথাহীন যত্ন',
@@ -256,6 +318,8 @@ const HomePage = () => {
               <div ref={heroCtaRef} className="flex flex-wrap gap-4 mb-8">
                 <MagneticButton
                   to="/appointment"
+                  glow
+                  sparkle
                   className="bg-teal text-white font-heading font-semibold px-8 py-4 rounded-xl text-lg inline-flex items-center gap-3 shadow-xl shadow-teal/25 hover:shadow-teal/40 hover:bg-teal-600 transition-all duration-300"
                 >
                   <Phone size={20} />
@@ -290,7 +354,7 @@ const HomePage = () => {
             </div>
 
             {/* Right - Real Doctor Photo */}
-            <div ref={heroImageRef} className="relative flex justify-center lg:justify-end opacity-0">
+            <div ref={heroImageRef} className="relative flex justify-center lg:justify-end">
               <div className="relative">
                 {/* Decorative ring */}
                 <div className="absolute -inset-4 rounded-3xl border-2 border-dashed border-teal/20 animate-spin-slow" />
@@ -302,6 +366,9 @@ const HomePage = () => {
                     alt="Dr. Arman Hossain - Dental Surgeon"
                     className="w-full h-full object-cover object-top"
                     loading="eager"
+                    width={416}
+                    height={416}
+                    fetchPriority="high"
                   />
                   {/* Gradient overlay at bottom */}
                   <div className="absolute inset-0 bg-gradient-to-t from-navy/60 via-transparent to-transparent" />
@@ -349,11 +416,15 @@ const HomePage = () => {
       </section>
 
       {/* ═══════════════════════════════════════════
+          SCROLL STORY — alternating left/right sections
+          ═══════════════════════════════════════════ */}
+      <ScrollStory sections={scrollStorySections} className="bg-offwhite" />
+
+      {/* ═══════════════════════════════════════════
           2. STATS BAR — Animated counters
           ═══════════════════════════════════════════ */}
-      <section className="bg-navy py-14 md:py-20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,191,166,0.08)_0%,transparent_70%)]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <DarkSection className="py-16 md:py-24" gradient="teal">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
             {[
               { end: 15, suffix: '+', label: t({ en: 'Years Experience', bn: 'বছরের অভিজ্ঞতা' }), icon: Award },
@@ -382,13 +453,64 @@ const HomePage = () => {
             })}
           </div>
         </div>
-      </section>
+      </DarkSection>
+
+      {/* ═══════════════════════════════════════════
+          PREMIUM 3D — Dental Implant Showcase
+          ═══════════════════════════════════════════ */}
+      <DarkSection className="py-20 md:py-32" gradient="deep">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* 3D Implant */}
+            <div className="flex justify-center order-2 lg:order-1">
+              <ScrollParallax3D><GlassImplant size={260} /></ScrollParallax3D>
+            </div>
+
+            {/* Text */}
+            <div className="text-center lg:text-left order-1 lg:order-2">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="inline-flex items-center gap-2 text-teal text-sm font-semibold tracking-wider uppercase mb-4">
+                  <span className="w-8 h-[1px] bg-teal" />
+                  {t({ en: 'Advanced Technology', bn: 'উন্নত প্রযুক্তি' })}
+                </span>
+                <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-5 leading-tight">
+                  {t({ en: 'Permanent Solutions,', bn: 'স্থায়ী সমাধান,' })}
+                  <br />
+                  <span className="text-teal">{t({ en: 'Built for Life', bn: 'জীবনের জন্য তৈরি' })}</span>
+                </h2>
+                <p className="text-gray-400 text-lg mb-8 max-w-lg">
+                  {t({
+                    en: 'Premium dental implants with titanium precision. Natural-looking, permanent tooth replacements that last a lifetime.',
+                    bn: 'টাইটানিয়াম নির্ভুলতায় প্রিমিয়াম ডেন্টাল ইমপ্লান্ট। প্রাকৃতিক দেখতে, স্থায়ী দাঁত প্রতিস্থাপন।',
+                  })}
+                </p>
+                <MagneticButton
+                  to="/services/dental-implants"
+                  className="border border-teal/30 text-teal font-heading font-semibold px-8 py-4 rounded-xl text-base inline-flex items-center gap-3 hover:bg-teal/10 transition-all duration-300 backdrop-blur-sm"
+                >
+                  {t({ en: 'Explore Implants', bn: 'ইমপ্লান্ট দেখুন' })}
+                  <ArrowRight size={18} />
+                </MagneticButton>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </DarkSection>
 
       {/* ═══════════════════════════════════════════
           3. SERVICES — 3D Tilt Cards
           ═══════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 bg-offwhite">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Dental Divider — after stats */}
+      <DentalDivider speed={25} theme="light" className="bg-offwhite" />
+
+      <section className="py-20 md:py-28 bg-offwhite relative">
+        <DentalBackground count={36} density="dense" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <SectionHeading
             title="Our Specialised Services"
             titleBn="আমাদের বিশেষায়িত সেবাসমূহ"
@@ -426,10 +548,14 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Running Tooth between sections */}
+      <RunningTooth direction="right" speed={10} size={55} className="bg-white" />
+
       {/* ═══════════════════════════════════════════
           4. WHY CHOOSE US — with Tilt Cards
           ═══════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 bg-white">
+      <section className="py-20 md:py-28 bg-white relative">
+        <DentalBackground count={32} density="dense" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             title="Why Choose Us"
@@ -461,10 +587,13 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* Divider wave before How It Works */}
+      <DentalDividerWave theme="light" className="bg-offwhite" />
+
       {/* ═══════════════════════════════════════════
           5. HOW IT WORKS
           ═══════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 bg-offwhite">
+      <section className="py-20 md:py-28 bg-offwhite relative">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading
             title="How It Works"
@@ -501,6 +630,9 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* Running tooth going left */}
+      <RunningTooth direction="left" speed={14} size={50} className="bg-white" />
 
       {/* ═══════════════════════════════════════════
           6. TESTIMONIALS
@@ -547,7 +679,7 @@ const HomePage = () => {
             </div>
 
             <div className="flex justify-center items-center gap-4 mt-6">
-              <button onClick={() => goToTestimonial('prev')} className="w-10 h-10 rounded-full bg-teal/10 hover:bg-teal/20 flex items-center justify-center transition-colors">
+              <button onClick={() => goToTestimonial('prev')} className="w-10 h-10 rounded-full bg-teal/10 hover:bg-teal/20 flex items-center justify-center transition-colors" aria-label="Previous testimonial">
                 <ChevronLeft className="w-5 h-5 text-teal" />
               </button>
               <div className="flex gap-2">
@@ -557,7 +689,7 @@ const HomePage = () => {
                   />
                 ))}
               </div>
-              <button onClick={() => goToTestimonial('next')} className="w-10 h-10 rounded-full bg-teal/10 hover:bg-teal/20 flex items-center justify-center transition-colors">
+              <button onClick={() => goToTestimonial('next')} className="w-10 h-10 rounded-full bg-teal/10 hover:bg-teal/20 flex items-center justify-center transition-colors" aria-label="Next testimonial">
                 <ChevronRight className="w-5 h-5 text-teal" />
               </button>
             </div>
@@ -596,7 +728,7 @@ const HomePage = () => {
             >
               {/* After - full background */}
               <div className="absolute inset-0">
-                <img src={PHOTOS.smileAfter} alt="After dental treatment" className="w-full h-full object-cover" />
+                <img src={PHOTOS.smileAfter} alt="After dental treatment" className="w-full h-full object-cover" width={800} height={600} loading="lazy" />
                 <div className="absolute bottom-4 right-4 bg-teal/90 text-white px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-sm">
                   {t({ en: 'After', bn: 'পরে' })}
                 </div>
@@ -604,7 +736,7 @@ const HomePage = () => {
 
               {/* Before - clipped */}
               <div className="absolute inset-0" style={{ clipPath: `inset(0 ${100 - sliderPos}% 0 0)` }}>
-                <img src={PHOTOS.smileBefore} alt="Before dental treatment" className="w-full h-full object-cover" />
+                <img src={PHOTOS.smileBefore} alt="Before dental treatment" className="w-full h-full object-cover" width={800} height={600} loading="lazy" />
                 <div className="absolute bottom-4 left-4 bg-navy/80 text-white px-4 py-2 rounded-xl text-sm font-bold backdrop-blur-sm">
                   {t({ en: 'Before', bn: 'আগে' })}
                 </div>
@@ -624,6 +756,51 @@ const HomePage = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════
+          PREMIUM 3D — Dental Excellence Showcase
+          ═══════════════════════════════════════════ */}
+      <DarkSection className="py-20 md:py-32" gradient="default">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Text */}
+            <div className="text-center lg:text-left">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="inline-flex items-center gap-2 text-gold text-sm font-semibold tracking-wider uppercase mb-4">
+                  <span className="w-8 h-[1px] bg-gold" />
+                  {t({ en: 'Excellence in Care', bn: 'যত্নে শ্রেষ্ঠত্ব' })}
+                </span>
+                <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-5 leading-tight">
+                  {t({ en: 'Precision Dentistry,', bn: 'নির্ভুল দন্তচিকিৎসা,' })}
+                  <br />
+                  <span className="text-gradient">{t({ en: 'Trusted Results', bn: 'বিশ্বস্ত ফলাফল' })}</span>
+                </h2>
+                <p className="text-gray-400 text-lg mb-8 max-w-lg">
+                  {t({
+                    en: '15+ years of pioneering painless procedures with world-class technology. Every smile is crafted with care.',
+                    bn: '১৫+ বছরের বিশ্বমানের প্রযুক্তি দিয়ে ব্যথাহীন চিকিৎসার পথিকৃৎ। প্রতিটি হাসি যত্ন দিয়ে তৈরি।',
+                  })}
+                </p>
+                <div className="flex flex-wrap gap-6 text-sm text-gray-400">
+                  <span className="flex items-center gap-2"><CheckCircle size={16} className="text-teal" /> {t({ en: 'Painless Surgery', bn: 'ব্যথাহীন সার্জারি' })}</span>
+                  <span className="flex items-center gap-2"><CheckCircle size={16} className="text-teal" /> {t({ en: '3D CBCT Imaging', bn: '3D CBCT ইমেজিং' })}</span>
+                  <span className="flex items-center gap-2"><CheckCircle size={16} className="text-teal" /> {t({ en: 'Laser Technology', bn: 'লেজার প্রযুক্তি' })}</span>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* 3D Morph */}
+            <div className="flex justify-center">
+              <ScrollParallax3D><DentalMorph size={320} /></ScrollParallax3D>
+            </div>
+          </div>
+        </div>
+      </DarkSection>
 
       {/* ═══════════════════════════════════════════
           7.5 YOUTUBE PATIENT REVIEWS
@@ -683,31 +860,49 @@ const HomePage = () => {
       {/* ═══════════════════════════════════════════
           8. CTA BANNER
           ═══════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 bg-navy relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(0,191,166,0.15)_0%,transparent_60%)]" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div ref={ctaBannerRef} className="text-center max-w-2xl mx-auto">
-            <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-5 leading-tight">
-              {t({ en: 'Ready to Transform Your Smile?', bn: 'আপনার হাসি রূপান্তর করতে প্রস্তুত?' })}
-            </h2>
-            <p className="text-gray-300 text-lg md:text-xl mb-10">
-              {t({ en: 'Book a free consultation today. Online payment gets you 5% OFF.', bn: 'আজই একটি বিনামূল্যে পরামর্শ বুক করুন। অনলাইন পেমেন্টে ৫% ছাড়।' })}
-            </p>
-            <MagneticButton
-              to="/appointment"
-              className="bg-white text-navy font-heading font-bold px-10 py-5 rounded-xl text-lg inline-flex items-center gap-3 shadow-2xl hover:shadow-white/20 hover:bg-teal hover:text-white transition-all duration-500"
-            >
-              <CalendarPlus size={22} />
-              {t({ en: 'Book Appointment', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন' })}
-            </MagneticButton>
+      {/* Dental divider before CTA */}
+      <DentalDivider speed={18} theme="dark" className="bg-[#050d1a] pt-4" />
+
+      <DarkSection className="py-20 md:py-32" gradient="default">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div ref={ctaBannerRef} className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left — Text */}
+            <div className="text-center lg:text-left">
+              <h2 className="font-heading text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-5 leading-tight">
+                {t({ en: 'Ready to Transform Your Smile?', bn: 'আপনার হাসি রূপান্তর করতে প্রস্তুত?' })}
+              </h2>
+              <p className="text-gray-400 text-lg md:text-xl mb-10 max-w-lg">
+                {t({ en: 'Book a free consultation today. Online payment gets you 5% OFF.', bn: 'আজই একটি বিনামূল্যে পরামর্শ বুক করুন। অনলাইন পেমেন্টে ৫% ছাড়।' })}
+              </p>
+              <MagneticButton
+                to="/appointment"
+                glow
+                sparkle
+                className="bg-teal text-white font-heading font-bold px-10 py-5 rounded-xl text-lg inline-flex items-center gap-3 shadow-2xl shadow-teal/20 hover:shadow-teal/40 hover:bg-teal-400 transition-all duration-500"
+              >
+                <CalendarPlus size={22} />
+                {t({ en: 'Book Appointment', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন' })}
+              </MagneticButton>
+            </div>
+
+            {/* Right — 3D Glass Tooth */}
+            <div className="flex justify-center lg:justify-end">
+              <ScrollParallax3D><GlassTooth size={280} /></ScrollParallax3D>
+            </div>
           </div>
         </div>
-      </section>
+      </DarkSection>
+
+      {/* Tooth Parade */}
+      <div className="bg-offwhite py-4">
+        <ToothParade count={7} size={35} />
+      </div>
 
       {/* ═══════════════════════════════════════════
           9. NEWSLETTER
           ═══════════════════════════════════════════ */}
-      <section className="py-20 md:py-28 bg-offwhite">
+      <section className="py-20 md:py-28 bg-offwhite relative">
+        <DentalBackground count={30} density="dense" />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div ref={newsletterRef} className="max-w-xl mx-auto text-center">
             <div className="w-16 h-16 rounded-2xl bg-teal/10 flex items-center justify-center mx-auto mb-6">
@@ -721,10 +916,13 @@ const HomePage = () => {
             </p>
             <form onSubmit={handleSubmit(onNewsletterSubmit)} className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
+                <label htmlFor="newsletter-email" className="sr-only">{t({ en: 'Email address', bn: 'ইমেইল ঠিকানা' })}</label>
                 <input
+                  id="newsletter-email"
                   type="email"
                   placeholder={t({ en: 'Enter your email', bn: 'আপনার ইমেইল লিখুন' })}
                   className={`w-full px-5 py-4 rounded-xl border-2 ${errors.email ? 'border-red-400' : 'border-gray-200'} focus:border-teal focus:outline-none text-navy placeholder:text-gray/50 transition-colors`}
+                  aria-invalid={errors.email ? 'true' : 'false'}
                   {...register('email', {
                     required: true,
                     pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i },

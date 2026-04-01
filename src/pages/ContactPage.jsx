@@ -26,6 +26,9 @@ import { api } from '../utils/emailService';
 import PageTransition from '../components/ui/PageTransition';
 import SectionHeading from '../components/ui/SectionHeading';
 import { useScrollReveal, useStaggerReveal } from '../hooks/useGsapAnimations';
+import DentalBackground from '../components/ui/DentalBackground';
+import { DentalDividerWave } from '../components/ui/DentalDivider';
+import RunningTooth from '../components/ui/RunningTooth';
 
 /* ------------------------------------------------------------------ */
 /*  ANIMATION HELPERS                                                  */
@@ -216,8 +219,12 @@ const ContactPage = () => {
         </div>
       </section>
 
+      {/* Dental wave divider */}
+      <DentalDividerWave className="bg-offwhite" />
+
       {/* ======================== CONTACT CARDS =========================== */}
-      <section className="py-16 md:py-24 bg-offwhite">
+      <section className="py-16 md:py-24 bg-offwhite relative">
+        <DentalBackground count={32} density="dense" />
         <div className="container mx-auto px-4">
           <SectionHeading
             title="Contact Information"
@@ -299,6 +306,9 @@ const ContactPage = () => {
         </div>
       </section>
 
+      {/* Running tooth */}
+      <RunningTooth direction="left" speed={13} size={45} className="bg-offwhite" />
+
       {/* ======================== CONTACT FORM ============================ */}
       <section className="py-16 md:py-24 bg-offwhite">
         <div className="container mx-auto px-4">
@@ -339,13 +349,15 @@ const ContactPage = () => {
               {/* Name & Phone row */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className={labelBase}>
+                  <label htmlFor="contact-fullName" className={labelBase}>
                     {t({ en: 'Full Name', bn: 'পূর্ণ নাম' })} <span className="text-red-500">*</span>
                   </label>
                   <input
+                    id="contact-fullName"
                     type="text"
                     className={inputBase}
                     placeholder={t({ en: 'Enter your full name', bn: 'আপনার পূর্ণ নাম লিখুন' })}
+                    aria-invalid={errors.fullName ? 'true' : undefined}
                     {...register('fullName', {
                       required: t({ en: 'Name is required', bn: 'নাম আবশ্যক' }),
                     })}
@@ -354,13 +366,15 @@ const ContactPage = () => {
                 </div>
 
                 <div>
-                  <label className={labelBase}>
+                  <label htmlFor="contact-phone" className={labelBase}>
                     {t({ en: 'Phone Number', bn: 'ফোন নম্বর' })} <span className="text-red-500">*</span>
                   </label>
                   <input
+                    id="contact-phone"
                     type="tel"
                     className={inputBase}
                     placeholder="+880 1XXX-XXXXXX"
+                    aria-invalid={errors.phone ? 'true' : undefined}
                     {...register('phone', {
                       required: t({ en: 'Phone number is required', bn: 'ফোন নম্বর আবশ্যক' }),
                       pattern: {
@@ -376,11 +390,13 @@ const ContactPage = () => {
               {/* Email & Service row */}
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className={labelBase}>{t({ en: 'Email Address', bn: 'ইমেইল ঠিকানা' })}</label>
+                  <label htmlFor="contact-email" className={labelBase}>{t({ en: 'Email Address', bn: 'ইমেইল ঠিকানা' })}</label>
                   <input
+                    id="contact-email"
                     type="email"
                     className={inputBase}
                     placeholder={t({ en: 'your@email.com', bn: 'your@email.com' })}
+                    aria-invalid={errors.email ? 'true' : undefined}
                     {...register('email', {
                       pattern: {
                         value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
@@ -392,8 +408,8 @@ const ContactPage = () => {
                 </div>
 
                 <div>
-                  <label className={labelBase}>{t({ en: 'Service Interested In', bn: 'আগ্রহের সেবা' })}</label>
-                  <select className={inputBase} {...register('service')}>
+                  <label htmlFor="contact-service" className={labelBase}>{t({ en: 'Service Interested In', bn: 'আগ্রহের সেবা' })}</label>
+                  <select id="contact-service" className={inputBase} {...register('service')}>
                     {serviceOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>
                         {t(opt.label)}
@@ -405,13 +421,15 @@ const ContactPage = () => {
 
               {/* Message */}
               <div>
-                <label className={labelBase}>
+                <label htmlFor="contact-message" className={labelBase}>
                   {t({ en: 'Message', bn: 'বার্তা' })} <span className="text-red-500">*</span>
                 </label>
                 <textarea
+                  id="contact-message"
                   rows={5}
                   className={inputBase}
                   placeholder={t({ en: 'Write your message here...', bn: 'আপনার বার্তা এখানে লিখুন...' })}
+                  aria-invalid={errors.message ? 'true' : undefined}
                   {...register('message', {
                     required: t({ en: 'Message is required', bn: 'বার্তা আবশ্যক' }),
                     minLength: {

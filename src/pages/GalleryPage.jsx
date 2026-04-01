@@ -4,6 +4,8 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import PageTransition from '../components/ui/PageTransition';
+import DentalBackground from '../components/ui/DentalBackground';
+import RunningTooth from '../components/ui/RunningTooth';
 
 /* ------------------------------------------------------------------ */
 /*  GALLERY DATA                                                       */
@@ -153,6 +155,8 @@ const GalleryPage = () => {
         <img
           src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
           alt="Dental clinic gallery"
+          width={800}
+          height={600}
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/75 to-navy/50" />
@@ -186,8 +190,12 @@ const GalleryPage = () => {
         </div>
       </section>
 
+      {/* Running tooth */}
+      <RunningTooth direction="right" speed={12} size={45} className="bg-offwhite" />
+
       {/* ========================= FILTER + GALLERY ===================== */}
-      <section className="py-16 md:py-24 bg-offwhite">
+      <section className="py-16 md:py-24 bg-offwhite relative">
+        <DentalBackground count={34} density="dense" />
         <div className="container mx-auto px-4">
           {/* Filter tabs */}
           <motion.div
@@ -237,6 +245,8 @@ const GalleryPage = () => {
                     <img
                       src={item.image}
                       alt={t({ en: item.label, bn: item.labelBn })}
+                      width={800}
+                      height={600}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       loading="lazy"
                     />
@@ -320,6 +330,8 @@ const GalleryPage = () => {
                   <img
                     src={filteredItems[lightboxIndex].image}
                     alt={t({ en: filteredItems[lightboxIndex].label, bn: filteredItems[lightboxIndex].labelBn })}
+                    width={800}
+                    height={600}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />

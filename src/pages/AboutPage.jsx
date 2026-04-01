@@ -32,6 +32,12 @@ import Badge from '../components/ui/Badge';
 import TiltCard from '../components/ui/TiltCard';
 import MagneticButton from '../components/ui/MagneticButton';
 import { useScrollReveal, useStaggerReveal } from '../hooks/useGsapAnimations';
+import DentalBackground from '../components/ui/DentalBackground';
+import RunningTooth from '../components/ui/RunningTooth';
+import DentalDivider from '../components/ui/DentalDivider';
+import { ToothBrushing, WigglingTooth } from '../components/ui/ToothAnimation';
+import { GlassTooth, DarkSection } from '../components/ui/Dental3DObject';
+import { ScrollParallax3D } from '../components/ui/ToothReveal';
 
 /* ------------------------------------------------------------------ */
 /*  DATA                                                               */
@@ -186,6 +192,8 @@ const AboutPage = () => {
         <img
           src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
           alt="About Dr. Arman Hossain"
+          width={1600}
+          height={900}
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-navy/90 via-navy/80 to-navy/60" />
@@ -203,6 +211,8 @@ const AboutPage = () => {
                 <img
                   src={DOCTOR_PHOTO}
                   alt="Dr. Arman Hossain"
+                  width={400}
+                  height={400}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -271,8 +281,12 @@ const AboutPage = () => {
         </div>
       </section>
 
+      {/* Running tooth */}
+      <RunningTooth direction="right" speed={12} size={50} className="bg-white" />
+
       {/* ======================== CAREER TIMELINE ======================== */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white relative">
+        <DentalBackground count={34} density="dense" />
         <div className="container mx-auto px-4">
           <SectionHeading
             title="Career Timeline"
@@ -328,8 +342,12 @@ const AboutPage = () => {
         </div>
       </section>
 
+      {/* Dental divider */}
+      <DentalDivider speed={22} theme="light" className="bg-offwhite" />
+
       {/* ===================== CREDENTIALS GRID ========================= */}
-      <section className="py-16 md:py-24 bg-offwhite">
+      <section className="py-16 md:py-24 bg-offwhite relative">
+        <DentalBackground count={32} density="dense" />
         <div className="container mx-auto px-4">
           <SectionHeading
             title="Certifications & Credentials"
@@ -416,6 +434,8 @@ const AboutPage = () => {
                 <img
                   src={cert.src}
                   alt={cert.alt}
+                  width={600}
+                  height={400}
                   className="w-full h-48 md:h-56 object-cover group-hover:brightness-110 transition-all duration-300"
                   loading="lazy"
                 />
@@ -428,29 +448,37 @@ const AboutPage = () => {
         </div>
       </section>
 
+      {/* Running tooth before CTA */}
+      <RunningTooth direction="left" speed={11} size={45} className="bg-[#050d1a]" />
+
       {/* ============================== CTA ============================== */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-teal to-teal-700 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <div ref={ctaRef}>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
-              {t({
-                en: 'Ready to meet the doctor?',
-                bn: 'ডাক্তারের সাথে দেখা করতে প্রস্তুত?',
-              })}
-            </h2>
-            <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-              {t({
-                en: 'Book your appointment today and experience world-class dental care.',
-                bn: 'আজই আপনার অ্যাপয়েন্টমেন্ট বুক করুন এবং বিশ্বমানের দন্ত চিকিৎসা অনুভব করুন।',
-              })}
-            </p>
-            <MagneticButton to="/appointment" className="bg-white text-teal font-heading font-semibold rounded-xl px-8 py-4 text-lg shadow-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-2">
-              {t({ en: 'Book Appointment', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন' })}
+      <DarkSection className="py-20 md:py-28" gradient="teal">
+        <div className="container mx-auto px-4 relative z-10">
+          <div ref={ctaRef} className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-4">
+                {t({
+                  en: 'Ready to meet the doctor?',
+                  bn: 'ডাক্তারের সাথে দেখা করতে প্রস্তুত?',
+                })}
+              </h2>
+              <p className="text-gray-400 text-lg mb-8 max-w-xl">
+                {t({
+                  en: 'Book your appointment today and experience world-class dental care.',
+                  bn: 'আজই আপনার অ্যাপয়েন্টমেন্ট বুক করুন এবং বিশ্বমানের দন্ত চিকিৎসা অনুভব করুন।',
+                })}
+              </p>
+              <MagneticButton to="/appointment" glow sparkle className="bg-teal text-white font-heading font-semibold rounded-xl px-8 py-4 text-lg shadow-2xl shadow-teal/20 hover:shadow-teal/40 hover:bg-teal-400 transition-all inline-flex items-center gap-2">
+                {t({ en: 'Book Appointment', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন' })}
               <ArrowRight size={20} />
             </MagneticButton>
+            </div>
+            <div className="flex justify-center">
+              <ScrollParallax3D><GlassTooth size={240} /></ScrollParallax3D>
+            </div>
           </div>
         </div>
-      </section>
+      </DarkSection>
     </PageTransition>
   );
 };

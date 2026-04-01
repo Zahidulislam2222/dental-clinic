@@ -7,6 +7,8 @@ import { useLanguage } from '../context/LanguageContext';
 import PageTransition from '../components/ui/PageTransition';
 import TiltCard from '../components/ui/TiltCard';
 import { useScrollReveal, useStaggerReveal } from '../hooks/useGsapAnimations';
+import DentalBackground from '../components/ui/DentalBackground';
+import DentalDivider from '../components/ui/DentalDivider';
 
 /* ------------------------------------------------------------------ */
 /*  ARTICLES DATA                                                      */
@@ -164,8 +166,12 @@ const BlogPage = () => {
         </div>
       </section>
 
+      {/* Dental divider */}
+      <DentalDivider speed={22} className="bg-offwhite" />
+
       {/* ========================= BLOG GRID ============================ */}
-      <section className="py-16 md:py-24 bg-offwhite">
+      <section className="py-16 md:py-24 bg-offwhite relative">
+        <DentalBackground count={32} density="dense" />
         <div className="container mx-auto px-4">
           <div ref={gridRef} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
             {articles.map((article) => (
@@ -179,6 +185,8 @@ const BlogPage = () => {
                   <img
                     src={article.image}
                     alt={t(article.title)}
+                    width={600}
+                    height={400}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />

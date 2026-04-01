@@ -4,7 +4,8 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import Lottie from 'lottie-react';
+import { lazy, Suspense } from 'react';
+const Lottie = lazy(() => import('lottie-react'));
 import {
   Shield, Wrench, Activity, Crown, CircleDot, GitBranch,
   Heart, Scissors, Baby, Sparkles, Monitor, Microscope,
@@ -575,11 +576,12 @@ const AppointmentPage = () => {
 
       <form onSubmit={handleSubmit(onDetailsSubmit)} className="space-y-5 max-w-lg">
         <div>
-          <label className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
+          <label htmlFor="appt-name" className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
             <User size={16} className="text-teal" />
             {t({ en: 'Full Name', bn: 'পূর্ণ নাম' })} <span className="text-red-500">*</span>
           </label>
           <input
+            id="appt-name"
             {...register('name', { required: t({ en: 'Full name is required', bn: 'পূর্ণ নাম আবশ্যক' }) })}
             className={`w-full px-4 py-3 rounded-xl border-2 ${errors.name ? 'border-red-400' : 'border-gray-200 focus:border-teal'} outline-none transition-colors bg-white text-navy`}
             placeholder={t({ en: 'Enter your full name', bn: 'আপনার পূর্ণ নাম লিখুন' })}
@@ -588,11 +590,12 @@ const AppointmentPage = () => {
         </div>
 
         <div>
-          <label className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
+          <label htmlFor="appt-phone" className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
             <Phone size={16} className="text-teal" />
             {t({ en: 'Phone Number', bn: 'ফোন নম্বর' })} <span className="text-red-500">*</span>
           </label>
           <input
+            id="appt-phone"
             {...register('phone', {
               required: t({ en: 'Phone number is required', bn: 'ফোন নম্বর আবশ্যক' }),
               pattern: { value: /^[0-9+\-\s()]{7,15}$/, message: t({ en: 'Enter a valid phone number', bn: 'একটি বৈধ ফোন নম্বর লিখুন' }) },
@@ -604,11 +607,12 @@ const AppointmentPage = () => {
         </div>
 
         <div>
-          <label className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
+          <label htmlFor="appt-email" className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
             <Mail size={16} className="text-teal" />
             {t({ en: 'Email', bn: 'ইমেইল' })} <span className="text-gray text-xs">({t({ en: 'optional', bn: 'ঐচ্ছিক' })})</span>
           </label>
           <input
+            id="appt-email"
             {...register('email', {
               pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: t({ en: 'Enter a valid email', bn: 'একটি বৈধ ইমেইল লিখুন' }) },
             })}
@@ -619,11 +623,12 @@ const AppointmentPage = () => {
         </div>
 
         <div>
-          <label className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
+          <label htmlFor="appt-notes" className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
             <FileText size={16} className="text-teal" />
             {t({ en: 'Special Notes', bn: 'বিশেষ নোট' })} <span className="text-gray text-xs">({t({ en: 'optional', bn: 'ঐচ্ছিক' })})</span>
           </label>
           <textarea
+            id="appt-notes"
             {...register('notes')}
             rows={3}
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-teal outline-none transition-colors bg-white text-navy resize-none"
@@ -704,10 +709,11 @@ const AppointmentPage = () => {
               </p>
             </div>
             <div>
-              <label className="text-navy font-heading font-semibold text-sm mb-2 block">
+              <label htmlFor="appt-txnid" className="text-navy font-heading font-semibold text-sm mb-2 block">
                 {t({ en: 'Transaction ID / TxnID', bn: 'ট্রানজেকশন আইডি' })} <span className="text-red-500">*</span>
               </label>
               <input
+                id="appt-txnid"
                 type="text"
                 value={transactionId}
                 onChange={(e) => setTransactionId(e.target.value)}
@@ -886,7 +892,9 @@ const AppointmentPage = () => {
       >
         {/* Lottie success animation */}
         <div className="w-28 h-28 mx-auto mb-4">
-          <Lottie animationData={successCheckAnimation} loop={false} className="w-full h-full" />
+          <Suspense fallback={<div className="w-full h-full rounded-full bg-teal/20 animate-pulse" />}>
+            <Lottie animationData={successCheckAnimation} loop={false} className="w-full h-full" />
+          </Suspense>
         </div>
 
         <h2 className="font-heading text-2xl md:text-3xl font-bold text-navy mb-2">

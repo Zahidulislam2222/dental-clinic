@@ -273,10 +273,11 @@ const RegisterPage = () => {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Full Name */}
         <div>
-          <label className={labelBase}>
+          <label htmlFor="reg-fullName" className={labelBase}>
             {t({ en: 'Full Name', bn: 'পূর্ণ নাম' })} <span className="text-red-500">*</span>
           </label>
           <input
+            id="reg-fullName"
             type="text"
             className={inputBase}
             placeholder={t({ en: 'Enter your full name', bn: 'আপনার পূর্ণ নাম লিখুন' })}
@@ -289,8 +290,8 @@ const RegisterPage = () => {
 
         {/* Date of Birth */}
         <div>
-          <label className={labelBase}>{t({ en: 'Date of Birth', bn: 'জন্ম তারিখ' })}</label>
-          <input type="date" className={inputBase} {...register('dateOfBirth')} />
+          <label htmlFor="reg-dob" className={labelBase}>{t({ en: 'Date of Birth', bn: 'জন্ম তারিখ' })}</label>
+          <input id="reg-dob" type="date" className={inputBase} {...register('dateOfBirth')} />
         </div>
       </div>
 
@@ -319,8 +320,9 @@ const RegisterPage = () => {
       <div className="grid md:grid-cols-2 gap-6">
         {/* National ID */}
         <div>
-          <label className={labelBase}>{t({ en: 'National ID / Passport Number', bn: 'জাতীয় পরিচয়পত্র নম্বর' })}</label>
+          <label htmlFor="reg-nationalId" className={labelBase}>{t({ en: 'National ID / Passport Number', bn: 'জাতীয় পরিচয়পত্র নম্বর' })}</label>
           <input
+            id="reg-nationalId"
             type="text"
             className={inputBase}
             placeholder={t({ en: 'Enter NID or Passport number', bn: 'NID বা পাসপোর্ট নম্বর দিন' })}
@@ -330,10 +332,11 @@ const RegisterPage = () => {
 
         {/* Phone Number */}
         <div>
-          <label className={labelBase}>
+          <label htmlFor="reg-phone" className={labelBase}>
             {t({ en: 'Phone Number', bn: 'ফোন নম্বর' })} <span className="text-red-500">*</span>
           </label>
           <input
+            id="reg-phone"
             type="tel"
             className={inputBase}
             placeholder="+880 1XXX-XXXXXX"
@@ -352,8 +355,9 @@ const RegisterPage = () => {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Email */}
         <div>
-          <label className={labelBase}>{t({ en: 'Email Address', bn: 'ইমেইল' })}</label>
+          <label htmlFor="reg-email" className={labelBase}>{t({ en: 'Email Address', bn: 'ইমেইল' })}</label>
           <input
+            id="reg-email"
             type="email"
             className={inputBase}
             placeholder="your@email.com"
@@ -369,8 +373,9 @@ const RegisterPage = () => {
 
         {/* Emergency Contact Name */}
         <div>
-          <label className={labelBase}>{t({ en: 'Emergency Contact Name', bn: 'জরুরি যোগাযোগ নাম' })}</label>
+          <label htmlFor="reg-emergencyName" className={labelBase}>{t({ en: 'Emergency Contact Name', bn: 'জরুরি যোগাযোগ নাম' })}</label>
           <input
+            id="reg-emergencyName"
             type="text"
             className={inputBase}
             placeholder={t({ en: 'Emergency contact name', bn: 'জরুরি যোগাযোগের নাম' })}
@@ -381,8 +386,9 @@ const RegisterPage = () => {
 
       {/* Emergency Contact Phone */}
       <div className="md:w-1/2">
-        <label className={labelBase}>{t({ en: 'Emergency Contact Phone', bn: 'জরুরি যোগাযোগ ফোন' })}</label>
+        <label htmlFor="reg-emergencyPhone" className={labelBase}>{t({ en: 'Emergency Contact Phone', bn: 'জরুরি যোগাযোগ ফোন' })}</label>
         <input
+          id="reg-emergencyPhone"
           type="tel"
           className={inputBase}
           placeholder="+880 1XXX-XXXXXX"
@@ -449,7 +455,9 @@ const RegisterPage = () => {
               transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
+              <label htmlFor="reg-allergyDetails" className="sr-only">{t({ en: 'Allergy Details', bn: 'অ্যালার্জির বিবরণ' })}</label>
               <input
+                id="reg-allergyDetails"
                 type="text"
                 className={inputBase}
                 placeholder={t({ en: 'Please specify your allergies', bn: 'আপনার অ্যালার্জি উল্লেখ করুন' })}
@@ -496,7 +504,9 @@ const RegisterPage = () => {
               transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
+              <label htmlFor="reg-medicationDetails" className="sr-only">{t({ en: 'Medication Details', bn: 'ওষুধের বিবরণ' })}</label>
               <input
+                id="reg-medicationDetails"
                 type="text"
                 className={inputBase}
                 placeholder={t({ en: 'Please list your current medications', bn: 'আপনার বর্তমান ওষুধের তালিকা দিন' })}
@@ -532,10 +542,11 @@ const RegisterPage = () => {
 
       {/* Previous dental treatment */}
       <div>
-        <label className={labelBase}>
+        <label htmlFor="reg-dentalHistory" className={labelBase}>
           {t({ en: 'Previous Dental Treatment History', bn: 'পূর্ববর্তী দন্ত চিকিৎসার ইতিহাস' })}
         </label>
         <textarea
+          id="reg-dentalHistory"
           rows={3}
           className={inputBase}
           placeholder={t({
@@ -548,11 +559,11 @@ const RegisterPage = () => {
 
       {/* Last dental visit */}
       <div className="md:w-1/2">
-        <label className={labelBase}>
+        <label htmlFor="reg-lastVisit" className={labelBase}>
           {t({ en: 'Last Dental Visit', bn: 'শেষ দন্ত চিকিৎসা পরিদর্শন' })}
         </label>
         <div className="flex items-center gap-4">
-          <input type="date" className={`${inputBase} flex-1`} {...register('lastDentalVisit')} />
+          <input id="reg-lastVisit" type="date" className={`${inputBase} flex-1`} {...register('lastDentalVisit')} />
           <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
             <input
               type="checkbox"
@@ -590,8 +601,8 @@ const RegisterPage = () => {
       <div className="grid md:grid-cols-2 gap-6">
         {/* Preferred Service */}
         <div>
-          <label className={labelBase}>{t({ en: 'Preferred Service', bn: 'পছন্দের সেবা' })}</label>
-          <select className={inputBase} {...register('preferredService')}>
+          <label htmlFor="reg-preferredService" className={labelBase}>{t({ en: 'Preferred Service', bn: 'পছন্দের সেবা' })}</label>
+          <select id="reg-preferredService" className={inputBase} {...register('preferredService')}>
             {allServices.map((svc) => (
               <option key={svc.value} value={svc.value}>
                 {t(svc.label)}
@@ -602,8 +613,8 @@ const RegisterPage = () => {
 
         {/* Preferred Date */}
         <div>
-          <label className={labelBase}>{t({ en: 'Preferred Date', bn: 'পছন্দের তারিখ' })}</label>
-          <input type="date" className={inputBase} {...register('preferredDate')} />
+          <label htmlFor="reg-preferredDate" className={labelBase}>{t({ en: 'Preferred Date', bn: 'পছন্দের তারিখ' })}</label>
+          <input id="reg-preferredDate" type="date" className={inputBase} {...register('preferredDate')} />
         </div>
       </div>
 
@@ -654,10 +665,11 @@ const RegisterPage = () => {
 
       {/* Special Notes */}
       <div>
-        <label className={labelBase}>
+        <label htmlFor="reg-specialNotes" className={labelBase}>
           {t({ en: 'Special Notes or Concerns', bn: 'বিশেষ নোট বা উদ্বেগ' })}
         </label>
         <textarea
+          id="reg-specialNotes"
           rows={4}
           className={inputBase}
           placeholder={t({

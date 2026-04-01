@@ -27,6 +27,11 @@ import Button from '../components/ui/Button';
 import TiltCard from '../components/ui/TiltCard';
 import MagneticButton from '../components/ui/MagneticButton';
 import { useScrollReveal, useStaggerReveal } from '../hooks/useGsapAnimations';
+import DentalBackground from '../components/ui/DentalBackground';
+import RunningTooth from '../components/ui/RunningTooth';
+import DentalDivider from '../components/ui/DentalDivider';
+import { DentalMorph, DarkSection } from '../components/ui/Dental3DObject';
+import { ScrollParallax3D } from '../components/ui/ToothReveal';
 
 /* ------------------------------------------------------------------ */
 /*  ICON MAP                                                           */
@@ -194,8 +199,12 @@ const ServicesPage = () => {
         </div>
       </section>
 
+      {/* Dental divider */}
+      <DentalDivider speed={20} className="bg-offwhite" />
+
       {/* ========================= SERVICES GRID ======================== */}
-      <section className="py-16 md:py-24 bg-offwhite">
+      <section className="py-16 md:py-24 bg-offwhite relative">
+        <DentalBackground count={38} density="dense" />
         <div className="container mx-auto px-4">
           <div ref={gridRef} className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {services.map((service) => {
@@ -250,41 +259,43 @@ const ServicesPage = () => {
         </div>
       </section>
 
-      {/* ============================== CTA ============================== */}
-      <section className="relative py-16 md:py-24 text-white overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1600&q=80&fit=crop"
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-navy/85" />
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <div ref={ctaRef}>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold mb-4">
-              {t({
-                en: "Can't find what you need?",
-                bn: 'আপনার প্রয়োজনীয় সেবা খুঁজে পাচ্ছেন না?',
-              })}
-            </h2>
-            <p className="text-gray-300 text-lg mb-8 max-w-xl mx-auto">
-              {t({
-                en: 'Contact us directly and we will guide you to the right treatment.',
-                bn: 'সরাসরি আমাদের সাথে যোগাযোগ করুন এবং আমরা আপনাকে সঠিক চিকিৎসায় গাইড করব।',
-              })}
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <MagneticButton to="/contact" className="bg-teal text-white font-heading font-semibold rounded-xl px-8 py-4 text-lg shadow-lg hover:bg-teal-600 transition-colors inline-flex items-center gap-2">
-                <Phone size={20} />
-                {t({ en: 'Contact Us', bn: 'যোগাযোগ করুন' })}
-              </MagneticButton>
-              <MagneticButton to="/appointment" className="border-2 border-white text-white font-heading font-semibold rounded-xl px-8 py-4 text-lg hover:bg-white hover:text-navy transition-colors inline-flex items-center gap-2">
-                {t({ en: 'Book Appointment', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন' })}
-                <ArrowRight size={20} />
-              </MagneticButton>
+      {/* Running tooth */}
+      <RunningTooth direction="right" speed={11} size={50} />
+
+      {/* ============================== CTA — Premium Dark ============================== */}
+      <DarkSection className="py-20 md:py-28" gradient="default">
+        <div className="container mx-auto px-4">
+          <div ref={ctaRef} className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-4">
+                {t({
+                  en: "Can't find what you need?",
+                  bn: 'আপনার প্রয়োজনীয় সেবা খুঁজে পাচ্ছেন না?',
+                })}
+              </h2>
+              <p className="text-gray-400 text-lg mb-8 max-w-xl">
+                {t({
+                  en: 'Contact us directly and we will guide you to the right treatment.',
+                  bn: 'সরাসরি আমাদের সাথে যোগাযোগ করুন এবং আমরা আপনাকে সঠিক চিকিৎসায় গাইড করব।',
+                })}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <MagneticButton glow sparkle to="/contact" className="bg-teal text-white font-heading font-semibold rounded-xl px-8 py-4 text-lg shadow-2xl shadow-teal/20 hover:shadow-teal/40 transition-all inline-flex items-center gap-2">
+                  <Phone size={20} />
+                  {t({ en: 'Contact Us', bn: 'যোগাযোগ করুন' })}
+                </MagneticButton>
+                <MagneticButton sparkle to="/appointment" className="border border-teal/30 text-teal font-heading font-semibold rounded-xl px-8 py-4 text-lg hover:bg-teal/10 transition-all inline-flex items-center gap-2 backdrop-blur-sm">
+                  {t({ en: 'Book Appointment', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন' })}
+                  <ArrowRight size={20} />
+                </MagneticButton>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <ScrollParallax3D><DentalMorph size={280} /></ScrollParallax3D>
             </div>
           </div>
         </div>
-      </section>
+      </DarkSection>
     </PageTransition>
   );
 };

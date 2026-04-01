@@ -90,6 +90,7 @@ const Navbar = () => {
             <button
               onClick={toggleLanguage}
               className="w-8 h-8 rounded-full text-xs font-bold border border-teal/30 text-teal hover:bg-teal/10 transition-colors flex items-center justify-center"
+              aria-label={language === 'en' ? 'Switch to Bengali' : 'Switch to English'}
             >
               {language === 'en' ? 'বাং' : 'EN'}
             </button>
@@ -111,10 +112,11 @@ const Navbar = () => {
             <button
               onClick={toggleLanguage}
               className="px-2 py-1 rounded text-xs font-semibold border border-teal/30 text-teal"
+              aria-label={language === 'en' ? 'Switch to Bengali' : 'Switch to English'}
             >
               {language === 'en' ? 'বাং' : 'EN'}
             </button>
-            <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-navy">
+            <button onClick={() => setMobileOpen(!mobileOpen)} className="p-2 text-navy" aria-label={mobileOpen ? 'Close menu' : 'Open menu'} aria-expanded={mobileOpen}>
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -147,7 +149,7 @@ const Navbar = () => {
                       <span className="text-xs font-medium tracking-wider uppercase text-teal">Dental Surgery</span>
                     </div>
                   </Link>
-                  <button onClick={() => setMobileOpen(false)} className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors">
+                  <button onClick={() => setMobileOpen(false)} className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors" aria-label="Close menu">
                     <X size={20} className="text-navy" />
                   </button>
                 </div>

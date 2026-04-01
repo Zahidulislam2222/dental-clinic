@@ -26,6 +26,11 @@ import Button from '../components/ui/Button';
 import TiltCard from '../components/ui/TiltCard';
 import MagneticButton from '../components/ui/MagneticButton';
 import { useScrollReveal, useStaggerReveal } from '../hooks/useGsapAnimations';
+import DentalBackground from '../components/ui/DentalBackground';
+import { DentalDividerWave } from '../components/ui/DentalDivider';
+import RunningTooth from '../components/ui/RunningTooth';
+import { GlassImplant, DarkSection } from '../components/ui/Dental3DObject';
+import { ScrollParallax3D } from '../components/ui/ToothReveal';
 
 /* ─────────────────────── data ─────────────────────── */
 
@@ -293,8 +298,12 @@ const PricingPage = () => {
         </div>
       </section>
 
+      {/* Dental wave divider */}
+      <DentalDividerWave className="bg-offwhite" />
+
       {/* ── Package Cards ── */}
-      <section className="py-16 md:py-24 bg-offwhite">
+      <section className="py-16 md:py-24 bg-offwhite relative">
+        <DentalBackground count={34} density="dense" />
         <div className="container mx-auto px-4">
           <SectionHeading
             title="Value Packages"
@@ -341,35 +350,40 @@ const PricingPage = () => {
         </div>
       </section>
 
-      {/* ── CTA Section ── */}
-      <section className="py-16 md:py-24 bg-gradient-to-br from-teal to-teal-700 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl" />
-        </div>
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <div ref={ctaRef}>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-4">
-              {t({ en: 'Questions about pricing?', bn: 'মূল্য সম্পর্কে প্রশ্ন আছে?' })}
-            </h2>
-            <p className="text-white/80 text-lg mb-8 max-w-xl mx-auto">
-              {t({
-                en: 'Contact us for a detailed quote or book a consultation to discuss your treatment plan.',
-                bn: 'বিস্তারিত উদ্ধৃতির জন্য আমাদের সাথে যোগাযোগ করুন বা আপনার চিকিৎসা পরিকল্পনা নিয়ে আলোচনা করতে পরামর্শ বুক করুন।',
-              })}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <MagneticButton to="/contact" className="bg-white text-teal font-heading font-semibold rounded-xl px-8 py-4 text-lg shadow-lg hover:bg-gray-50 transition-colors inline-flex items-center gap-2">
-                <Phone size={20} />
-                {t({ en: 'Contact Us', bn: 'যোগাযোগ করুন' })}
-              </MagneticButton>
-              <MagneticButton to="/appointment" className="border-2 border-white text-white font-heading font-semibold rounded-xl px-8 py-4 text-lg hover:bg-white hover:text-teal transition-colors inline-flex items-center gap-2">
-                <CalendarCheck size={20} />
-                {t({ en: 'Book Appointment', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন' })}
-              </MagneticButton>
+      {/* Running tooth */}
+      <RunningTooth direction="left" speed={10} size={50} className="bg-gradient-to-br from-teal to-teal-700" />
+
+      {/* ── CTA Section — Premium Dark ── */}
+      <DarkSection className="py-20 md:py-28" gradient="deep">
+        <div className="container mx-auto px-4">
+          <div ref={ctaRef} className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h2 className="font-heading text-3xl md:text-5xl font-bold text-white mb-4">
+                {t({ en: 'Questions about pricing?', bn: 'মূল্য সম্পর্কে প্রশ্ন আছে?' })}
+              </h2>
+              <p className="text-gray-400 text-lg mb-8 max-w-xl">
+                {t({
+                  en: 'Contact us for a detailed quote or book a consultation to discuss your treatment plan.',
+                  bn: 'বিস্তারিত উদ্ধৃতির জন্য আমাদের সাথে যোগাযোগ করুন বা আপনার চিকিৎসা পরিকল্পনা নিয়ে আলোচনা করতে পরামর্শ বুক করুন।',
+                })}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <MagneticButton glow sparkle to="/contact" className="bg-teal text-white font-heading font-semibold rounded-xl px-8 py-4 text-lg shadow-2xl shadow-teal/20 hover:shadow-teal/40 transition-all inline-flex items-center gap-2">
+                  <Phone size={20} />
+                  {t({ en: 'Contact Us', bn: 'যোগাযোগ করুন' })}
+                </MagneticButton>
+                <MagneticButton sparkle to="/appointment" className="border border-teal/30 text-teal font-heading font-semibold rounded-xl px-8 py-4 text-lg hover:bg-teal/10 transition-all inline-flex items-center gap-2 backdrop-blur-sm">
+                  <CalendarCheck size={20} />
+                  {t({ en: 'Book Appointment', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন' })}
+                </MagneticButton>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <ScrollParallax3D><GlassImplant size={220} /></ScrollParallax3D>
             </div>
           </div>
         </div>
-      </section>
+      </DarkSection>
     </PageTransition>
   );
 };
