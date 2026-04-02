@@ -226,6 +226,12 @@ const HomePage = () => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
   const onNewsletterSubmit = async (data) => {
     try {
+      const { checkRateLimit, formatCooldown } = await import('../utils/rateLimit');
+      const { canSubmit, remainingMs } = checkRateLimit('newsletter-form');
+      if (!canSubmit) {
+        toast.error(t({ en: `Too many attempts. Try again in ${formatCooldown(remainingMs)}.`, bn: `অনেক বেশি চেষ্টা। ${formatCooldown(remainingMs)} পর আবার চেষ্টা করুন।` }));
+        return;
+      }
       const { api } = await import('../utils/emailService');
       await api.subscribeNewsletter(data.email);
       toast.success(t({ en: `Thanks! ${data.email} has been subscribed.`, bn: `ধন্যবাদ! ${data.email} সাবস্ক্রাইব হয়েছে।` }));
@@ -914,28 +920,45 @@ const HomePage = () => {
             <p className="text-gray text-sm md:text-base mb-8">
               {t({ en: 'Join 2,000+ patients receiving monthly oral health tips from Dr. Arman.', bn: 'ডা. আরমানের কাছ থেকে মাসিক মৌখিক স্বাস্থ্য টিপস পাচ্ছেন ২,০০০+ রোগীদের সাথে যুক্ত হন।' })}
             </p>
-            <form onSubmit={handleSubmit(onNewsletterSubmit)} className="flex flex-col sm:flex-row gap-3">
-              <div className="flex-1">
-                <label htmlFor="newsletter-email" className="sr-only">{t({ en: 'Email address', bn: 'ইমেইল ঠিকানা' })}</label>
+            <form onSubmit={handleSubmit(onNewsletterSubmit)} className="space-y-3">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <label htmlFor="newsletter-email" className="sr-only">{t({ en: 'Email address', bn: 'ইমেইল ঠিকানা' })}</label>
+                  <input
+                    id="newsletter-email"
+                    type="email"
+                    placeholder={t({ en: 'Enter your email', bn: 'আপনার ইমেইল লিখুন' })}
+                    className={`w-full px-5 py-4 rounded-xl border-2 ${errors.email ? 'border-red-400' : 'border-gray-200'} focus:border-teal focus:outline-none text-navy placeholder:text-gray/50 transition-colors`}
+                    aria-invalid={errors.email ? 'true' : 'false'}
+                    {...register('email', {
+                      required: t({ en: 'Email is required', bn: 'ইমেইল আবশ্যক' }),
+                      pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: t({ en: 'Enter a valid email', bn: 'একটি বৈধ ইমেইল দিন' }) },
+                    })}
+                  />
+                  {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                </div>
+                <MagneticButton
+                  type="submit"
+                  className="bg-teal text-white font-heading font-semibold px-8 py-4 rounded-xl inline-flex items-center gap-2 hover:bg-teal-600 transition-colors shadow-lg"
+                >
+                  <Mail size={18} />
+                  {t({ en: 'Subscribe', bn: 'সাবস্ক্রাইব' })}
+                </MagneticButton>
+              </div>
+              <label className="flex items-start gap-2 text-xs text-gray-500 cursor-pointer">
                 <input
-                  id="newsletter-email"
-                  type="email"
-                  placeholder={t({ en: 'Enter your email', bn: 'আপনার ইমেইল লিখুন' })}
-                  className={`w-full px-5 py-4 rounded-xl border-2 ${errors.email ? 'border-red-400' : 'border-gray-200'} focus:border-teal focus:outline-none text-navy placeholder:text-gray/50 transition-colors`}
-                  aria-invalid={errors.email ? 'true' : 'false'}
-                  {...register('email', {
-                    required: true,
-                    pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i },
+                  type="checkbox"
+                  className="mt-0.5 w-4 h-4 text-teal border-gray-300 rounded focus:ring-teal"
+                  {...register('newsletterConsent', {
+                    required: t({ en: 'You must agree to subscribe', bn: 'সাবস্ক্রাইব করতে সম্মতি দিন' }),
                   })}
                 />
-              </div>
-              <MagneticButton
-                type="submit"
-                className="bg-teal text-white font-heading font-semibold px-8 py-4 rounded-xl inline-flex items-center gap-2 hover:bg-teal-600 transition-colors shadow-lg"
-              >
-                <Mail size={18} />
-                {t({ en: 'Subscribe', bn: 'সাবস্ক্রাইব' })}
-              </MagneticButton>
+                <span>
+                  {t({ en: 'I agree to receive emails and accept the ', bn: 'আমি ইমেইল পেতে সম্মত এবং ' })}
+                  <Link to="/privacy-policy" className="text-teal underline hover:text-teal-600">{t({ en: 'Privacy Policy', bn: 'গোপনীয়তা নীতি' })}</Link>
+                </span>
+              </label>
+              {errors.newsletterConsent && <p className="text-red-500 text-xs">{errors.newsletterConsent.message}</p>}
             </form>
           </div>
         </div>

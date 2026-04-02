@@ -17,6 +17,7 @@ export default defineConfig({
           'vendor-animation': ['framer-motion', 'gsap'],
           'vendor-lottie': ['lottie-react'],
           'vendor-ui': ['lucide-react', 'react-helmet-async', 'react-hook-form', 'react-hot-toast'],
+          'vendor-supabase': ['@supabase/supabase-js'],
         }
       }
     }

@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { api } from '../utils/emailService';
+import { checkRateLimit, formatCooldown } from '../utils/rateLimit';
+import CONTACT from '../config/contact';
 import PageTransition from '../components/ui/PageTransition';
 import { successCheckAnimation } from '../data/lottieAnimations';
 
@@ -139,12 +141,6 @@ const formatDateShort = (date) => {
   };
 };
 
-const generateBookingRef = () => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let ref = 'EDS-';
-  for (let i = 0; i < 6; i++) ref += chars.charAt(Math.floor(Math.random() * chars.length));
-  return ref;
-};
 
 const generateICS = (service, dateStr, time, name) => {
   const lines = [
@@ -230,6 +226,7 @@ const AppointmentPage = () => {
   const [transactionId, setTransactionId] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bookingComplete, setBookingComplete] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
   const [bookingRef, setBookingRef] = useState('');
 
   const availableDates = useMemo(() => generateDates(), []);
@@ -237,7 +234,7 @@ const AppointmentPage = () => {
   const totalSteps = stepLabels.length;
 
   const {
-    register, handleSubmit, formState: { errors }, getValues,
+    register, handleSubmit, formState: { errors }, getValues, reset,
   } = useForm();
 
   const goToStep = (step) => {
@@ -250,6 +247,11 @@ const AppointmentPage = () => {
   const onDetailsSubmit = () => nextStep();
 
   const confirmBooking = async () => {
+    const { canSubmit, remainingMs } = checkRateLimit('appointment-form');
+    if (!canSubmit) {
+      toast.error(t({ en: `Too many submissions. Try again in ${formatCooldown(remainingMs)}.`, bn: `অনেক বেশি জমা দেওয়া হয়েছে। ${formatCooldown(remainingMs)} পর আবার চেষ্টা করুন।` }));
+      return;
+    }
     setIsSubmitting(true);
     try {
       const fv = getValues();
@@ -265,6 +267,7 @@ const AppointmentPage = () => {
       });
       setBookingRef(result.refNumber);
       setBookingComplete(true);
+      reset();
       toast.success(t({ en: 'Appointment booked successfully!', bn: 'অ্যাপয়েন্টমেন্ট সফলভাবে বুক হয়েছে!' }));
     } catch {
       toast.error(t({ en: 'Booking failed. Please try again.', bn: 'বুকিং ব্যর্থ। আবার চেষ্টা করুন।' }));
@@ -292,7 +295,7 @@ const AppointmentPage = () => {
     const fv = getValues();
     const payStatus = bookingMode === 'pre-payment' ? `\nPayment: ${selectedPayment?.toUpperCase()} (TxnID: ${transactionId})` : '\nPayment: At Clinic';
     const message = `Hello! I've booked an appointment.\n\nRef: ${bookingRef}\nType: ${bookingMode}\nService: ${bookingMode === 'consultation-first' ? 'Consultation' : t(selectedService?.title)}\nDate: ${selectedDate ? formatDateShort(new Date(selectedDate)).full : ''}\nTime: ${selectedTime}\nName: ${fv.name}\nPhone: ${fv.phone}${payStatus}`;
-    return `https://wa.me/8801712345678?text=${encodeURIComponent(message)}`;
+    return `https://wa.me/${CONTACT.phoneRaw}?text=${encodeURIComponent(message)}`;
   };
 
   /* ---- Navigation buttons helper ---- */
@@ -598,7 +601,7 @@ const AppointmentPage = () => {
             id="appt-phone"
             {...register('phone', {
               required: t({ en: 'Phone number is required', bn: 'ফোন নম্বর আবশ্যক' }),
-              pattern: { value: /^[0-9+\-\s()]{7,15}$/, message: t({ en: 'Enter a valid phone number', bn: 'একটি বৈধ ফোন নম্বর লিখুন' }) },
+              pattern: { value: /^(\+?880|0)?1[3-9]\d{8}$/, message: t({ en: 'Enter a valid BD phone number', bn: 'একটি বৈধ বাংলাদেশি ফোন নম্বর দিন' }) },
             })}
             className={`w-full px-4 py-3 rounded-xl border-2 ${errors.phone ? 'border-red-400' : 'border-gray-200 focus:border-teal'} outline-none transition-colors bg-white text-navy`}
             placeholder={t({ en: 'e.g. 01721-XXXXXX', bn: 'যেমন ০১৭২১-XXXXXX' })}
@@ -614,7 +617,7 @@ const AppointmentPage = () => {
           <input
             id="appt-email"
             {...register('email', {
-              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: t({ en: 'Enter a valid email', bn: 'একটি বৈধ ইমেইল লিখুন' }) },
+              pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message: t({ en: 'Enter a valid email', bn: 'একটি বৈধ ইমেইল লিখুন' }) },
             })}
             className={`w-full px-4 py-3 rounded-xl border-2 ${errors.email ? 'border-red-400' : 'border-gray-200 focus:border-teal'} outline-none transition-colors bg-white text-navy`}
             placeholder="your@email.com"
@@ -846,6 +849,32 @@ const AppointmentPage = () => {
           )}
         </div>
 
+        {/* HIPAA disclaimer + consent */}
+        <div className="max-w-lg mt-6 space-y-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+            <p className="text-amber-800 text-xs">
+              <strong>{t({ en: 'Notice:', bn: 'বিজ্ঞপ্তি:' })}</strong>{' '}
+              {t({
+                en: 'This system is not yet HIPAA-compliant. Data is stored locally in your browser.',
+                bn: 'এই সিস্টেমটি এখনও HIPAA-সম্মত নয়। তথ্য আপনার ব্রাউজারে স্থানীয়ভাবে সংরক্ষিত হয়।',
+              })}
+            </p>
+          </div>
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={consentGiven}
+              onChange={(e) => setConsentGiven(e.target.checked)}
+              className="mt-1 w-4 h-4 text-teal border-gray-300 rounded focus:ring-teal"
+            />
+            <span className="text-sm text-navy/70">
+              {t({ en: 'I agree to the', bn: 'আমি সম্মত' })}{' '}
+              <a href="/privacy-policy" target="_blank" className="text-teal underline">{t({ en: 'Privacy Policy', bn: 'গোপনীয়তা নীতি' })}</a>
+              {t({ en: ' and consent to my data being processed.', bn: ' এবং আমার তথ্য প্রক্রিয়াকরণে সম্মতি দিচ্ছি।' })}
+            </span>
+          </label>
+        </div>
+
         <div className="flex justify-between mt-8 max-w-lg">
           <motion.button
             whileHover={{ scale: 1.02 }}
@@ -860,7 +889,7 @@ const AppointmentPage = () => {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={confirmBooking}
-            disabled={isSubmitting}
+            disabled={isSubmitting || !consentGiven}
             className="font-heading font-semibold px-8 py-3 rounded-xl inline-flex items-center gap-2 bg-teal text-white hover:bg-teal-600 shadow-lg transition-all disabled:opacity-60"
           >
             {isSubmitting ? (

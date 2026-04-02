@@ -24,6 +24,7 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { api } from '../utils/emailService';
+import { checkRateLimit, formatCooldown } from '../utils/rateLimit';
 import PageTransition from '../components/ui/PageTransition';
 import SectionHeading from '../components/ui/SectionHeading';
 
@@ -152,7 +153,7 @@ const RegisterPage = () => {
       fieldsToValidate = ['fullName', 'phone'];
     }
     if (currentStep === 2) {
-      fieldsToValidate = [];
+      fieldsToValidate = ['preferredDate', 'preferredTime'];
     }
 
     const isValid = fieldsToValidate.length > 0 ? await trigger(fieldsToValidate) : true;
@@ -171,22 +172,35 @@ const RegisterPage = () => {
 
   /* ---- submit ---- */
   const onSubmit = async (data) => {
+    const { canSubmit, remainingMs } = checkRateLimit('registration-form');
+    if (!canSubmit) {
+      toast.error(t({ en: `Too many submissions. Try again in ${formatCooldown(remainingMs)}.`, bn: `অনেক বেশি জমা দেওয়া হয়েছে। ${formatCooldown(remainingMs)} পর আবার চেষ্টা করুন।` }));
+      return;
+    }
     setIsSubmitting(true);
     try {
+      // Build medicalHistory from Step 2 fields
+      const medicalParts = [];
+      if (data.conditions?.length) medicalParts.push(`Conditions: ${data.conditions.join(', ')}`);
+      if (hasCurrentMeds && data.medicationDetails) medicalParts.push(`Medications: ${data.medicationDetails}`);
+      if (data.previousDentalHistory) medicalParts.push(`Dental history: ${data.previousDentalHistory}`);
+      if (data.lastDentalVisit) medicalParts.push(`Last visit: ${data.lastDentalVisit}`);
+
       const result = await api.submitRegistration({
         fullName: data.fullName,
         phone: data.phone,
         email: data.email || '',
-        dob: data.dob || '',
+        dob: data.dateOfBirth || '',
         gender: data.gender || '',
         bloodGroup: data.bloodGroup || '',
-        medicalHistory: data.medicalHistory || '',
-        allergies: hasAllergies ? (data.allergies || 'Yes') : 'None',
+        medicalHistory: medicalParts.join(' | ') || '',
+        allergies: hasAllergies ? (data.allergyDetails || 'Yes (unspecified)') : 'None',
         preferredDate: data.preferredDate || '',
         preferredTime: data.preferredTime || '',
       });
       setReferenceNumber(result.refNumber);
       setIsSuccess(true);
+      reset();
       if (language === 'bn') {
         toast.success('নিবন্ধন সফল! আমরা ফোনে আপনার অ্যাপয়েন্টমেন্ট নিশ্চিত করব।');
       } else {
@@ -291,7 +305,15 @@ const RegisterPage = () => {
         {/* Date of Birth */}
         <div>
           <label htmlFor="reg-dob" className={labelBase}>{t({ en: 'Date of Birth', bn: 'জন্ম তারিখ' })}</label>
-          <input id="reg-dob" type="date" className={inputBase} {...register('dateOfBirth')} />
+          <input id="reg-dob" type="date" className={inputBase} max={new Date().toISOString().split('T')[0]} {...register('dateOfBirth', {
+            validate: (v) => {
+              if (!v) return true;
+              const age = (Date.now() - new Date(v).getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+              if (age < 1 || age > 150) return t({ en: 'Enter a valid date of birth', bn: 'একটি বৈধ জন্ম তারিখ দিন' });
+              return true;
+            },
+          })} />
+          {errors.dateOfBirth && <p className={errorBase}>{errors.dateOfBirth.message}</p>}
         </div>
       </div>
 
@@ -363,7 +385,7 @@ const RegisterPage = () => {
             placeholder="your@email.com"
             {...register('email', {
               pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                 message: t({ en: 'Enter a valid email', bn: 'একটি বৈধ ইমেইল দিন' }),
               },
             })}
@@ -614,7 +636,10 @@ const RegisterPage = () => {
         {/* Preferred Date */}
         <div>
           <label htmlFor="reg-preferredDate" className={labelBase}>{t({ en: 'Preferred Date', bn: 'পছন্দের তারিখ' })}</label>
-          <input id="reg-preferredDate" type="date" className={inputBase} {...register('preferredDate')} />
+          <input id="reg-preferredDate" type="date" className={inputBase} min={new Date().toISOString().split('T')[0]} {...register('preferredDate', {
+            required: t({ en: 'Preferred date is required', bn: 'পছন্দের তারিখ আবশ্যক' }),
+          })} />
+          {errors.preferredDate && <p className={errorBase}>{errors.preferredDate.message}</p>}
         </div>
       </div>
 
@@ -630,7 +655,9 @@ const RegisterPage = () => {
               <input
                 type="radio"
                 value={slot.value}
-                {...register('preferredTime')}
+                {...register('preferredTime', {
+                  required: t({ en: 'Please select a time slot', bn: 'একটি সময় স্লট নির্বাচন করুন' }),
+                })}
                 className="w-4 h-4 text-teal border-gray-300 focus:ring-teal"
               />
               <Clock size={16} className="text-teal" />
@@ -638,6 +665,7 @@ const RegisterPage = () => {
             </label>
           ))}
         </div>
+        {errors.preferredTime && <p className={errorBase}>{errors.preferredTime.message}</p>}
       </div>
 
       {/* How did you hear about us */}
@@ -679,6 +707,35 @@ const RegisterPage = () => {
           {...register('specialNotes')}
         />
       </div>
+
+      {/* HIPAA Disclaimer */}
+      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+        <p className="text-amber-800 text-xs">
+          <strong>{t({ en: 'Notice:', bn: 'বিজ্ঞপ্তি:' })}</strong>{' '}
+          {t({
+            en: 'This system is not yet HIPAA-compliant. Please do not submit sensitive medical records. Data is stored locally in your browser.',
+            bn: 'এই সিস্টেমটি এখনও HIPAA-সম্মত নয়। সংবেদনশীল চিকিৎসা রেকর্ড জমা দেবেন না। তথ্য আপনার ব্রাউজারে স্থানীয়ভাবে সংরক্ষিত হয়।',
+          })}
+        </p>
+      </div>
+
+      {/* Privacy consent */}
+      <div className="flex items-start gap-3">
+        <input
+          type="checkbox"
+          id="reg-consent"
+          {...register('privacyConsent', { required: t({ en: 'You must agree to proceed', bn: 'এগিয়ে যেতে আপনাকে সম্মত হতে হবে' }) })}
+          className="mt-1 w-4 h-4 text-teal border-gray-300 rounded focus:ring-teal"
+        />
+        <label htmlFor="reg-consent" className="text-sm text-navy/70">
+          {t({
+            en: 'I consent to the collection of my personal and medical information as described in the',
+            bn: 'আমি আমার ব্যক্তিগত ও চিকিৎসা তথ্য সংগ্রহে সম্মতি দিচ্ছি যা বর্ণিত আছে',
+          })}{' '}
+          <a href="/privacy-policy" target="_blank" className="text-teal underline">{t({ en: 'Privacy Policy', bn: 'গোপনীয়তা নীতিতে' })}</a>.
+        </label>
+      </div>
+      {errors.privacyConsent && <p className={errorBase}>{errors.privacyConsent.message}</p>}
     </motion.div>
   );
 

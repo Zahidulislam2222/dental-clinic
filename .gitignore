@@ -31,8 +31,6 @@ Desktop.ini
 
 # Claude Code
 .claude/
-.claude.json
-CLAUDE.md
 
 # Logs
 npm-debug.log*
@@ -46,4 +44,6 @@ coverage/
 # Misc
 *.tgz
 .cache/
-*.docx
+
+# Signed BAA PDFs (sensitive legal documents — do NOT commit)
+docs/baa/*.pdf

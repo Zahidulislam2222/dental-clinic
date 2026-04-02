@@ -11,6 +11,7 @@ import {
   Tag,
   CalendarPlus,
 } from 'lucide-react';
+import DOMPurify from 'dompurify';
 import { useLanguage } from '../context/LanguageContext';
 import PageTransition from '../components/ui/PageTransition';
 import Button from '../components/ui/Button';
@@ -515,7 +516,7 @@ const BlogPostPage = () => {
           >
             <div
               className="prose prose-lg max-w-none prose-headings:font-heading prose-headings:text-navy prose-headings:font-bold prose-h2:text-xl prose-h2:md:text-2xl prose-h2:mt-8 prose-h2:mb-4 prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4"
-              dangerouslySetInnerHTML={{ __html: t(article.content) }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(t(article.content)) }}
             />
 
             {/* Tags */}

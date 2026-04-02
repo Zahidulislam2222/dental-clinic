@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import CONTACT from '../../config/contact';
 
 const WhatsAppFloat = () => {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -34,7 +35,7 @@ const WhatsAppFloat = () => {
               })}
             </p>
             <a
-              href="https://wa.me/8801712345678?text=Hello!%20I%20want%20to%20book%20an%20appointment%20at%20Everyday%20Dental%20Surgery."
+              href={CONTACT.whatsapp('Hello! I want to book an appointment at Everyday Dental Surgery.')}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-green-500 text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-green-600 transition-colors"

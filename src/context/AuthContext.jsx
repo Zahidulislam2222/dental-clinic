@@ -1,0 +1,188 @@
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
+
+const AuthContext = createContext(null);
+
+// HIPAA 164.312(a)(2)(iii) — automatic logoff after inactivity
+const INACTIVITY_WARNING_MS = 14 * 60 * 1000; // 14 min → show warning
+const INACTIVITY_LOGOUT_MS = 15 * 60 * 1000;  // 15 min → force logout
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
+  const warningTimer = useRef(null);
+  const logoutTimer = useRef(null);
+
+  // Fetch user profile (role, name, etc.)
+  const fetchProfile = useCallback(async (userId) => {
+    if (!supabase) return null;
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    if (error) {
+      console.error('Failed to fetch profile:', error.message);
+      return null;
+    }
+    return data;
+  }, []);
+
+  // Reset inactivity timers on user activity
+  const resetInactivityTimers = useCallback(() => {
+    if (!user) return;
+    setShowTimeoutWarning(false);
+
+    if (warningTimer.current) clearTimeout(warningTimer.current);
+    if (logoutTimer.current) clearTimeout(logoutTimer.current);
+
+    warningTimer.current = setTimeout(() => {
+      setShowTimeoutWarning(true);
+    }, INACTIVITY_WARNING_MS);
+
+    logoutTimer.current = setTimeout(() => {
+      signOut();
+    }, INACTIVITY_LOGOUT_MS);
+  }, [user]);
+
+  // Track user activity for auto-logout
+  useEffect(() => {
+    if (!user) return;
+
+    const events = ['mousedown', 'keydown', 'touchstart', 'scroll'];
+    const handler = () => resetInactivityTimers();
+
+    events.forEach((e) => window.addEventListener(e, handler, { passive: true }));
+    resetInactivityTimers(); // Start timers
+
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, handler));
+      if (warningTimer.current) clearTimeout(warningTimer.current);
+      if (logoutTimer.current) clearTimeout(logoutTimer.current);
+    };
+  }, [user, resetInactivityTimers]);
+
+  // Auth state listener
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) {
+      setLoading(false);
+      return;
+    }
+
+    // Get initial session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (session?.user) {
+        setUser(session.user);
+        const p = await fetchProfile(session.user.id);
+        setProfile(p);
+      }
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          setUser(session.user);
+          const p = await fetchProfile(session.user.id);
+          setProfile(p);
+        } else {
+          setUser(null);
+          setProfile(null);
+        }
+        setLoading(false);
+      }
+    );
+
+    return () => subscription?.unsubscribe();
+  }, [fetchProfile]);
+
+  // Auth methods
+  const signUp = async (email, password, metadata = {}) => {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: metadata },
+    });
+    if (error) throw error;
+    return data;
+  };
+
+  const signIn = async (email, password) => {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+    return data;
+  };
+
+  const signInWithOtp = async (phone) => {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { data, error } = await supabase.auth.signInWithOtp({ phone });
+    if (error) throw error;
+    return data;
+  };
+
+  const verifyOtp = async (phone, token) => {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { data, error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms' });
+    if (error) throw error;
+    return data;
+  };
+
+  const signOut = async () => {
+    if (!supabase) return;
+    setShowTimeoutWarning(false);
+    await supabase.auth.signOut();
+    setUser(null);
+    setProfile(null);
+  };
+
+  const resetPassword = async (email) => {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) throw error;
+  };
+
+  const updatePassword = async (newPassword) => {
+    if (!supabase) throw new Error('Supabase not configured');
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) throw error;
+  };
+
+  const hasRole = (role) => profile?.role === role;
+  const isStaff = () => ['admin', 'doctor', 'receptionist'].includes(profile?.role);
+  const isAdmin = () => profile?.role === 'admin';
+
+  const value = {
+    user,
+    profile,
+    loading,
+    isAuthenticated: !!user,
+    showTimeoutWarning,
+    setShowTimeoutWarning,
+    signUp,
+    signIn,
+    signInWithOtp,
+    verifyOtp,
+    signOut,
+    resetPassword,
+    updatePassword,
+    hasRole,
+    isStaff,
+    isAdmin,
+    resetInactivityTimers,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  return context;
+};

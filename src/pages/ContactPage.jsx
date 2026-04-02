@@ -23,6 +23,7 @@ import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useLanguage } from '../context/LanguageContext';
 import { api } from '../utils/emailService';
+import { checkRateLimit, formatCooldown } from '../utils/rateLimit';
 import PageTransition from '../components/ui/PageTransition';
 import SectionHeading from '../components/ui/SectionHeading';
 import { useScrollReveal, useStaggerReveal } from '../hooks/useGsapAnimations';
@@ -157,6 +158,11 @@ const ContactPage = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
+    const { canSubmit, remainingMs } = checkRateLimit('contact-form');
+    if (!canSubmit) {
+      toast.error(t({ en: `Too many submissions. Try again in ${formatCooldown(remainingMs)}.`, bn: `অনেক বেশি জমা দেওয়া হয়েছে। ${formatCooldown(remainingMs)} পর আবার চেষ্টা করুন।` }));
+      return;
+    }
     setIsSubmitting(true);
     try {
       await api.submitContact(data);
@@ -399,7 +405,7 @@ const ContactPage = () => {
                     aria-invalid={errors.email ? 'true' : undefined}
                     {...register('email', {
                       pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                         message: t({ en: 'Enter a valid email', bn: 'একটি বৈধ ইমেইল দিন' }),
                       },
                     })}
@@ -436,10 +442,35 @@ const ContactPage = () => {
                       value: 10,
                       message: t({ en: 'Message must be at least 10 characters', bn: 'বার্তা কমপক্ষে ১০ অক্ষরের হতে হবে' }),
                     },
+                    maxLength: {
+                      value: 1000,
+                      message: t({ en: 'Message cannot exceed 1000 characters', bn: 'বার্তা ১০০০ অক্ষরের বেশি হতে পারে না' }),
+                    },
                   })}
                 />
                 {errors.message && <p className={errorBase}>{errors.message.message}</p>}
               </div>
+
+              {/* Privacy consent */}
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  id="contact-consent"
+                  {...register('privacyConsent', { required: t({ en: 'You must agree to the privacy policy', bn: 'আপনাকে গোপনীয়তা নীতিতে সম্মত হতে হবে' }) })}
+                  className="mt-1 w-4 h-4 text-teal border-gray-300 rounded focus:ring-teal"
+                />
+                <label htmlFor="contact-consent" className="text-sm text-navy/70">
+                  {t({ en: 'I agree to the', bn: 'আমি সম্মত' })}{' '}
+                  <a href="/privacy-policy" target="_blank" className="text-teal underline">{t({ en: 'Privacy Policy', bn: 'গোপনীয়তা নীতি' })}</a>
+                  {t({ en: ' and consent to my data being processed.', bn: ' এবং আমার তথ্য প্রক্রিয়াকরণে সম্মতি দিচ্ছি।' })}
+                </label>
+              </div>
+              {errors.privacyConsent && <p className={errorBase}>{errors.privacyConsent.message}</p>}
+
+              {/* Data notice */}
+              <p className="text-xs text-gray-400 bg-gray-50 rounded-lg px-4 py-2">
+                {t({ en: 'Your data is stored locally in your browser. We are working on a secure backend.', bn: 'আপনার তথ্য আপনার ব্রাউজারে স্থানীয়ভাবে সংরক্ষিত। আমরা একটি নিরাপদ ব্যাকএন্ডে কাজ করছি।' })}
+              </p>
 
               {/* Submit */}
               <motion.button

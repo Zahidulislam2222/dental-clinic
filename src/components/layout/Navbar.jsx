@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Phone, Calendar } from 'lucide-react';
+import { Menu, X, Phone, Calendar, LogIn, User, Shield } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
 import { ANNOUNCEMENT_HEIGHT } from './AnnouncementBar';
 
 const navLinks = [
@@ -16,6 +17,35 @@ const navLinks = [
   { to: '/faq', label: { en: 'FAQ', bn: 'প্রশ্নোত্তর' } },
   { to: '/contact', label: { en: 'Contact', bn: 'যোগাযোগ' } },
 ];
+
+const AuthNavButton = () => {
+  const { isAuthenticated, profile } = useAuth();
+  const { t } = useLanguage();
+
+  if (!isAuthenticated) {
+    return (
+      <Link
+        to="/login"
+        className="flex items-center gap-1.5 text-navy hover:text-teal transition-colors px-3 py-2 rounded-lg hover:bg-gray-50 text-sm font-medium"
+      >
+        <LogIn size={14} />
+        <span className="hidden xl:inline">{t({ en: 'Login', bn: 'লগইন' })}</span>
+      </Link>
+    );
+  }
+
+  const dashboardLink = ['admin', 'doctor', 'receptionist'].includes(profile?.role) ? '/admin' : '/dashboard';
+
+  return (
+    <Link
+      to={dashboardLink}
+      className="flex items-center gap-1.5 text-navy hover:text-teal transition-colors px-3 py-2 rounded-lg hover:bg-gray-50 text-sm font-medium"
+    >
+      {profile?.role === 'admin' ? <Shield size={14} className="text-teal" /> : <User size={14} className="text-teal" />}
+      <span className="hidden xl:inline max-w-[100px] truncate">{profile?.full_name || t({ en: 'Portal', bn: 'পোর্টাল' })}</span>
+    </Link>
+  );
+};
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -105,6 +135,7 @@ const Navbar = () => {
               <Calendar size={14} />
               {t({ en: 'Book Now', bn: 'বুক করুন' })}
             </Link>
+            <AuthNavButton />
           </div>
 
           {/* Mobile Menu Button */}

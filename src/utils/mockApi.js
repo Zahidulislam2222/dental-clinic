@@ -1,9 +1,15 @@
+/**
+ * @deprecated Use emailService.js instead. This file is kept for reference only.
+ */
+
 // Simulated API delay
 const delay = (ms = 800) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Generate random reference number
+// Cryptographically secure reference number
 const generateRefNumber = () => {
-  return 'EDS-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  const arr = new Uint8Array(4);
+  crypto.getRandomValues(arr);
+  return 'EDS-' + Array.from(arr, (x) => x.toString(16).padStart(2, '0')).join('').toUpperCase();
 };
 
 // Mock API functions

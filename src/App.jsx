@@ -6,6 +6,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
+import ProtectedRoute from './components/auth/ProtectedRoute'
 import AnnouncementBar from './components/layout/AnnouncementBar'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
@@ -28,6 +29,19 @@ const AppointmentPage = lazy(() => import('./pages/AppointmentPage'))
 const GalleryPage = lazy(() => import('./pages/GalleryPage'))
 const CommunityPage = lazy(() => import('./pages/CommunityPage'))
 const ConferencesPage = lazy(() => import('./pages/ConferencesPage'))
+const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
+
+// Auth pages
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const SignupPage = lazy(() => import('./pages/SignupPage'))
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'))
+const ResetPasswordPage = lazy(() => import('./pages/ResetPasswordPage'))
+const UnauthorizedPage = lazy(() => import('./pages/UnauthorizedPage'))
+
+// Protected pages
+const PatientDashboard = lazy(() => import('./pages/PatientDashboard'))
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'))
 
 // Page loading fallback
 const PageLoader = () => (
@@ -103,6 +117,19 @@ const App = () => {
                 <Route path="/gallery" element={<GalleryPage />} />
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/conferences" element={<ConferencesPage />} />
+                <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms" element={<TermsPage />} />
+
+                {/* Auth routes */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/reset-password" element={<ResetPasswordPage />} />
+                <Route path="/unauthorized" element={<UnauthorizedPage />} />
+
+                {/* Protected routes */}
+                <Route path="/dashboard/*" element={<ProtectedRoute><PatientDashboard /></ProtectedRoute>} />
+                <Route path="/admin/*" element={<ProtectedRoute requiredRoles={['admin', 'doctor', 'receptionist']}><AdminDashboard /></ProtectedRoute>} />
               </Routes>
             </AnimatePresence>
           </Suspense>
