@@ -59,6 +59,91 @@ export const SERVICE_SNOMED = {
   'cosmetic-dentistry':  { code: '3950001',   display: 'Cosmetic dental procedure' },
 };
 
+// ── Dental ICD-10-CM Codes (K02-K05) — FHIR-TERM-001 ──
+export const DENTAL_ICD10 = {
+  // K02 — Dental caries
+  'K02':    { code: 'K02',   display: 'Dental caries' },
+  'K02.0':  { code: 'K02.0', display: 'Caries limited to enamel' },
+  'K02.1':  { code: 'K02.1', display: 'Caries of dentine' },
+  'K02.2':  { code: 'K02.2', display: 'Caries of cementum' },
+  'K02.3':  { code: 'K02.3', display: 'Arrested dental caries' },
+  'K02.5':  { code: 'K02.5', display: 'Dental caries on pit and fissure surface' },
+  'K02.51': { code: 'K02.51', display: 'Dental caries on pit and fissure surface limited to enamel' },
+  'K02.52': { code: 'K02.52', display: 'Dental caries on pit and fissure surface penetrating into dentin' },
+  'K02.53': { code: 'K02.53', display: 'Dental caries on pit and fissure surface penetrating into pulp' },
+  'K02.6':  { code: 'K02.6', display: 'Dental caries on smooth surface' },
+  'K02.61': { code: 'K02.61', display: 'Dental caries on smooth surface limited to enamel' },
+  'K02.62': { code: 'K02.62', display: 'Dental caries on smooth surface penetrating into dentin' },
+  'K02.63': { code: 'K02.63', display: 'Dental caries on smooth surface penetrating into pulp' },
+  'K02.7':  { code: 'K02.7', display: 'Dental root caries' },
+  'K02.9':  { code: 'K02.9', display: 'Dental caries, unspecified' },
+  // K03 — Other diseases of hard tissues of teeth
+  'K03':    { code: 'K03',   display: 'Other diseases of hard tissues of teeth' },
+  'K03.0':  { code: 'K03.0', display: 'Excessive attrition of teeth' },
+  'K03.1':  { code: 'K03.1', display: 'Abrasion of teeth' },
+  'K03.2':  { code: 'K03.2', display: 'Erosion of teeth' },
+  'K03.8':  { code: 'K03.8', display: 'Other specified diseases of hard tissues of teeth' },
+  'K03.9':  { code: 'K03.9', display: 'Disease of hard tissues of teeth, unspecified' },
+  // K04 — Diseases of pulp and periapical tissues
+  'K04':    { code: 'K04',   display: 'Diseases of pulp and periapical tissues' },
+  'K04.0':  { code: 'K04.0', display: 'Pulpitis' },
+  'K04.01': { code: 'K04.01', display: 'Reversible pulpitis' },
+  'K04.02': { code: 'K04.02', display: 'Irreversible pulpitis' },
+  'K04.1':  { code: 'K04.1', display: 'Necrosis of pulp' },
+  'K04.2':  { code: 'K04.2', display: 'Pulp degeneration' },
+  'K04.3':  { code: 'K04.3', display: 'Abnormal hard tissue formation in pulp' },
+  'K04.4':  { code: 'K04.4', display: 'Acute apical periodontitis of pulpal origin' },
+  'K04.5':  { code: 'K04.5', display: 'Chronic apical periodontitis' },
+  'K04.6':  { code: 'K04.6', display: 'Periapical abscess with sinus' },
+  'K04.7':  { code: 'K04.7', display: 'Periapical abscess without sinus' },
+  'K04.8':  { code: 'K04.8', display: 'Radicular cyst' },
+  'K04.9':  { code: 'K04.9', display: 'Other and unspecified diseases of pulp and periapical tissues' },
+  // K05 — Gingivitis and periodontal diseases
+  'K05':    { code: 'K05',   display: 'Gingivitis and periodontal diseases' },
+  'K05.0':  { code: 'K05.0', display: 'Acute gingivitis' },
+  'K05.00': { code: 'K05.00', display: 'Acute gingivitis, plaque induced' },
+  'K05.01': { code: 'K05.01', display: 'Acute gingivitis, non-plaque induced' },
+  'K05.1':  { code: 'K05.1', display: 'Chronic gingivitis' },
+  'K05.10': { code: 'K05.10', display: 'Chronic gingivitis, plaque induced' },
+  'K05.11': { code: 'K05.11', display: 'Chronic gingivitis, non-plaque induced' },
+  'K05.2':  { code: 'K05.2', display: 'Aggressive periodontitis' },
+  'K05.20': { code: 'K05.20', display: 'Aggressive periodontitis, unspecified' },
+  'K05.21': { code: 'K05.21', display: 'Aggressive periodontitis, localized' },
+  'K05.22': { code: 'K05.22', display: 'Aggressive periodontitis, generalized' },
+  'K05.3':  { code: 'K05.3', display: 'Chronic periodontitis' },
+  'K05.30': { code: 'K05.30', display: 'Chronic periodontitis, unspecified' },
+  'K05.31': { code: 'K05.31', display: 'Chronic periodontitis, localized' },
+  'K05.32': { code: 'K05.32', display: 'Chronic periodontitis, generalized' },
+  'K05.4':  { code: 'K05.4', display: 'Periodontosis' },
+  'K05.5':  { code: 'K05.5', display: 'Other periodontal diseases' },
+  'K05.6':  { code: 'K05.6', display: 'Periodontal disease, unspecified' },
+};
+
+// ── LOINC Codes for Observations — FHIR-TERM-002 ──
+export const LOINC_CODES = {
+  // Vital signs
+  'blood-pressure-systolic': { code: '8480-6',  display: 'Systolic blood pressure' },
+  'blood-pressure-diastolic':{ code: '8462-4',  display: 'Diastolic blood pressure' },
+  'heart-rate':              { code: '8867-4',  display: 'Heart rate' },
+  'body-temperature':        { code: '8310-5',  display: 'Body temperature' },
+  'respiratory-rate':        { code: '9279-1',  display: 'Respiratory rate' },
+  'body-weight':             { code: '29463-7', display: 'Body weight' },
+  'body-height':             { code: '8302-2',  display: 'Body height' },
+  'bmi':                     { code: '39156-5', display: 'Body mass index' },
+  'oxygen-saturation':       { code: '2708-6',  display: 'Oxygen saturation' },
+  // Dental-specific observations
+  'periodontal-pocket-depth':{ code: '81288-6', display: 'Periodontal pocket depth' },
+  'gingival-bleeding-index': { code: '81289-4', display: 'Gingival bleeding index' },
+  'plaque-index':            { code: '81290-2', display: 'Plaque index' },
+  'tooth-mobility':          { code: '81291-0', display: 'Tooth mobility' },
+  'oral-mucosa-exam':        { code: '32890-1', display: 'Oral mucosa examination' },
+  // Document types (for DocumentReference)
+  'dental-xray':             { code: '38269-7', display: 'Dental X-ray' },
+  'panoramic-xray':          { code: '39638-2', display: 'Panoramic dental X-ray' },
+  'clinical-photo':          { code: '72170-4', display: 'Clinical photograph' },
+  'dental-report':           { code: '34108-1', display: 'Dental report' },
+};
+
 // ── Practitioner Qualification SNOMED CT ──
 export const PRACTITIONER_QUALIFICATION = {
   dentist:       { code: '106289002', display: 'Dentist' },
@@ -92,6 +177,8 @@ export const IDENTIFIER_SYSTEMS = {
   allergyVerif:   'http://terminology.hl7.org/CodeSystem/allergyintolerance-verification',
   condClini:      'http://terminology.hl7.org/CodeSystem/condition-clinical',
   condVerif:      'http://terminology.hl7.org/CodeSystem/condition-ver-status',
+  loinc:          'http://loinc.org',
+  dentalIcd10:    'http://hl7.org/fhir/sid/icd-10-cm',
 };
 
 /**
@@ -123,4 +210,31 @@ export function getConditionCoding(conditionKey) {
 export function getAllergySnomed(substance) {
   const key = substance?.toLowerCase().replace(/\s+/g, '');
   return ALLERGY_SNOMED[key] || null;
+}
+
+/**
+ * Look up a dental ICD-10 code by code string (e.g., 'K02.51').
+ */
+export function getDentalIcd10(code) {
+  return DENTAL_ICD10[code] || null;
+}
+
+/**
+ * Look up a LOINC code by key (e.g., 'blood-pressure-systolic').
+ */
+export function getLoincCode(key) {
+  return LOINC_CODES[key] || null;
+}
+
+/**
+ * Get LOINC coding object for use in FHIR Observation.code.
+ */
+export function getLoincCoding(key) {
+  const loinc = LOINC_CODES[key];
+  if (!loinc) return null;
+  return {
+    system: IDENTIFIER_SYSTEMS.loinc,
+    code: loinc.code,
+    display: loinc.display,
+  };
 }

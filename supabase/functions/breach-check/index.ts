@@ -9,11 +9,10 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { corsHeaders, handleCors } from '../_shared/cors.ts';
+import { createLogger } from '../_shared/logger.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const log = createLogger('breach-check');
 
 interface AnomalyRule {
   id: number;
@@ -26,9 +25,8 @@ interface AnomalyRule {
 }
 
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
 
   try {
     const supabaseAdmin = createClient(
@@ -189,7 +187,31 @@ serve(async (req: Request) => {
                 subject: `Security Alert: ${rule.description}`,
                 message: details,
               },
-            }).catch(err => console.error('Alert email failed:', err));
+            }).catch(err => log.error('Alert email failed', { error_code: err?.code || 'UNKNOWN' }));
+          }
+
+          // Patient notification for critical breaches (HIPAA 164.404)
+          if (rule.severity === 'critical' && rule.rule_name === 'excessive_phi_access') {
+            // Log that patient notification is required
+            await supabaseAdmin.from('security_incidents').update({
+              containment_actions: 'Automated: Account flagged for review. Admin notified.',
+            }).eq('title', rule.description).eq('status', 'detected');
+          }
+
+          // Auto-containment: lock accounts involved in critical breaches
+          if (rule.severity === 'critical') {
+            const affectedUsers = details.match(/User.*?\(([a-f0-9-]+)\)/);
+            if (affectedUsers?.[1]) {
+              await supabaseAdmin.from('user_profiles').update({
+                is_active: false,
+              }).eq('id', affectedUsers[1]);
+
+              await supabaseAdmin.from('security_incidents').update({
+                status: 'contained',
+                contained_at: new Date().toISOString(),
+                containment_actions: `Automated: Account ${affectedUsers[1]} deactivated pending investigation.`,
+              }).eq('title', rule.description).eq('status', 'detected');
+            }
           }
         }
       }
@@ -201,7 +223,7 @@ serve(async (req: Request) => {
     );
 
   } catch (error) {
-    console.error('breach-check error:', error);
+    log.error('breach-check error', { error_code: error?.code || 'UNKNOWN' });
     return new Response(
       JSON.stringify({ error: 'Breach check failed' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -7,11 +7,10 @@
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { corsHeaders, handleCors } from '../_shared/cors.ts';
+import { createLogger } from '../_shared/logger.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const log = createLogger('send-notification');
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 const CLINIC_EMAIL = Deno.env.get('CLINIC_NOTIFICATION_EMAIL') || 'admin@everyday-dental.com';
@@ -68,9 +67,8 @@ function buildPatientConfirmationHtml(formType: string, refNumber: string): stri
 }
 
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
 
   try {
     const body: NotificationRequest = await req.json();
@@ -78,7 +76,7 @@ serve(async (req: Request) => {
 
     if (!RESEND_API_KEY) {
       // Resend not configured — log and succeed silently
-      console.warn('[send-notification] RESEND_API_KEY not set, skipping email');
+      log.warn('RESEND_API_KEY not set, skipping email');
       return new Response(
         JSON.stringify({ success: true, skipped: true }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -132,7 +130,7 @@ serve(async (req: Request) => {
 
     const failures = results.filter((r) => r.status === 'rejected');
     if (failures.length > 0) {
-      console.error('[send-notification] Some emails failed:', failures);
+      log.error('Some emails failed', { error_code: 'EMAIL_SEND_FAILURE' });
     }
 
     return new Response(
@@ -141,7 +139,7 @@ serve(async (req: Request) => {
     );
 
   } catch (error) {
-    console.error('send-notification error:', error);
+    log.error('send-notification error', { error_code: error?.code || 'UNKNOWN' });
     return new Response(
       JSON.stringify({ error: 'Notification failed' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

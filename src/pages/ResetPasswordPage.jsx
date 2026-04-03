@@ -59,6 +59,7 @@ const ResetPasswordPage = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t({ en: 'New password', bn: 'নতুন পাসওয়ার্ড' })}
+                  autoComplete="new-password"
                   className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 pl-11 text-navy placeholder-gray-400 focus:border-teal focus:ring-2 focus:ring-teal/20 outline-none transition-all"
                   {...register('password', {
                     required: t({ en: 'Password is required', bn: 'পাসওয়ার্ড আবশ্যক' }),
@@ -86,6 +87,7 @@ const ResetPasswordPage = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder={t({ en: 'Confirm new password', bn: 'নতুন পাসওয়ার্ড নিশ্চিত করুন' })}
+                  autoComplete="new-password"
                   className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 pl-11 text-navy placeholder-gray-400 focus:border-teal focus:ring-2 focus:ring-teal/20 outline-none transition-all"
                   {...register('confirmPassword', {
                     required: t({ en: 'Please confirm password', bn: 'পাসওয়ার্ড নিশ্চিত করুন' }),

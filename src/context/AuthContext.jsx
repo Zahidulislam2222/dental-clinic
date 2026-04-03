@@ -6,6 +6,7 @@ const AuthContext = createContext(null);
 // HIPAA 164.312(a)(2)(iii) — automatic logoff after inactivity
 const INACTIVITY_WARNING_MS = 14 * 60 * 1000; // 14 min → show warning
 const INACTIVITY_LOGOUT_MS = 15 * 60 * 1000;  // 15 min → force logout
+const SESSION_CHANNEL = 'eds-session-sync';    // BroadcastChannel for tab-aware timeout
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -14,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [showTimeoutWarning, setShowTimeoutWarning] = useState(false);
   const warningTimer = useRef(null);
   const logoutTimer = useRef(null);
+  const broadcastChannel = useRef(null);
 
   // Fetch user profile (role, name, etc.)
   const fetchProfile = useCallback(async (userId) => {
@@ -31,6 +33,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Reset inactivity timers on user activity
+  // HIPAA-SESSION-001: BroadcastChannel syncs activity across tabs
   const resetInactivityTimers = useCallback(() => {
     if (!user) return;
     setShowTimeoutWarning(false);
@@ -47,12 +50,36 @@ export const AuthProvider = ({ children }) => {
     }, INACTIVITY_LOGOUT_MS);
   }, [user]);
 
-  // Track user activity for auto-logout
+  // Broadcast activity to other tabs so one active tab keeps all alive
+  const broadcastActivity = useCallback(() => {
+    try {
+      broadcastChannel.current?.postMessage({ type: 'activity', timestamp: Date.now() });
+    } catch { /* channel may be closed */ }
+  }, []);
+
+  // Track user activity for auto-logout + BroadcastChannel tab sync
   useEffect(() => {
     if (!user) return;
 
+    // Set up BroadcastChannel for tab-aware session management
+    try {
+      broadcastChannel.current = new BroadcastChannel(SESSION_CHANNEL);
+      broadcastChannel.current.onmessage = (event) => {
+        if (event.data?.type === 'activity') {
+          resetInactivityTimers();
+        } else if (event.data?.type === 'logout') {
+          setUser(null);
+          setProfile(null);
+          setShowTimeoutWarning(false);
+        }
+      };
+    } catch { /* BroadcastChannel not supported — single-tab fallback */ }
+
     const events = ['mousedown', 'keydown', 'touchstart', 'scroll'];
-    const handler = () => resetInactivityTimers();
+    const handler = () => {
+      resetInactivityTimers();
+      broadcastActivity();
+    };
 
     events.forEach((e) => window.addEventListener(e, handler, { passive: true }));
     resetInactivityTimers(); // Start timers
@@ -61,8 +88,9 @@ export const AuthProvider = ({ children }) => {
       events.forEach((e) => window.removeEventListener(e, handler));
       if (warningTimer.current) clearTimeout(warningTimer.current);
       if (logoutTimer.current) clearTimeout(logoutTimer.current);
+      try { broadcastChannel.current?.close(); } catch { /* ignore */ }
     };
-  }, [user, resetInactivityTimers]);
+  }, [user, resetInactivityTimers, broadcastActivity]);
 
   // Auth state listener
   useEffect(() => {
@@ -135,6 +163,8 @@ export const AuthProvider = ({ children }) => {
   const signOut = async () => {
     if (!supabase) return;
     setShowTimeoutWarning(false);
+    // Broadcast logout to all tabs
+    try { broadcastChannel.current?.postMessage({ type: 'logout' }); } catch { /* ignore */ }
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);

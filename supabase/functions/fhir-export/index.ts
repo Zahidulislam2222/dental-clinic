@@ -11,13 +11,12 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { corsHeaders, handleCors } from '../_shared/cors.ts';
+import { createLogger } from '../_shared/logger.ts';
+
+const log = createLogger('fhir-export');
 
 const FHIR_CONTENT_TYPE = 'application/fhir+json; charset=utf-8';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 function operationOutcome(severity: string, code: string, diagnostics: string, status = 400) {
   return new Response(JSON.stringify({
@@ -30,9 +29,8 @@ function operationOutcome(severity: string, code: string, diagnostics: string, s
 }
 
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
 
   try {
     // Authenticate
@@ -185,7 +183,7 @@ serve(async (req: Request) => {
     });
 
   } catch (error) {
-    console.error('FHIR export error:', error);
+    log.error('FHIR export error', { error_code: error?.code || 'UNKNOWN' });
     return operationOutcome('fatal', 'exception', 'Export failed', 500);
   }
 });

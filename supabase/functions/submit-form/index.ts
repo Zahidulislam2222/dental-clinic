@@ -9,11 +9,11 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { sanitizeFormData } from '../_shared/sanitize.ts';
+import { corsHeaders, handleCors } from '../_shared/cors.ts';
+import { checkRateLimit } from '../_shared/rate-limit.ts';
+import { createLogger } from '../_shared/logger.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const log = createLogger('submit-form');
 
 interface ValidationError {
   field: string;
@@ -67,9 +67,8 @@ function generateRefNumber(): string {
 
 serve(async (req: Request) => {
   // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
 
   try {
     const { formType, data: rawData } = await req.json();
@@ -88,17 +87,26 @@ serve(async (req: Request) => {
     }
 
     if (errors.length > 0) {
-      return new Response(JSON.stringify({ errors }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      return new Response(JSON.stringify({ error: 'Validation failed. Please check your inputs.', fieldCount: errors.length }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // 3. Create admin client (bypasses RLS for encryption functions)
+    // Rate limiting (server-side) — SEC-RATE-001 fix
+    const clientIp = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    // Get client IP for audit logging
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+    const rateCheck = await checkRateLimit(supabaseAdmin, clientIp, formType);
+    if (!rateCheck.allowed) {
+      return new Response(
+        JSON.stringify({ error: 'Too many submissions. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Set session vars for audit trigger
+    await supabaseAdmin.rpc('set_config', { setting: 'app.client_ip', value: clientIp }).catch(() => {});
 
     // 4. Insert based on form type
     let result: Record<string, unknown> = {};
@@ -180,7 +188,7 @@ serve(async (req: Request) => {
     );
 
   } catch (error) {
-    console.error('submit-form error:', error);
+    log.error('submit-form error', { error_code: error?.code || 'UNKNOWN' });
     return new Response(
       JSON.stringify({ error: 'Submission failed. Please try again.' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -6,18 +6,16 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { corsHeaders, handleCors } from '../_shared/cors.ts';
+import { createLogger } from '../_shared/logger.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const log = createLogger('admin-manage-user');
 
 const VALID_ROLES = ['patient', 'doctor', 'receptionist', 'admin'];
 
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
 
   try {
     const authHeader = req.headers.get('authorization');
@@ -99,7 +97,7 @@ serve(async (req: Request) => {
     );
 
   } catch (error) {
-    console.error('admin-manage-user error:', error);
+    log.error('admin-manage-user error', { error_code: error?.code || 'UNKNOWN' });
     return new Response(
       JSON.stringify({ error: 'User management failed' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

@@ -142,6 +142,7 @@ const LoginPage = () => {
                     <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder={t({ en: 'Password', bn: 'পাসওয়ার্ড' })}
+                      autoComplete="current-password"
                       className={inputBase}
                       {...register('password', {
                         required: t({ en: 'Password is required', bn: 'পাসওয়ার্ড আবশ্যক' }),

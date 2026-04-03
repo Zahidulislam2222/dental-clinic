@@ -158,6 +158,7 @@ const SignupPage = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     placeholder={t({ en: 'Password (min 8 chars)', bn: 'পাসওয়ার্ড (সর্বনিম্ন ৮ অক্ষর)' })}
+                    autoComplete="new-password"
                     className={inputBase}
                     {...register('password', {
                       required: t({ en: 'Password is required', bn: 'পাসওয়ার্ড আবশ্যক' }),
@@ -186,6 +187,7 @@ const SignupPage = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     placeholder={t({ en: 'Confirm password', bn: 'পাসওয়ার্ড নিশ্চিত করুন' })}
+                    autoComplete="new-password"
                     className={inputBase}
                     {...register('confirmPassword', {
                       required: t({ en: 'Please confirm password', bn: 'পাসওয়ার্ড নিশ্চিত করুন' }),

@@ -1,0 +1,190 @@
+{
+  "_description": "Compliance Registry — maps every requirement to its implementation and verification check. This is the single source of truth for compliance status.",
+  "_version": "1.0.0",
+  "_lastUpdated": "2026-04-03",
+
+  "hipaa": {
+    "164.308(a)(3)": {
+      "title": "Workforce Security — Role-Based Access",
+      "implementation": "supabase/migrations/002_auth_rbac.sql, supabase/migrations/003_rbac_policies.sql",
+      "checks": ["HIPAA-RBAC-001", "HIPAA-RBAC-002", "HIPAA-RBAC-003"]
+    },
+    "164.308(a)(4)": {
+      "title": "Access Management — RLS + Admin Controls",
+      "implementation": "supabase/migrations/003_rbac_policies.sql",
+      "checks": ["HIPAA-RLS-001", "HIPAA-RLS-002", "HIPAA-RLS-003"]
+    },
+    "164.312(a)(1)": {
+      "title": "Access Controls on All PHI Tables",
+      "implementation": "supabase/migrations/001_initial_schema.sql, supabase/migrations/003_rbac_policies.sql",
+      "checks": ["HIPAA-RLS-001"]
+    },
+    "164.312(a)(2)(i)": {
+      "title": "Unique User Identification",
+      "implementation": "supabase/migrations/002_auth_rbac.sql, src/context/AuthContext.jsx",
+      "checks": ["HIPAA-AUTH-001"]
+    },
+    "164.312(a)(2)(iii)": {
+      "title": "Automatic Logoff (15-min timeout)",
+      "implementation": "src/context/AuthContext.jsx",
+      "checks": ["HIPAA-SESSION-001", "HIPAA-SESSION-002"]
+    },
+    "164.312(a)(2)(iv)": {
+      "title": "Encryption at Rest (pgcrypto AES-256)",
+      "implementation": "supabase/migrations/004_encryption.sql",
+      "checks": ["HIPAA-ENC-001", "HIPAA-ENC-002", "HIPAA-ENC-003", "HIPAA-ENC-004"]
+    },
+    "164.312(b)": {
+      "title": "Audit Controls (all access logged)",
+      "implementation": "supabase/migrations/005_audit_logging.sql",
+      "checks": ["HIPAA-AUDIT-001", "HIPAA-AUDIT-002", "HIPAA-AUDIT-003"]
+    },
+    "164.312(d)": {
+      "title": "Transmission Security (HTTPS + CSP)",
+      "implementation": "public/_headers",
+      "checks": ["SEC-CSP-001", "SEC-CSP-002", "SEC-HEADERS-001"]
+    },
+    "164.404-410": {
+      "title": "Breach Notification (60-day deadline)",
+      "implementation": "supabase/migrations/009_breach_notification.sql, supabase/functions/breach-check/index.ts",
+      "checks": ["HIPAA-BREACH-001", "HIPAA-BREACH-002", "HIPAA-BREACH-003"]
+    },
+    "164.508": {
+      "title": "Consent Documentation & Enforcement",
+      "implementation": "supabase/migrations/006_consent_tracking.sql",
+      "checks": ["HIPAA-CONSENT-001", "HIPAA-CONSENT-002"]
+    },
+    "164.524": {
+      "title": "Patient Right to Access (FHIR export)",
+      "implementation": "supabase/functions/fhir-export/index.ts, src/lib/fhir.js",
+      "checks": ["FHIR-EXPORT-001"]
+    },
+    "164.528": {
+      "title": "Accounting of Disclosures",
+      "implementation": "supabase/migrations/005_audit_logging.sql",
+      "checks": ["HIPAA-AUDIT-001", "HIPAA-AUDIT-002"]
+    }
+  },
+
+  "fhir_r4": {
+    "resource-patient": {
+      "title": "Patient Resource Completeness",
+      "implementation": "src/lib/fhir.js:buildPatientResource",
+      "checks": ["FHIR-RES-001"]
+    },
+    "resource-appointment": {
+      "title": "Appointment Resource Correctness",
+      "implementation": "src/lib/fhir.js:buildAppointmentResource",
+      "checks": ["FHIR-APPT-001", "FHIR-APPT-002", "FHIR-APPT-003"]
+    },
+    "resource-procedure": {
+      "title": "Procedure Resource (completed treatments)",
+      "implementation": "MISSING",
+      "checks": ["FHIR-PROC-001"]
+    },
+    "resource-allergyintolerance": {
+      "title": "AllergyIntolerance Resource",
+      "implementation": "src/lib/fhir.js:buildAllergyIntoleranceResource",
+      "checks": ["FHIR-ALLERGY-001"]
+    },
+    "resource-condition": {
+      "title": "Condition Resource",
+      "implementation": "src/lib/fhir.js:buildConditionResource",
+      "checks": ["FHIR-COND-001"]
+    },
+    "terminology": {
+      "title": "SNOMED CT / ICD-10 / LOINC Codes",
+      "implementation": "src/lib/fhir-terminology.js",
+      "checks": ["FHIR-TERM-001", "FHIR-TERM-002"]
+    },
+    "rest-api": {
+      "title": "FHIR REST API Completeness",
+      "implementation": "supabase/functions/fhir-api/index.ts",
+      "checks": ["FHIR-API-001", "FHIR-API-002", "FHIR-API-003"]
+    },
+    "validator": {
+      "title": "FHIR Validator Completeness",
+      "implementation": "src/lib/fhir-validator.js",
+      "checks": ["FHIR-VAL-001", "FHIR-VAL-002"]
+    },
+    "rls-policies": {
+      "title": "FHIR Resource RLS Policies",
+      "implementation": "supabase/migrations/007_fhir_schema.sql",
+      "checks": ["FHIR-RLS-001"]
+    }
+  },
+
+  "soc2": {
+    "CC6-access": {
+      "title": "Logical Access Controls",
+      "implementation": "supabase/migrations/003_rbac_policies.sql, docs/policies/ACCESS_CONTROL_POLICY.md",
+      "checks": ["SOC2-MFA-001", "SOC2-ACCESS-001"]
+    },
+    "CC7-operations": {
+      "title": "System Operations — Anomaly Detection",
+      "implementation": "supabase/functions/breach-check/index.ts, supabase/migrations/009_breach_notification.sql",
+      "checks": ["SOC2-BREACH-001"]
+    },
+    "A1-availability": {
+      "title": "Data Retention & Lifecycle",
+      "implementation": "supabase/migrations/008_data_retention.sql",
+      "checks": ["SOC2-RETENTION-001"]
+    },
+    "vendor-management": {
+      "title": "Vendor BAA Documentation",
+      "implementation": "docs/baa/",
+      "checks": ["SOC2-BAA-001"]
+    },
+    "privacy": {
+      "title": "Consent Enforcement",
+      "implementation": "supabase/migrations/006_consent_tracking.sql",
+      "checks": ["SOC2-CONSENT-001"]
+    }
+  },
+
+  "security": {
+    "cors": {
+      "title": "CORS Configuration",
+      "implementation": "supabase/functions/*/index.ts",
+      "checks": ["SEC-CORS-001"]
+    },
+    "csp": {
+      "title": "Content Security Policy",
+      "implementation": "public/_headers",
+      "checks": ["SEC-CSP-001", "SEC-CSP-002"]
+    },
+    "phi-storage": {
+      "title": "Client-Side PHI Storage",
+      "implementation": "src/utils/emailService.js",
+      "checks": ["SEC-PHI-001"]
+    },
+    "rate-limiting": {
+      "title": "Server-Side Rate Limiting",
+      "implementation": "supabase/functions/submit-form/index.ts",
+      "checks": ["SEC-RATE-001"]
+    },
+    "service-worker": {
+      "title": "Service Worker Caching",
+      "implementation": "public/sw.js",
+      "checks": ["SEC-SW-001"]
+    },
+    "error-handling": {
+      "title": "Error Message Information Leakage",
+      "implementation": "supabase/functions/*/index.ts",
+      "checks": ["SEC-ERROR-001"]
+    }
+  },
+
+  "data-flow": {
+    "form-submission": {
+      "title": "Form → Server → Encrypt → Audit chain integrity",
+      "implementation": "src/utils/emailService.js, supabase/functions/submit-form/index.ts",
+      "checks": ["FLOW-BYPASS-001", "FLOW-RATE-001", "FLOW-CAPTCHA-001"]
+    },
+    "appointment-lifecycle": {
+      "title": "Appointment status column and lifecycle",
+      "implementation": "supabase/migrations/001_initial_schema.sql",
+      "checks": ["FLOW-APPT-001"]
+    }
+  }
+}

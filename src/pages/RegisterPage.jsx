@@ -483,6 +483,7 @@ const RegisterPage = () => {
                 type="text"
                 className={inputBase}
                 placeholder={t({ en: 'Please specify your allergies', bn: 'আপনার অ্যালার্জি উল্লেখ করুন' })}
+                autoComplete="off"
                 {...register('allergyDetails')}
               />
             </motion.div>
@@ -532,6 +533,7 @@ const RegisterPage = () => {
                 type="text"
                 className={inputBase}
                 placeholder={t({ en: 'Please list your current medications', bn: 'আপনার বর্তমান ওষুধের তালিকা দিন' })}
+                autoComplete="off"
                 {...register('medicationDetails')}
               />
             </motion.div>
@@ -575,6 +577,7 @@ const RegisterPage = () => {
             en: 'Describe any previous dental treatments...',
             bn: 'পূর্ববর্তী দন্ত চিকিৎসার বিবরণ দিন...',
           })}
+          autoComplete="off"
           {...register('previousDentalHistory')}
         />
       </div>
@@ -704,6 +707,7 @@ const RegisterPage = () => {
             en: 'Any special notes, concerns, or requests...',
             bn: 'কোনো বিশেষ নোট, উদ্বেগ বা অনুরোধ...',
           })}
+          autoComplete="off"
           {...register('specialNotes')}
         />
       </div>

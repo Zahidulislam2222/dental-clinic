@@ -5,23 +5,6 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 // Helpers
 // ──────────────────────────────────────────────────────────
 
-// localStorage fallback for dev mode (no Supabase configured)
-const FALLBACK_KEYS = {
-  contacts: 'eds-contact-messages',
-  appointments: 'eds-appointments',
-  registrations: 'eds-registrations',
-  newsletter: 'eds-newsletter',
-};
-
-const saveToLocalStorage = async (table, data) => {
-  console.warn('[EmailService] No backend configured — saving to localStorage.');
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  const key = FALLBACK_KEYS[table] || `eds-${table}`;
-  const entries = JSON.parse(localStorage.getItem(key) || '[]');
-  entries.push({ ...data, createdAt: new Date().toISOString() });
-  localStorage.setItem(key, JSON.stringify(entries));
-};
-
 // Fire-and-forget notification via Edge Function (no PHI in email)
 const sendNotification = (type, params) => {
   if (!isSupabaseConfigured || !supabase) return;
@@ -32,10 +15,19 @@ const sendNotification = (type, params) => {
 
 // ──────────────────────────────────────────────────────────
 // Public API — submits through Supabase Edge Functions
+// SEC-PHI-001: No localStorage fallback — PHI must never touch client storage
+// FLOW-BYPASS-001: All submissions require backend
 // ──────────────────────────────────────────────────────────
+
+function requireBackend() {
+  if (!isSupabaseConfigured || !supabase) {
+    throw new Error('Backend is not configured. Submissions require a server connection.');
+  }
+}
 
 export const api = {
   async submitContact(data) {
+    requireBackend();
     const sanitized = sanitizeFormData({
       fullName: data.fullName,
       phone: data.phone,
@@ -44,24 +36,17 @@ export const api = {
       message: data.message,
     });
 
-    if (isSupabaseConfigured) {
-      const { data: result, error } = await supabase.functions.invoke('submit-form', {
-        body: { formType: 'contact', data: sanitized },
-      });
-      if (error) throw new Error(error.message);
-      if (result?.errors) throw new Error(result.errors.map((e) => e.message).join(', '));
+    const { data: result, error } = await supabase.functions.invoke('submit-form', {
+      body: { formType: 'contact', data: sanitized },
+    });
+    if (error) throw new Error('Submission failed. Please try again.');
 
-      // Fire-and-forget admin notification (no PHI)
-      sendNotification('admin_new_submission', { formType: 'contact' });
-
-      return result;
-    }
-
-    await saveToLocalStorage('contacts', sanitized);
-    return { success: true, message: 'Message sent successfully!' };
+    sendNotification('admin_new_submission', { formType: 'contact' });
+    return result;
   },
 
   async submitAppointment(data) {
+    requireBackend();
     const sanitized = sanitizeFormData({
       fullName: data.fullName,
       phone: data.phone,
@@ -74,27 +59,21 @@ export const api = {
       userId: data.userId || null,
     });
 
-    if (isSupabaseConfigured) {
-      const { data: result, error } = await supabase.functions.invoke('submit-form', {
-        body: { formType: 'appointment', data: sanitized },
-      });
-      if (error) throw new Error(error.message);
-      if (result?.errors) throw new Error(result.errors.map((e) => e.message).join(', '));
+    const { data: result, error } = await supabase.functions.invoke('submit-form', {
+      body: { formType: 'appointment', data: sanitized },
+    });
+    if (error) throw new Error('Submission failed. Please try again.');
 
-      // Notifications (no PHI in email body)
-      sendNotification('admin_new_submission', { formType: 'appointment', refNumber: result.refNumber });
-      if (sanitized.email && sanitized.email !== 'N/A') {
-        sendNotification('patient_confirmation', { formType: 'appointment', refNumber: result.refNumber, patientEmail: sanitized.email });
-      }
-
-      return result;
+    sendNotification('admin_new_submission', { formType: 'appointment', refNumber: result.refNumber });
+    if (sanitized.email && sanitized.email !== 'N/A') {
+      sendNotification('patient_confirmation', { formType: 'appointment', refNumber: result.refNumber, patientEmail: sanitized.email });
     }
 
-    await saveToLocalStorage('appointments', sanitized);
-    return { success: true, refNumber: 'DEV-LOCAL' };
+    return result;
   },
 
   async submitRegistration(data) {
+    requireBackend();
     const sanitized = sanitizeFormData({
       fullName: data.fullName,
       phone: data.phone,
@@ -109,39 +88,28 @@ export const api = {
       userId: data.userId || null,
     });
 
-    if (isSupabaseConfigured) {
-      const { data: result, error } = await supabase.functions.invoke('submit-form', {
-        body: { formType: 'registration', data: sanitized },
-      });
-      if (error) throw new Error(error.message);
-      if (result?.errors) throw new Error(result.errors.map((e) => e.message).join(', '));
+    const { data: result, error } = await supabase.functions.invoke('submit-form', {
+      body: { formType: 'registration', data: sanitized },
+    });
+    if (error) throw new Error('Submission failed. Please try again.');
 
-      sendNotification('admin_new_submission', { formType: 'registration', refNumber: result.refNumber });
-      if (sanitized.email && sanitized.email !== 'N/A') {
-        sendNotification('patient_confirmation', { formType: 'registration', refNumber: result.refNumber, patientEmail: sanitized.email });
-      }
-
-      return result;
+    sendNotification('admin_new_submission', { formType: 'registration', refNumber: result.refNumber });
+    if (sanitized.email && sanitized.email !== 'N/A') {
+      sendNotification('patient_confirmation', { formType: 'registration', refNumber: result.refNumber, patientEmail: sanitized.email });
     }
 
-    await saveToLocalStorage('registrations', sanitized);
-    return { success: true, refNumber: 'DEV-LOCAL' };
+    return result;
   },
 
   async subscribeNewsletter(email) {
+    requireBackend();
     const sanitized = sanitizeFormData({ email });
 
-    if (isSupabaseConfigured) {
-      const { data: result, error } = await supabase.functions.invoke('submit-form', {
-        body: { formType: 'newsletter', data: sanitized },
-      });
-      if (error) throw new Error(error.message);
-      if (result?.errors) throw new Error(result.errors.map((e) => e.message).join(', '));
-      return result;
-    }
-
-    await saveToLocalStorage('newsletter', sanitized);
-    return { success: true, message: 'Subscribed successfully!' };
+    const { data: result, error } = await supabase.functions.invoke('submit-form', {
+      body: { formType: 'newsletter', data: sanitized },
+    });
+    if (error) throw new Error('Subscription failed. Please try again.');
+    return result;
   },
 };
 

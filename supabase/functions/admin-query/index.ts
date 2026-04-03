@@ -6,11 +6,10 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { corsHeaders, handleCors } from '../_shared/cors.ts';
+import { createLogger } from '../_shared/logger.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const log = createLogger('admin-query');
 
 const ALLOWED_TABLES = [
   'appointments', 'registrations', 'contacts', 'newsletter_subscribers',
@@ -18,10 +17,22 @@ const ALLOWED_TABLES = [
   'fhir_resources', 'security_incidents',
 ];
 
+const ALLOWED_FILTER_COLUMNS: Record<string, string[]> = {
+  appointments: ['id', 'ref_number', 'user_id', 'status', 'service', 'date', 'created_at'],
+  registrations: ['id', 'ref_number', 'user_id', 'created_at'],
+  contacts: ['id', 'created_at'],
+  newsletter_subscribers: ['id', 'subscriber_email', 'created_at'],
+  audit_logs: ['user_id', 'action', 'table_name', 'timestamp'],
+  data_access_requests: ['user_id', 'request_type', 'status', 'created_at'],
+  user_profiles: ['id', 'role', 'is_active', 'created_at'],
+  consent_records: ['user_id', 'consent_type', 'created_at'],
+  fhir_resources: ['resource_type', 'resource_id', 'created_at'],
+  security_incidents: ['severity', 'status', 'detected_at'],
+};
+
 serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
-  }
+  const corsResponse = handleCors(req);
+  if (corsResponse) return corsResponse;
 
   try {
     const authHeader = req.headers.get('authorization');
@@ -94,7 +105,9 @@ serve(async (req: Request) => {
 
     // Apply optional filters
     if (filters && typeof filters === 'object') {
+      const allowedCols = ALLOWED_FILTER_COLUMNS[table] || [];
       for (const [key, value] of Object.entries(filters)) {
+        if (!allowedCols.includes(key)) continue; // Skip disallowed columns
         query = query.eq(key, value);
       }
     }
@@ -111,7 +124,7 @@ serve(async (req: Request) => {
     );
 
   } catch (error) {
-    console.error('admin-query error:', error);
+    log.error('admin-query error', { error_code: error?.code || 'UNKNOWN' });
     return new Response(
       JSON.stringify({ error: 'Query failed' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

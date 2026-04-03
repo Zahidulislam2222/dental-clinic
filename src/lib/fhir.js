@@ -1,6 +1,10 @@
 /**
  * FHIR R4 4.0.1 Resource Builders
  * Transforms internal dental-clinic data into canonical FHIR resources.
+ *
+ * Resources: Patient, Appointment, Procedure, Observation, Encounter,
+ *            DocumentReference, AllergyIntolerance, Condition, Bundle,
+ *            CapabilityStatement
  */
 
 import {
@@ -91,11 +95,13 @@ export function buildPatientResource(registration) {
 }
 
 // ── Appointment Resource ──
+// Fix: FHIR-APPT-001 (start/end), FHIR-APPT-002 (duration), FHIR-APPT-003 (reasonCode/cancelationReason)
 
 export function buildAppointmentResource(appointment) {
   const {
     id, ref_number, patient_name, service, date, time,
-    booking_mode, status, user_id,
+    booking_mode, status, user_id, duration_minutes,
+    reason, cancellation_reason,
   } = appointment;
 
   const appointmentId = `appointment-${id}`;
@@ -105,9 +111,9 @@ export function buildAppointmentResource(appointment) {
   const fhirStatus = status === 'confirmed' ? APPOINTMENT_STATUS.booked
     : status === 'cancelled' ? APPOINTMENT_STATUS.cancelled
     : status === 'completed' ? APPOINTMENT_STATUS.fulfilled
+    : status === 'arrived' ? APPOINTMENT_STATUS.arrived
+    : status === 'noshow' ? APPOINTMENT_STATUS.noshow
     : APPOINTMENT_STATUS.proposed;
-
-  const startDateTime = date && time ? `${date}T${time}:00` : undefined;
 
   const resource = {
     resourceType: 'Appointment',
@@ -152,8 +158,39 @@ export function buildAppointmentResource(appointment) {
     ],
   };
 
-  if (startDateTime) {
-    resource.requestedPeriod = [{ start: startDateTime }];
+  // FHIR-APPT-001: Use start/end for booked+ status, requestedPeriod for proposed
+  if (date && time) {
+    const startDateTime = `${date}T${time}:00`;
+    if (['proposed', 'pending'].includes(fhirStatus)) {
+      resource.requestedPeriod = [{ start: startDateTime }];
+    } else {
+      resource.start = startDateTime;
+      const durationMin = duration_minutes || 30;
+      const endDate = new Date(new Date(startDateTime).getTime() + durationMin * 60000);
+      resource.end = endDate.toISOString();
+    }
+  }
+
+  // FHIR-APPT-002: Duration
+  resource.minutesDuration = duration_minutes || 30;
+
+  // FHIR-APPT-003: reasonCode
+  if (reason || service) {
+    resource.reasonCode = [{
+      coding: [{
+        system: IDENTIFIER_SYSTEMS.snomedCt,
+        code: serviceSnomed.code,
+        display: serviceSnomed.display,
+      }],
+      text: reason || service,
+    }];
+  }
+
+  // FHIR-APPT-003: cancelationReason
+  if (fhirStatus === 'cancelled' && cancellation_reason) {
+    resource.cancelationReason = {
+      text: cancellation_reason,
+    };
   }
 
   if (booking_mode) {
@@ -166,10 +203,165 @@ export function buildAppointmentResource(appointment) {
   return resource;
 }
 
-// ── AllergyIntolerance Resource ──
+// ── Procedure Resource ──
+// Fix: FHIR-PROC-001 (CRITICAL) — document completed dental treatments
 
-export function buildAllergyIntoleranceResource(patientRef, allergyText) {
+export function buildProcedureResource(procedure) {
+  const {
+    id, patient_ref, service, performed_date, status,
+    notes, practitioner_ref, appointment_ref,
+  } = procedure;
+
+  const serviceSnomed = getServiceSnomed(service);
+  const fhirStatus = status === 'completed' ? 'completed'
+    : status === 'in-progress' ? 'in-progress'
+    : status === 'cancelled' ? 'not-done'
+    : 'completed';
+
+  const resource = {
+    resourceType: 'Procedure',
+    id: `procedure-${id}`,
+    meta: meta('Procedure'),
+    status: fhirStatus,
+    code: {
+      coding: [{
+        system: IDENTIFIER_SYSTEMS.snomedCt,
+        code: serviceSnomed.code,
+        display: serviceSnomed.display,
+      }],
+      text: service,
+    },
+    subject: { reference: patient_ref },
+    performedDateTime: performed_date,
+    performer: [{
+      actor: { reference: practitioner_ref || PRACTITIONER_REF },
+    }],
+  };
+
+  if (notes) {
+    resource.note = [{ text: notes }];
+  }
+
+  if (appointment_ref) {
+    resource.basedOn = [{ reference: `Appointment/${appointment_ref}` }];
+  }
+
+  return resource;
+}
+
+// ── Observation Resource ──
+// Fix: FHIR-MISSING-001 — vital signs, periodontal measurements
+
+export function buildObservationResource(observation) {
+  const {
+    id, patient_ref, code_system, code, display,
+    value, unit, effective_date, status,
+  } = observation;
+
+  return {
+    resourceType: 'Observation',
+    id: `observation-${id}`,
+    meta: meta('Observation'),
+    status: status || 'final',
+    code: {
+      coding: [{
+        system: code_system || 'http://loinc.org',
+        code,
+        display,
+      }],
+    },
+    subject: { reference: patient_ref },
+    effectiveDateTime: effective_date || new Date().toISOString(),
+    valueQuantity: value !== undefined ? {
+      value: parseFloat(value),
+      unit: unit || '',
+      system: 'http://unitsofmeasure.org',
+    } : undefined,
+  };
+}
+
+// ── Encounter Resource ──
+// Fix: FHIR-MISSING-001 — visit linking
+
+export function buildEncounterResource(encounter) {
+  const {
+    id, patient_ref, appointment_ref, status,
+    period_start, period_end, reason_display,
+  } = encounter;
+
+  const resource = {
+    resourceType: 'Encounter',
+    id: `encounter-${id}`,
+    meta: meta('Encounter'),
+    status: status || 'finished',
+    class: {
+      system: 'http://terminology.hl7.org/CodeSystem/v3-ActCode',
+      code: 'AMB',
+      display: 'ambulatory',
+    },
+    subject: { reference: patient_ref },
+    period: {
+      start: period_start,
+      ...(period_end && { end: period_end }),
+    },
+    serviceProvider: { reference: ORG_REF },
+  };
+
+  if (appointment_ref) {
+    resource.appointment = [{ reference: `Appointment/${appointment_ref}` }];
+  }
+
+  if (reason_display) {
+    resource.reasonCode = [{ text: reason_display }];
+  }
+
+  return resource;
+}
+
+// ── DocumentReference Resource ──
+// Fix: FHIR-MISSING-001 — X-rays, clinical photos
+
+export function buildDocumentReferenceResource(doc) {
+  const {
+    id, patient_ref, type_code, type_display,
+    content_type, url, title, date,
+  } = doc;
+
+  return {
+    resourceType: 'DocumentReference',
+    id: `document-${id}`,
+    meta: meta('DocumentReference'),
+    status: 'current',
+    type: {
+      coding: [{
+        system: 'http://loinc.org',
+        code: type_code || '18748-4',
+        display: type_display || 'Diagnostic imaging study',
+      }],
+    },
+    subject: { reference: patient_ref },
+    date: date || new Date().toISOString(),
+    content: [{
+      attachment: {
+        contentType: content_type || 'image/jpeg',
+        url,
+        title: title || 'Clinical document',
+      },
+    }],
+  };
+}
+
+// ── AllergyIntolerance Resource ──
+// Fix: FHIR-ALLERGY-001 (severity/criticality), FHIR-COND-001 (parameterize status)
+
+export function buildAllergyIntoleranceResource(patientRef, allergyText, options = {}) {
   if (!allergyText || allergyText === 'None' || allergyText === 'N/A') return null;
+
+  const {
+    clinicalStatus = 'active',
+    verificationStatus = 'unconfirmed',
+    criticality = 'unable-to-assess',
+  } = options;
 
   const allergies = allergyText.split(',').map(a => a.trim()).filter(Boolean);
   if (allergies.length === 0) return null;
@@ -183,18 +375,19 @@ export function buildAllergyIntoleranceResource(patientRef, allergyText) {
       clinicalStatus: {
         coding: [{
           system: IDENTIFIER_SYSTEMS.allergyClini,
-          code: 'active',
-          display: 'Active',
+          code: clinicalStatus,
+          display: clinicalStatus.charAt(0).toUpperCase() + clinicalStatus.slice(1),
         }],
       },
       verificationStatus: {
         coding: [{
           system: IDENTIFIER_SYSTEMS.allergyVerif,
-          code: 'unconfirmed',
-          display: 'Unconfirmed',
+          code: verificationStatus,
+          display: verificationStatus.charAt(0).toUpperCase() + verificationStatus.slice(1),
         }],
       },
       type: 'allergy',
+      criticality,
       patient: { reference: patientRef },
       recordedDate: new Date().toISOString().split('T')[0],
     };
@@ -217,30 +410,37 @@ export function buildAllergyIntoleranceResource(patientRef, allergyText) {
 }
 
 // ── Condition Resource ──
+// Fix: FHIR-ALLERGY-001 (severity), FHIR-COND-001 (parameterize status)
 
-export function buildConditionResource(patientRef, conditionKey) {
+export function buildConditionResource(patientRef, conditionKey, options = {}) {
   const coding = getConditionCoding(conditionKey);
   if (!coding) return null;
+
+  const {
+    clinicalStatus = 'active',
+    verificationStatus = 'unconfirmed',
+    severity = null,
+  } = options;
 
   const codings = [coding.snomed];
   if (coding.icd10) codings.push(coding.icd10);
 
-  return {
+  const resource = {
     resourceType: 'Condition',
     id: `condition-${patientRef.replace('Patient/', '')}-${conditionKey}`,
     meta: meta('Condition'),
     clinicalStatus: {
       coding: [{
         system: IDENTIFIER_SYSTEMS.condClini,
-        code: 'active',
-        display: 'Active',
+        code: clinicalStatus,
+        display: clinicalStatus.charAt(0).toUpperCase() + clinicalStatus.slice(1),
       }],
     },
     verificationStatus: {
       coding: [{
         system: IDENTIFIER_SYSTEMS.condVerif,
-        code: 'unconfirmed',
-        display: 'Unconfirmed',
+        code: verificationStatus,
+        display: verificationStatus.charAt(0).toUpperCase() + verificationStatus.slice(1),
       }],
     },
     code: {
@@ -250,6 +450,22 @@ export function buildConditionResource(patientRef, conditionKey) {
     subject: { reference: patientRef },
     recordedDate: new Date().toISOString().split('T')[0],
   };
+
+  if (severity) {
+    const severityMap = {
+      mild: { code: '255604002', display: 'Mild' },
+      moderate: { code: '6736007', display: 'Moderate' },
+      severe: { code: '24484000', display: 'Severe' },
+    };
+    const sev = severityMap[severity];
+    if (sev) {
+      resource.severity = {
+        coding: [{ system: IDENTIFIER_SYSTEMS.snomedCt, ...sev }],
+      };
+    }
+  }
+
+  return resource;
 }
 
 // ── Bundle Builder ──
@@ -300,15 +516,48 @@ export function buildCapabilityStatement(baseUrl) {
         {
           type: 'Patient',
           interaction: [{ code: 'read' }, { code: 'search-type' }],
-          searchParam: [{ name: '_id', type: 'token' }],
+          searchParam: [
+            { name: '_id', type: 'token' },
+            { name: 'name', type: 'string' },
+            { name: 'phone', type: 'token' },
+            { name: 'birthdate', type: 'date' },
+            { name: 'identifier', type: 'token' },
+          ],
         },
         {
           type: 'Appointment',
-          interaction: [{ code: 'read' }, { code: 'search-type' }],
+          interaction: [{ code: 'read' }, { code: 'search-type' }, { code: 'create' }, { code: 'update' }],
           searchParam: [
             { name: 'patient', type: 'reference' },
             { name: 'status', type: 'token' },
+            { name: 'date', type: 'date' },
           ],
+        },
+        {
+          type: 'Procedure',
+          interaction: [{ code: 'read' }, { code: 'search-type' }, { code: 'create' }],
+          searchParam: [
+            { name: 'patient', type: 'reference' },
+            { name: 'date', type: 'date' },
+          ],
+        },
+        {
+          type: 'Observation',
+          interaction: [{ code: 'read' }, { code: 'search-type' }, { code: 'create' }],
+          searchParam: [
+            { name: 'patient', type: 'reference' },
+            { name: 'code', type: 'token' },
+          ],
+        },
+        {
+          type: 'Encounter',
+          interaction: [{ code: 'read' }, { code: 'search-type' }],
+          searchParam: [{ name: 'patient', type: 'reference' }],
+        },
+        {
+          type: 'DocumentReference',
+          interaction: [{ code: 'read' }, { code: 'search-type' }],
+          searchParam: [{ name: 'patient', type: 'reference' }],
         },
         {
           type: 'Practitioner',
