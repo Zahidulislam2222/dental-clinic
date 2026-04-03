@@ -21,7 +21,7 @@ ALTER TABLE fhir_resources ENABLE ROW LEVEL SECURITY;
 
 -- Staff can read FHIR resources
 CREATE POLICY "staff_read_fhir" ON fhir_resources
-  FOR SELECT TO authenticated USING (auth.is_staff());
+  FOR SELECT TO authenticated USING (public.is_staff());
 
 -- Patients can read their own FHIR resources
 CREATE POLICY "patient_read_own_fhir" ON fhir_resources
@@ -29,7 +29,7 @@ CREATE POLICY "patient_read_own_fhir" ON fhir_resources
   USING (
     resource->>'id' = auth.uid()::TEXT
     OR resource->'subject'->>'reference' = 'Patient/' || auth.uid()::TEXT
-    OR auth.is_staff()
+    OR public.is_staff()
   );
 
 -- Only system (Edge Functions via service_role) can write FHIR resources

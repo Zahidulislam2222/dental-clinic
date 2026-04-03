@@ -5,12 +5,12 @@
 
 -- 1. Helper functions (SECURITY DEFINER to avoid RLS recursion)
 
-CREATE OR REPLACE FUNCTION auth.user_role()
+CREATE OR REPLACE FUNCTION public.user_role()
 RETURNS user_role AS $$
   SELECT role FROM public.user_profiles WHERE id = auth.uid();
 $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
-CREATE OR REPLACE FUNCTION auth.is_admin()
+CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_profiles
@@ -18,7 +18,7 @@ RETURNS BOOLEAN AS $$
   );
 $$ LANGUAGE sql SECURITY DEFINER STABLE;
 
-CREATE OR REPLACE FUNCTION auth.is_staff()
+CREATE OR REPLACE FUNCTION public.is_staff()
 RETURNS BOOLEAN AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_profiles
@@ -44,11 +44,11 @@ CREATE POLICY "public_insert_contacts" ON contacts
 
 -- Staff: can SELECT all contacts
 CREATE POLICY "staff_select_contacts" ON contacts
-  FOR SELECT TO authenticated USING (auth.is_staff());
+  FOR SELECT TO authenticated USING (public.is_staff());
 
 -- Admin: can DELETE contacts
 CREATE POLICY "admin_delete_contacts" ON contacts
-  FOR DELETE TO authenticated USING (auth.is_admin());
+  FOR DELETE TO authenticated USING (public.is_admin());
 
 -- 4. Appointments table policies
 -- Public: can INSERT (appointment form is public)
@@ -58,15 +58,15 @@ CREATE POLICY "public_insert_appointments" ON appointments
 -- Patient: can SELECT own appointments
 CREATE POLICY "patient_select_own_appointments" ON appointments
   FOR SELECT TO authenticated
-  USING (user_id = auth.uid() OR auth.is_staff());
+  USING (user_id = auth.uid() OR public.is_staff());
 
 -- Staff: can UPDATE appointments (status changes, etc.)
 CREATE POLICY "staff_update_appointments" ON appointments
-  FOR UPDATE TO authenticated USING (auth.is_staff());
+  FOR UPDATE TO authenticated USING (public.is_staff());
 
 -- Admin: can DELETE appointments
 CREATE POLICY "admin_delete_appointments" ON appointments
-  FOR DELETE TO authenticated USING (auth.is_admin());
+  FOR DELETE TO authenticated USING (public.is_admin());
 
 -- 5. Registrations table policies
 -- Public: can INSERT (registration form is public)
@@ -76,15 +76,15 @@ CREATE POLICY "public_insert_registrations" ON registrations
 -- Patient: can SELECT own registrations
 CREATE POLICY "patient_select_own_registrations" ON registrations
   FOR SELECT TO authenticated
-  USING (user_id = auth.uid() OR auth.is_staff());
+  USING (user_id = auth.uid() OR public.is_staff());
 
 -- Staff: can UPDATE registrations
 CREATE POLICY "staff_update_registrations" ON registrations
-  FOR UPDATE TO authenticated USING (auth.is_staff());
+  FOR UPDATE TO authenticated USING (public.is_staff());
 
 -- Admin: can DELETE registrations
 CREATE POLICY "admin_delete_registrations" ON registrations
-  FOR DELETE TO authenticated USING (auth.is_admin());
+  FOR DELETE TO authenticated USING (public.is_admin());
 
 -- 6. Newsletter subscribers policies
 -- Public: can INSERT
@@ -93,10 +93,10 @@ CREATE POLICY "public_insert_newsletter" ON newsletter_subscribers
 
 -- Admin only: can SELECT/DELETE newsletter subscribers
 CREATE POLICY "admin_select_newsletter" ON newsletter_subscribers
-  FOR SELECT TO authenticated USING (auth.is_admin());
+  FOR SELECT TO authenticated USING (public.is_admin());
 
 CREATE POLICY "admin_delete_newsletter" ON newsletter_subscribers
-  FOR DELETE TO authenticated USING (auth.is_admin());
+  FOR DELETE TO authenticated USING (public.is_admin());
 
 -- 7. Receptionist-safe view (excludes PHI columns)
 -- Minimum Necessary Standard: receptionist doesn't need medical data

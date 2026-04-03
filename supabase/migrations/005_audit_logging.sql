@@ -40,7 +40,7 @@ CREATE POLICY "audit_insert" ON audit_logs
 -- Only admins can read audit logs
 CREATE POLICY "admin_read_audit" ON audit_logs
   FOR SELECT TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_admin());
 
 -- 3. Indexes for common audit queries
 CREATE INDEX IF NOT EXISTS idx_audit_timestamp ON audit_logs (timestamp DESC);

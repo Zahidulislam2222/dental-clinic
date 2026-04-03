@@ -36,7 +36,7 @@ ALTER TABLE security_incidents ENABLE ROW LEVEL SECURITY;
 -- Only admin can manage security incidents
 CREATE POLICY "admin_manage_incidents" ON security_incidents
   FOR ALL TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_admin());
 
 -- System can insert incidents (from breach-check function)
 CREATE POLICY "system_insert_incidents" ON security_incidents
@@ -62,7 +62,7 @@ ALTER TABLE anomaly_rules ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "admin_manage_rules" ON anomaly_rules
   FOR ALL TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_admin());
 
 -- Seed default anomaly rules
 INSERT INTO anomaly_rules (rule_name, description, severity, threshold, window_minutes) VALUES

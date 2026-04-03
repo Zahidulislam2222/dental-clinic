@@ -26,12 +26,12 @@ CREATE POLICY "consent_insert" ON consent_records
 -- Patients can view their own consent history
 CREATE POLICY "patient_view_own_consent" ON consent_records
   FOR SELECT TO authenticated
-  USING (user_id = auth.uid() OR auth.is_admin());
+  USING (user_id = auth.uid() OR public.is_admin());
 
 -- Only admin can revoke consent (set revoked_at)
 CREATE POLICY "admin_revoke_consent" ON consent_records
   FOR UPDATE TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_admin());
 
 -- No deletion of consent records (legal requirement)
 CREATE POLICY "consent_no_delete" ON consent_records
@@ -66,12 +66,12 @@ CREATE POLICY "patient_insert_requests" ON data_access_requests
 -- Patients can view their own requests
 CREATE POLICY "patient_view_own_requests" ON data_access_requests
   FOR SELECT TO authenticated
-  USING (user_id = auth.uid() OR auth.is_admin());
+  USING (user_id = auth.uid() OR public.is_admin());
 
 -- Admin can update request status
 CREATE POLICY "admin_update_requests" ON data_access_requests
   FOR UPDATE TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_admin());
 
 -- No deletion (legal requirement)
 CREATE POLICY "requests_no_delete" ON data_access_requests

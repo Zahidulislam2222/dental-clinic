@@ -44,7 +44,7 @@ BEGIN
   ) THEN
     CREATE POLICY admin_read_fhir_fallback ON public.fhir_audit_fallback
       FOR SELECT TO authenticated
-      USING (auth.is_admin());
+      USING (public.is_admin());
   END IF;
 END $$;
 

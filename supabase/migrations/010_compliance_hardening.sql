@@ -86,6 +86,12 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 --    Audit: HIPAA-ENC-002 (CRITICAL)
 -- ──────────────────────────────────────────────────────────────
 
+-- Drop views that depend on plaintext columns before removing them
+DROP VIEW IF EXISTS registrations_decrypted CASCADE;
+DROP VIEW IF EXISTS appointments_decrypted CASCADE;
+DROP VIEW IF EXISTS registrations_reception CASCADE;
+DROP VIEW IF EXISTS appointments_reception CASCADE;
+
 -- Safety: only drop if encrypted columns exist
 DO $$
 BEGIN
@@ -103,38 +109,7 @@ BEGIN
   END IF;
 END $$;
 
--- Update decrypted views to only use encrypted columns
-CREATE OR REPLACE VIEW registrations_decrypted AS
-SELECT
-  id, ref_number, user_id, patient_name, patient_phone, patient_email,
-  COALESCE(decrypt_phi(date_of_birth_enc), 'N/A') AS date_of_birth,
-  gender,
-  COALESCE(decrypt_phi(blood_group_enc), 'N/A') AS blood_group,
-  COALESCE(decrypt_phi(medical_history_enc), 'None') AS medical_history,
-  COALESCE(decrypt_phi(allergies_enc), 'None') AS allergies,
-  preferred_date, preferred_time, created_at
-FROM registrations;
-
-CREATE OR REPLACE VIEW appointments_decrypted AS
-SELECT
-  id, ref_number, user_id, patient_name, patient_phone, patient_email,
-  service, date, time, booking_mode, status,
-  COALESCE(decrypt_phi(medical_notes_enc), 'None') AS medical_notes,
-  created_at
-FROM appointments;
-
--- Update receptionist views (no PHI columns at all)
-CREATE OR REPLACE VIEW registrations_reception AS
-SELECT
-  id, ref_number, patient_name, patient_phone, patient_email,
-  preferred_date, preferred_time, created_at, user_id
-FROM registrations;
-
-CREATE OR REPLACE VIEW appointments_reception AS
-SELECT
-  id, ref_number, patient_name, patient_phone, patient_email,
-  service, date, time, booking_mode, status, created_at, user_id
-FROM appointments;
+-- NOTE: Views are recreated AFTER section 5 (status column addition)
 
 -- ──────────────────────────────────────────────────────────────
 -- 4. ENCRYPTION KEY ROTATION FUNCTION
@@ -188,6 +163,38 @@ ALTER TABLE appointments
 
 CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);
 
+-- Recreate views now that status column exists
+CREATE OR REPLACE VIEW registrations_decrypted AS
+SELECT
+  id, ref_number, user_id, patient_name, patient_phone, patient_email,
+  COALESCE(decrypt_phi(date_of_birth_enc), 'N/A') AS date_of_birth,
+  gender,
+  COALESCE(decrypt_phi(blood_group_enc), 'N/A') AS blood_group,
+  COALESCE(decrypt_phi(medical_history_enc), 'None') AS medical_history,
+  COALESCE(decrypt_phi(allergies_enc), 'None') AS allergies,
+  preferred_date, preferred_time, created_at
+FROM registrations;
+
+CREATE OR REPLACE VIEW appointments_decrypted AS
+SELECT
+  id, ref_number, user_id, patient_name, patient_phone, patient_email,
+  service, date, time, booking_mode, status,
+  COALESCE(decrypt_phi(medical_notes_enc), 'None') AS medical_notes,
+  created_at
+FROM appointments;
+
+CREATE OR REPLACE VIEW registrations_reception AS
+SELECT
+  id, ref_number, patient_name, patient_phone, patient_email,
+  preferred_date, preferred_time, created_at, user_id
+FROM registrations;
+
+CREATE OR REPLACE VIEW appointments_reception AS
+SELECT
+  id, ref_number, patient_name, patient_phone, patient_email,
+  service, date, time, booking_mode, status, created_at, user_id
+FROM appointments;
+
 -- ──────────────────────────────────────────────────────────────
 -- 6. FIX FHIR RLS: check BOTH subject AND patient references
 --    Audit: FHIR-RLS-001 (CRITICAL)
@@ -199,7 +206,7 @@ CREATE POLICY "patient_read_own_fhir" ON fhir_resources
   FOR SELECT TO authenticated
   USING (
     -- Staff can read all
-    auth.is_staff()
+    public.is_staff()
     -- Patients: match by resource ID, subject reference, OR patient reference
     OR resource->>'id' = auth.uid()::TEXT
     OR resource->'subject'->>'reference' = 'Patient/' || auth.uid()::TEXT
@@ -212,7 +219,7 @@ CREATE POLICY "patient_read_own_fhir" ON fhir_resources
 -- ──────────────────────────────────────────────────────────────
 
 -- Helper function: check if user has active (non-revoked) medical data consent
-CREATE OR REPLACE FUNCTION auth.has_active_consent(check_user_id UUID DEFAULT auth.uid())
+CREATE OR REPLACE FUNCTION public.has_active_consent(check_user_id UUID DEFAULT auth.uid())
 RETURNS BOOLEAN AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.consent_records
@@ -228,16 +235,16 @@ DROP POLICY IF EXISTS "patient_select_own_registrations" ON registrations;
 CREATE POLICY "patient_select_own_registrations" ON registrations
   FOR SELECT TO authenticated
   USING (
-    auth.is_staff()
-    OR (user_id = auth.uid() AND auth.has_active_consent())
+    public.is_staff()
+    OR (user_id = auth.uid() AND public.has_active_consent())
   );
 
 DROP POLICY IF EXISTS "patient_select_own_appointments" ON appointments;
 CREATE POLICY "patient_select_own_appointments" ON appointments
   FOR SELECT TO authenticated
   USING (
-    auth.is_staff()
-    OR (user_id = auth.uid() AND auth.has_active_consent())
+    public.is_staff()
+    OR (user_id = auth.uid() AND public.has_active_consent())
   );
 
 -- ──────────────────────────────────────────────────────────────
@@ -368,15 +375,16 @@ $$;
 -- After enabling, run these manually in SQL Editor:
 
 -- Nightly data purge at 2:00 AM UTC
-SELECT cron.schedule('nightly-data-purge', '0 2 * * *', 'SELECT purge_expired_records()');
+-- NOTE: Run these manually in SQL Editor AFTER enabling pg_cron extension
+-- SELECT cron.schedule('nightly-data-purge', '0 2 * * *', 'SELECT purge_expired_records()');
 
 -- Hourly breach detection
-SELECT cron.schedule('hourly-breach-check', '0 * * * *', $$
-  SELECT net.http_post(
-    url := current_setting('app.supabase_url') || '/functions/v1/breach-check',
-    headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'))
-  );
-$$);
+-- SELECT cron.schedule('hourly-breach-check', '0 * * * *', $$
+--   SELECT net.http_post(
+--     url := current_setting('app.supabase_url') || '/functions/v1/breach-check',
+--     headers := jsonb_build_object('Authorization', 'Bearer ' || current_setting('app.service_role_key'))
+--   );
+-- $$);
 
 -- ──────────────────────────────────────────────────────────────
 -- 11. RECEPTIONIST COLUMN-LEVEL RESTRICTION via function
@@ -385,7 +393,7 @@ $$);
 
 -- Receptionist MUST use the reception views — restrict base table access
 -- Create a function that returns NULL for PHI columns when called by receptionist
-CREATE OR REPLACE FUNCTION auth.is_receptionist()
+CREATE OR REPLACE FUNCTION public.is_receptionist()
 RETURNS BOOLEAN AS $$
   SELECT EXISTS (
     SELECT 1 FROM public.user_profiles
@@ -407,11 +415,11 @@ DROP POLICY IF EXISTS "staff_select_appointments" ON appointments;
 -- Receptionist reads from reception views only (no direct base table access for SELECT)
 CREATE POLICY "doctor_admin_select_registrations" ON registrations
   FOR SELECT TO authenticated
-  USING (auth.user_role() IN ('admin', 'doctor'));
+  USING (public.user_role() IN ('admin', 'doctor'));
 
 CREATE POLICY "doctor_admin_select_appointments" ON appointments
   FOR SELECT TO authenticated
-  USING (auth.user_role() IN ('admin', 'doctor'));
+  USING (public.user_role() IN ('admin', 'doctor'));
 
 -- ──────────────────────────────────────────────────────────────
 -- 12. DEPROVISIONING SECURITY EVENT

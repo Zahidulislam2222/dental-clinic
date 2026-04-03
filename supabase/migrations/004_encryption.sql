@@ -125,22 +125,26 @@ FROM appointments;
 -- 8. Database-level CHECK constraints (server-side validation)
 -- These enforce data integrity even if client-side validation is bypassed
 
-ALTER TABLE contacts
-  ADD CONSTRAINT IF NOT EXISTS chk_contacts_name
-    CHECK (length(from_name) BETWEEN 1 AND 200),
-  ADD CONSTRAINT IF NOT EXISTS chk_contacts_message
-    CHECK (length(message) BETWEEN 1 AND 5000);
+DO $$ BEGIN
+  ALTER TABLE contacts ADD CONSTRAINT chk_contacts_name CHECK (length(from_name) BETWEEN 1 AND 200);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-ALTER TABLE appointments
-  ADD CONSTRAINT IF NOT EXISTS chk_appt_name
-    CHECK (length(patient_name) BETWEEN 1 AND 200),
-  ADD CONSTRAINT IF NOT EXISTS chk_appt_service
-    CHECK (length(service) BETWEEN 1 AND 200);
+DO $$ BEGIN
+  ALTER TABLE contacts ADD CONSTRAINT chk_contacts_message CHECK (length(message) BETWEEN 1 AND 5000);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-ALTER TABLE registrations
-  ADD CONSTRAINT IF NOT EXISTS chk_reg_name
-    CHECK (length(patient_name) BETWEEN 1 AND 200);
+DO $$ BEGIN
+  ALTER TABLE appointments ADD CONSTRAINT chk_appt_name CHECK (length(patient_name) BETWEEN 1 AND 200);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
-ALTER TABLE newsletter_subscribers
-  ADD CONSTRAINT IF NOT EXISTS chk_newsletter_email
-    CHECK (subscriber_email ~ '^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$');
+DO $$ BEGIN
+  ALTER TABLE appointments ADD CONSTRAINT chk_appt_service CHECK (length(service) BETWEEN 1 AND 200);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE registrations ADD CONSTRAINT chk_reg_name CHECK (length(patient_name) BETWEEN 1 AND 200);
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+DO $$ BEGIN
+  ALTER TABLE newsletter_subscribers ADD CONSTRAINT chk_newsletter_email CHECK (subscriber_email ~ '^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;

@@ -21,7 +21,7 @@ ALTER TABLE retention_policies ENABLE ROW LEVEL SECURITY;
 -- Only admin can view/modify retention policies
 CREATE POLICY "admin_manage_retention" ON retention_policies
   FOR ALL TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_admin());
 
 -- Insert default retention policies (HIPAA minimum: 6 years = 2190 days)
 INSERT INTO retention_policies (table_name, retention_days, description) VALUES
@@ -49,7 +49,7 @@ ALTER TABLE purge_logs ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "admin_view_purge_logs" ON purge_logs
   FOR SELECT TO authenticated
-  USING (auth.is_admin());
+  USING (public.is_admin());
 
 -- Immutable purge logs
 CREATE POLICY "system_insert_purge_logs" ON purge_logs
