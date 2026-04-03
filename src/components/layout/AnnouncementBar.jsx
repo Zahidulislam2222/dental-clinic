@@ -14,7 +14,7 @@ export const ANNOUNCEMENT_HEIGHT = 36; // px, used by Navbar for offset
 
 const AnnouncementBar = () => {
   const [visible, setVisible] = useState(true);
-  const { t } = useLanguage();
+  const { t, language, toggleLanguage } = useLanguage();
 
   if (!visible) return null;
 
@@ -38,11 +38,23 @@ const AnnouncementBar = () => {
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-3 pr-3 shrink-0 bg-navy pl-3 border-l border-white/10 h-full">
-          <a href="tel:+8801712345678" className="flex items-center gap-1.5 text-teal hover:text-teal-300 transition-colors font-semibold text-xs whitespace-nowrap">
-            <Phone size={12} />
-            {t({ en: 'Emergency', bn: 'জরুরি' })}
+        <div className="hidden md:flex items-center gap-2 pr-3 shrink-0 bg-navy pl-3 border-l border-white/10 h-full">
+          <a
+            href="tel:+8801712345678"
+            className="flex items-center gap-1.5 text-white/80 hover:text-teal transition-colors text-xs whitespace-nowrap"
+          >
+            <Phone size={11} />
+            <span className="font-medium">+880 1712-345678</span>
           </a>
+          <span className="text-white/20">|</span>
+          <button
+            onClick={toggleLanguage}
+            className="text-white/80 hover:text-teal transition-colors text-xs font-semibold px-1"
+            aria-label={language === 'en' ? 'Switch to Bengali' : 'Switch to English'}
+          >
+            {language === 'en' ? 'বাং' : 'EN'}
+          </button>
+          <span className="text-white/20">|</span>
           <button onClick={() => setVisible(false)} className="p-0.5 hover:bg-white/10 rounded transition-colors" aria-label="Close">
             <X size={13} />
           </button>

@@ -90,6 +90,35 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   PREMIUM NAV LINK UNDERLINE
+   ═══════════════════════════════════════════════════════════════ */
+
+.nav-link-premium {
+  position: relative;
+}
+
+.nav-link-premium::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #00BFA6;
+  border-radius: 9999px;
+  transform: translateX(-50%);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-link-premium:hover::after {
+  width: 60%;
+}
+
+.nav-link-premium.active-link::after {
+  width: 60%;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    PREMIUM BUTTON EFFECTS
    ═══════════════════════════════════════════════════════════════ */
 
