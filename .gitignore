@@ -46,5 +46,10 @@ coverage/
 *.tgz
 .cache/
 
+# Generated reports & docs
+AUDIT_REPORT.docx
+*.docx
+*.pdf
+
 # Signed BAA PDFs (sensitive legal documents — do NOT commit)
 docs/baa/*.pdf
