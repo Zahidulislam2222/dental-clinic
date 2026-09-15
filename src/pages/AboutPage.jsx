@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import media from '../data/media.json';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -123,18 +123,18 @@ const missionVisionValues = [
 ];
 
 const certificateImages = [
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 1' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 2' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 3' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 4' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 5' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 6' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 7' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 8' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 9' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 10' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 11' },
-  { src: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?w=600&q=85&fit=crop', alt: 'Certificate 12' },
+  { src: media.image31, alt: 'Certificate 1' },
+  { src: media.image31, alt: 'Certificate 2' },
+  { src: media.image31, alt: 'Certificate 3' },
+  { src: media.image31, alt: 'Certificate 4' },
+  { src: media.image31, alt: 'Certificate 5' },
+  { src: media.image31, alt: 'Certificate 6' },
+  { src: media.image31, alt: 'Certificate 7' },
+  { src: media.image31, alt: 'Certificate 8' },
+  { src: media.image31, alt: 'Certificate 9' },
+  { src: media.image31, alt: 'Certificate 10' },
+  { src: media.image31, alt: 'Certificate 11' },
+  { src: media.image31, alt: 'Certificate 12' },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -159,12 +159,12 @@ const stagger = {
 /*  COMPONENT                                                          */
 /* ------------------------------------------------------------------ */
 
-const DOCTOR_PHOTO = 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=85&fit=crop&crop=face';
-const CLINIC_PHOTO = 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=85&fit=crop';
+const DOCTOR_PHOTO = media.image40;
+const CLINIC_PHOTO = media.image47;
 
 const AboutPage = () => {
-  const { t, language } = useLanguage();
-  const heroRef = useScrollReveal({ y: 40, duration: 0.8 });
+  const { t, _language } = useLanguage();
+  const _heroRef = useScrollReveal({ y: 40, duration: 0.8 });
   const credentialsRef = useStaggerReveal({ stagger: 0.08, y: 40 });
   const certsRef = useStaggerReveal({ stagger: 0.08, y: 40 });
   const certImagesRef = useStaggerReveal({ stagger: 0.06, y: 40 });
@@ -190,7 +190,7 @@ const AboutPage = () => {
       {/* ============================== HERO ============================== */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
+          src={media.image45}
           alt="About Dr. Arman Hossain"
           width={1600}
           height={900}

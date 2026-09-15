@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, Clock, Facebook, Youtube, Linkedin, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -129,7 +128,9 @@ const Footer = () => {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
           <p>&copy; 2026 Everyday Dental Surgery & Implant Center. {t({ en: 'All rights reserved.', bn: 'সর্বস্বত্ব সংরক্ষিত।' })}</p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap gap-6">
+            <Link to="/experience">Patient demo</Link>
+            <Link to="/trust">Privacy & engineering</Link>
             <Link to="/privacy-policy" className="hover:text-teal cursor-pointer transition-colors">{t({ en: 'Privacy Policy', bn: 'গোপনীয়তা নীতি' })}</Link>
             <Link to="/terms" className="hover:text-teal cursor-pointer transition-colors">{t({ en: 'Terms & Conditions', bn: 'শর্তাবলী' })}</Link>
           </div>

@@ -12,7 +12,7 @@ import PageTransition from '../components/ui/PageTransition';
 const SignupPage = () => {
   const { t } = useLanguage();
   const { signUp } = useAuth();
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
@@ -100,7 +100,7 @@ const SignupPage = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               {/* Full Name */}
               <div>
                 <div className="relative">
@@ -227,7 +227,7 @@ const SignupPage = () => {
                 }
                 {!isSubmitting && <ArrowRight size={18} />}
               </button>
-            </form>
+            </fieldset>
 
             <div className="mt-6 text-center text-sm text-gray-500">
               {t({ en: 'Already have an account?', bn: 'ইতোমধ্যে অ্যাকাউন্ট আছে?' })}{' '}

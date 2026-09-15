@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion } from 'framer-motion';
+import media from '../data/media.json';
 import { Helmet } from 'react-helmet-async';
 import {
   BadgePercent,
@@ -276,7 +275,7 @@ const PricingPage = () => {
       {/* ── Hero Section ── */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1600&q=80&fit=crop"
+          src={media.image7}
           alt="Transparent dental pricing"
           className="absolute inset-0 w-full h-full object-cover"
         />

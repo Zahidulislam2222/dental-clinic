@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion } from 'framer-motion';
+import media from '../data/media.json';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { Clock, Calendar, ArrowRight, User } from 'lucide-react';
@@ -29,7 +28,7 @@ const articles = [
       en: "Modern rotary technology and advanced anaesthesia have completely transformed root canal treatment. Here's what you need to know.",
       bn: 'আধুনিক রোটারি প্রযুক্তি এবং উন্নত অ্যানেসথেসিয়া রুট ক্যানাল চিকিৎসাকে সম্পূর্ণ বদলে দিয়েছে।',
     },
-    image: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=600&q=85&fit=crop',
+    image: media.image33,
   },
   {
     id: 2,
@@ -45,7 +44,7 @@ const articles = [
       en: 'A comprehensive comparison of dental implants and dentures — cost, comfort, durability, and which option suits your lifestyle.',
       bn: 'ডেন্টাল ইমপ্লান্ট এবং ডেনচারের ব্যাপক তুলনা — খরচ, আরাম, স্থায়িত্ব।',
     },
-    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=85&fit=crop',
+    image: media.image29,
   },
   {
     id: 3,
@@ -61,7 +60,7 @@ const articles = [
       en: 'Most people wait until something hurts. But preventive dental visits can save you thousands in treatment costs and preserve your natural teeth.',
       bn: 'বেশিরভাগ মানুষ ব্যথা না হওয়া পর্যন্ত অপেক্ষা করেন। কিন্তু প্রতিরোধমূলক পরিদর্শন হাজার টাকা বাঁচাতে পারে।',
     },
-    image: 'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=600&q=85&fit=crop',
+    image: media.image22,
   },
   {
     id: 4,
@@ -77,7 +76,7 @@ const articles = [
       en: 'Choosing between clear aligners and traditional braces? We break down the pros, cons, costs, and treatment times for each option.',
       bn: 'ক্লিয়ার অ্যালাইনার এবং ঐতিহ্যবাহী ব্রেসেসের মধ্যে পছন্দ? আমরা প্রতিটি বিকল্পের সুবিধা-অসুবিধা বিশ্লেষণ করি।',
     },
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=85&fit=crop',
+    image: media.image36,
   },
   {
     id: 5,
@@ -93,7 +92,7 @@ const articles = [
       en: 'From citrus fruits to sports drinks — these common foods might be eroding your enamel without you even knowing it.',
       bn: 'সাইট্রাস ফল থেকে স্পোর্টস ড্রিংক — এই সাধারণ খাবারগুলো আপনার এনামেল ক্ষয় করতে পারে।',
     },
-    image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&q=85&fit=crop',
+    image: media.image19,
   },
   {
     id: 6,
@@ -109,7 +108,7 @@ const articles = [
       en: "Your first implant consultation doesn't have to be scary. Here's a step-by-step guide of what happens and how to prepare.",
       bn: 'আপনার প্রথম ইমপ্লান্ট পরামর্শ ভীতিকর হতে হবে না। এখানে ধাপে ধাপে গাইড।',
     },
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=85&fit=crop',
+    image: media.image36,
   },
 ];
 
@@ -146,7 +145,7 @@ const BlogPage = () => {
       {/* ========================= HERO BANNER ========================== */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1600&q=80&fit=crop"
+          src={media.image25}
           alt="Dental health blog"
           className="absolute inset-0 w-full h-full object-cover"
         />

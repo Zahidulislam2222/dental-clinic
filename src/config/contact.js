@@ -3,11 +3,13 @@
  * Update here once and all components reflect the change.
  */
 
+import { runtime } from './runtime';
+
 export const CONTACT = {
   phone: '+880 1712-345678',
   phoneRaw: '8801712345678',          // For WhatsApp / tel: links
-  email: 'info@example-dental.com',
-  website: 'https://dental-clinic-anq.pages.dev',
+  email: 'demo@example.invalid',
+  website: runtime.siteUrl,
 
   address: {
     en: '123/A, Greenview Plaza (3rd Floor), Mirpur Road, Dhanmondi, Dhaka-1217',

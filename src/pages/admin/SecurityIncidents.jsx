@@ -41,8 +41,8 @@ const SecurityIncidents = () => {
         supabase.functions.invoke('admin-query', { body: { table: 'security_incidents' } }),
         supabase.functions.invoke('admin-query', { body: { table: 'anomaly_rules' } }),
       ]);
-      setIncidents(incResult.data?.data || []);
-      setRules(ruleResult.data?.data || []);
+      setIncidents(incResult._data?._data || []);
+      setRules(ruleResult._data?._data || []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -79,7 +79,7 @@ const SecurityIncidents = () => {
     if (!supabase) return;
     setUpdating('check');
     try {
-      const { data, error } = await supabase.functions.invoke('breach-check');
+      const { _data, error } = await supabase.functions.invoke('breach-check');
       if (error) throw error;
       await fetchData();
     } catch (err) {
@@ -176,7 +176,7 @@ const SecurityIncidents = () => {
       </div>
 
       {/* Incidents Table */}
-      <DataTable columns={columns} data={incidents} defaultSort={{ key: 'detected_at', dir: 'desc' }} />
+      <DataTable columns={columns} _data={incidents} defaultSort={{ key: 'detected_at', dir: 'desc' }} />
 
       {/* Anomaly Rules */}
       <h3 className="font-heading font-bold text-navy mt-8 mb-3">

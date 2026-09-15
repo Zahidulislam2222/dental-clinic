@@ -904,3 +904,30 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Review and privacy surfaces use readable, restrained styles. */
+.skip-link { position: fixed; top: -100px; left: 1rem; z-index: 200; background: white; color: #0a1628; padding: 1rem; }
+.skip-link:focus { top: 1rem; }
+:focus-visible { outline: 3px solid #956400; outline-offset: 4px; }
+.demo-notice { padding: 1rem max(1rem, calc((100vw - 1200px)/2)); background: #eef7f5; color: #0a1628; border-bottom: 1px solid #b4d4cb; }
+.demo-notice p { font-size: .9rem; margin: .35rem 0; }
+.demo-notice nav { display:flex; flex-wrap:wrap; gap: 1rem; }
+.demo-notice a, .review-page a { text-decoration: underline; text-underline-offset: .2em; color: #00685b; }
+.review-page { max-width: 1100px; margin: auto; padding: 3rem 1.25rem; color: #13283e; line-height: 1.75; }
+.review-page h1 { font-size: clamp(2rem,5vw,3rem); font-weight: 750; line-height: 1.2; margin-bottom: 1.5rem; }
+.review-page h2 { font-size: 1.45rem; font-weight: 700; margin: 1.5rem 0 .65rem; }
+.review-page p { margin: .75rem 0; }
+.review-page ul, .review-page ol { padding-left: 1.5rem; list-style: revert; }
+.review-page button, .review-page select { border: 1px solid #667a88; background: white; color: #13283e; padding: .65rem .9rem; min-height: 44px; border-radius: 4px; }
+.review-page button:hover { background: #e5f3ef; }
+.review-actions { display:flex; flex-direction:column; gap:.65rem; align-items:stretch; }
+.review-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); gap:2rem; }
+.review-grid article { border-top: 2px solid #00685b; margin-top:1.5rem; }
+.review-notice { background:#eef7f5; padding:1rem; }
+.review-page table { width:100%; border-collapse:collapse; margin:1rem 0; }
+.review-page th,.review-page td { text-align:left; padding:.75rem; border-bottom:1px solid #c9d3db; vertical-align:top; }
+fieldset[disabled] { opacity:.65; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+  [style*="opacity: 0"] { opacity:1 !important; }
+}

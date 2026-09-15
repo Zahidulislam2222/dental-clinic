@@ -1,3 +1,5 @@
+> HISTORICAL CLINICAL PROTOTYPE MATERIAL. This file is not current runtime or legal assurance. See docs/VERIFICATION.md and docs/CLINICAL-RELEASE.md for the synthetic release and unresolved clinical gates.
+
 # Compliance Fix Progress Tracker
 
 > This file tracks progress on fixing all 56 audit failures + Stripe payment.

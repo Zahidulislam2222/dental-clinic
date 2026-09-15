@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * Server-side form submission handler
  * HIPAA: 164.312(c) Integrity controls — server-side validation
@@ -66,6 +67,8 @@ function generateRefNumber(): string {
 }
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   // Handle CORS preflight
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;

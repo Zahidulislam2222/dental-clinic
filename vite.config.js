@@ -1,25 +1,9 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tooling from './config/tooling.json' with { type: 'json' };
 export default defineConfig({
   plugins: [react()],
-  server: {
-    port: 3000,
-    open: true
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-animation': ['framer-motion', 'gsap'],
-          'vendor-lottie': ['lottie-react'],
-          'vendor-ui': ['lucide-react', 'react-helmet-async', 'react-hook-form', 'react-hot-toast'],
-          'vendor-supabase': ['@supabase/supabase-js'],
-        }
-      }
-    }
-  }
-})
+  server: { host: tooling.host, port: tooling.devPort, strictPort: true },
+  preview: { host: tooling.host, port: tooling.previewPort, strictPort: true },
+  build: { outDir: 'dist', sourcemap: false },
+});

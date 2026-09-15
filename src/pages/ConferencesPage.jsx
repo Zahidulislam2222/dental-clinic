@@ -1,3 +1,4 @@
+import media from '../data/media.json';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -39,7 +40,7 @@ const badgeColors = {
 /*  ANIMATION                                                          */
 /* ------------------------------------------------------------------ */
 
-const fadeUp = {
+const _fadeUp = {
   hidden: { opacity: 0, y: 40 },
   visible: (i = 0) => ({
     opacity: 1,
@@ -74,7 +75,7 @@ const ConferencesPage = () => {
       {/* ── Hero ── */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&q=80&fit=crop"
+          src={media.image13}
           alt="Medical conference"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -188,7 +189,7 @@ const ConferencesPage = () => {
       {/* ── CTA ── */}
       <section className="relative py-16 md:py-24 text-white overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
+          src={media.image45}
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
         />

@@ -1,3 +1,4 @@
+import media from '../data/media.json';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,7 +16,7 @@ import {
   Stethoscope, ScanLine, HeartPulse,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { useScrollReveal, useStaggerReveal, useParallax } from '../hooks/useGsapAnimations';
+import { useScrollReveal, useStaggerReveal, } from '../hooks/useGsapAnimations';
 import SectionHeading from '../components/ui/SectionHeading';
 import Card from '../components/ui/Card';
 import TiltCard from '../components/ui/TiltCard';
@@ -35,11 +36,11 @@ gsap.registerPlugin(ScrollTrigger);
 /* ── Stock Photo URLs (Unsplash) ── */
 const PHOTOS = {
   doctor: '/images/doctor-hero.webp',
-  clinic: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=85&fit=crop',
-  smileAfter: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85&fit=crop',
-  smileBefore: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=800&q=85&fit=crop',
-  patient: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&q=85&fit=crop',
-  team: 'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=800&q=85&fit=crop',
+  clinic: media.image47,
+  smileAfter: media.image3,
+  smileBefore: media.image34,
+  patient: media.image9,
+  team: media.image23,
 };
 
 /* ──────────────────────────────────────────────
@@ -920,7 +921,7 @@ const HomePage = () => {
             <p className="text-gray text-sm md:text-base mb-8">
               {t({ en: 'Join 2,000+ patients receiving monthly oral health tips from Dr. Arman.', bn: 'ডা. আরমানের কাছ থেকে মাসিক মৌখিক স্বাস্থ্য টিপস পাচ্ছেন ২,০০০+ রোগীদের সাথে যুক্ত হন।' })}
             </p>
-            <form onSubmit={handleSubmit(onNewsletterSubmit)} className="space-y-3">
+            <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleSubmit(onNewsletterSubmit)} className="space-y-3">
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
                   <label htmlFor="newsletter-email" className="sr-only">{t({ en: 'Email address', bn: 'ইমেইল ঠিকানা' })}</label>
@@ -959,7 +960,7 @@ const HomePage = () => {
                 </span>
               </label>
               {errors.newsletterConsent && <p className="text-red-500 text-xs">{errors.newsletterConsent.message}</p>}
-            </form>
+            </fieldset>
           </div>
         </div>
       </section>

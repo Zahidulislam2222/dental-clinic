@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * Breach Detection — Supabase Edge Function
  * HIPAA 164.404-410: Automated anomaly detection
@@ -25,6 +26,8 @@ interface AnomalyRule {
 }
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

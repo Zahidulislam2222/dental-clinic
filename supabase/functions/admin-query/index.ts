@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * Admin Data Query — Supabase Edge Function
  * Provides audit-logged data access for admin/staff users.
@@ -31,6 +32,8 @@ const ALLOWED_FILTER_COLUMNS: Record<string, string[]> = {
 };
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

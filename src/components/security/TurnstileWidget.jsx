@@ -11,7 +11,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 
-const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+const TURNSTILE_SITE_KEY = null; // No third-party challenge is loaded by the synthetic demo.
 const SCRIPT_ID = 'cf-turnstile-script';
 
 export const isTurnstileConfigured = Boolean(TURNSTILE_SITE_KEY) && !TURNSTILE_SITE_KEY?.includes('placeholder');

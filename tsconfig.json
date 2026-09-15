@@ -1,0 +1,4 @@
+{
+  "compilerOptions": { "allowJs": true, "checkJs": true, "noEmit": true, "strict": true, "target": "ES2022", "module": "ESNext", "moduleResolution": "bundler", "resolveJsonModule": true, "types": ["vite/client"], "skipLibCheck": true },
+  "include": ["src/config/runtime.js", "src/lib/demo-policy.js", "supabase/functions/_shared/release-boundary.ts"]
+}

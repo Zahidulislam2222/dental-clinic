@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import media from '../data/media.json';
+import { useState, } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -203,7 +204,7 @@ const ContactPage = () => {
       {/* ============================== HERO ============================== */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
+          src={media.image45}
           alt="Contact Everyday Dental Surgery"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -333,14 +334,14 @@ const ContactPage = () => {
             <div className="hidden lg:block lg:col-span-2 sticky top-32">
               <div className="rounded-2xl overflow-hidden shadow-xl">
                 <img
-                  src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=600&q=85&fit=crop"
+                  src={media.image46}
                   alt={t({ en: 'Modern dental clinic', bn: 'আধুনিক ডেন্টাল ক্লিনিক' })}
                   className="w-full h-72 object-cover"
                 />
               </div>
               <div className="mt-6 rounded-2xl overflow-hidden shadow-xl">
                 <img
-                  src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=85&fit=crop"
+                  src={media.image39}
                   alt={t({ en: 'Dr. Arman Hossain', bn: 'ডা. আরমান হোসেন' })}
                   className="w-full h-72 object-cover"
                 />
@@ -348,7 +349,7 @@ const ContactPage = () => {
             </div>
 
             <div className="lg:col-span-3">
-            <form
+            <fieldset disabled aria-label="Form preview — real submissions disabled"
               onSubmit={handleSubmit(onSubmit)}
               className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 md:p-10 space-y-6"
             >
@@ -492,7 +493,7 @@ const ContactPage = () => {
                   </>
                 )}
               </motion.button>
-            </form>
+            </fieldset>
             </div>
           </div>
         </div>
@@ -512,17 +513,7 @@ const ContactPage = () => {
             ref={mapRef}
             className="max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-gray-100"
           >
-            <iframe
-              title="Everyday Dental Surgery Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3652.2!2d90.41127!3d23.74611!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b90000000001%3A0x1!2sExample+Dental+Clinic!5e0!3m2!1sen!2sbd!4v1700000000000!5m2!1sen!2sbd"
-              width="100%"
-              height="450"
-              style={{ border: 0 }}
-              allowFullScreen=""
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="w-full"
-            />
+            <p className="p-8 text-center">Fictional demonstration location. No map is loaded automatically.</p>
             {/* Fallback: Direct link to Google Maps */}
             <div className="bg-gray-50 p-4 text-center border-t border-gray-100">
               <a
@@ -610,7 +601,7 @@ const ContactPage = () => {
       {/* ======================== SOCIAL LINKS ============================= */}
       <section className="relative py-16 md:py-24 text-white overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
+          src={media.image45}
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
         />

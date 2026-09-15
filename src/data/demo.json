@@ -1,0 +1,27 @@
+{
+  "title": "Explore a safer patient journey",
+  "intro": "A fictional patient workspace. Try appointment status, consent, access decisions and a structured export. All records are synthetic; changes exist only in this tab and reset on refresh.",
+  "banner": "Portfolio demo · Fictional practice · No real appointments or medical advice",
+  "intakeNotice": "Real submissions are disabled. Please do not enter personal, medical or payment information. Explore the sample patient journey instead.",
+  "roles": ["patient", "receptionist", "doctor", "admin"],
+  "patient": {"id": "sample-patient-a", "name": "Sample Patient A", "birthDate": "1990-01-01"},
+  "otherPatientId": "sample-patient-b",
+  "appointment": {"id": "sample-appointment-a", "service": "Routine dental assessment", "status": "requested"},
+  "clinicalNote": "Synthetic example: review the sample care plan at the next appointment.",
+  "actions": {
+    "cancel": "Cancel sample appointment",
+    "consent": "Toggle optional data-sharing consent",
+    "hold": "Toggle sample legal hold",
+    "erase": "Request sample erasure",
+    "export": "Export sample FHIR JSON"
+  },
+  "messages": {
+    "denied": "Access denied by the sample policy.",
+    "held": "Erasure deferred: a legal hold requires review. Withdrawal does not override a retention obligation.",
+    "erased": "Synthetic record erased from this tab. Refresh restores the original example.",
+    "cancelled": "Sample appointment cancelled. No real booking was changed.",
+    "consent": "Optional sharing preference changed. This is separate from the legal basis for treatment.",
+    "hold": "Sample legal hold changed.",
+    "exported": "Synthetic FHIR-shaped export prepared. Partner conformance is not certified."
+  }
+}

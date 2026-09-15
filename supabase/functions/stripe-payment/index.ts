@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * Stripe Payment — Supabase Edge Function
  * Handles payment intent creation and webhook verification server-side.
@@ -48,6 +49,8 @@ async function stripeRequest(endpoint: string, body: Record<string, string>) {
 }
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }

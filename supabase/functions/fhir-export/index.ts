@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * FHIR R4 Patient Bundle Export
  * HIPAA 164.524 — Right to Access: patients can export all their data
@@ -29,6 +30,8 @@ function operationOutcome(severity: string, code: string, diagnostics: string, s
 }
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

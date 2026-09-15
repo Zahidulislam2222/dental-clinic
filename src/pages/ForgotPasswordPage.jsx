@@ -70,7 +70,7 @@ const ForgotPasswordPage = () => {
                 </p>
               </div>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
                   <div className="relative">
                     <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -97,7 +97,7 @@ const ForgotPasswordPage = () => {
                     : t({ en: 'Send Reset Link', bn: 'রিসেট লিংক পাঠান' })
                   }
                 </button>
-              </form>
+              </fieldset>
 
               <div className="mt-6 text-center">
                 <Link to="/login" className="text-gray-500 text-sm hover:text-teal inline-flex items-center gap-1">

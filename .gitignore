@@ -53,3 +53,13 @@ AUDIT_REPORT.docx
 
 # Signed BAA PDFs (sensitive legal documents — do NOT commit)
 docs/baa/*.pdf
+
+# Private recovery and operational evidence
+CREDENTIALS.md
+PROJECT-DOSSIER.md
+memory/
+tests/manual/
+supabase/.temp/
+deploy/generated/
+playwright-report/
+test-results/

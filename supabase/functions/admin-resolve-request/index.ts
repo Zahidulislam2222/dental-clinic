@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * Admin Resolve Data Request — Supabase Edge Function
  * Processes patient data access/amendment/deletion requests.
@@ -12,6 +13,8 @@ import { createLogger } from '../_shared/logger.ts';
 const log = createLogger('admin-resolve-request');
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

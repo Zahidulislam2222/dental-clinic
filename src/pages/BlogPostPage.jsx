@@ -1,3 +1,4 @@
+import media from '../data/media.json';
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
@@ -32,7 +33,7 @@ const articles = [
     readTime: '5 min',
     date: 'March 15, 2026',
     gradient: 'from-teal-400 to-teal-600',
-    image: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1600&q=80&fit=crop',
+    image: media.image32,
     tags: [
       { en: 'Root Canal', bn: 'রুট ক্যানাল' },
       { en: 'Pain-Free', bn: 'ব্যথামুক্ত' },
@@ -92,7 +93,7 @@ const articles = [
     readTime: '7 min',
     date: 'March 8, 2026',
     gradient: 'from-blue-400 to-blue-600',
-    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1600&q=80&fit=crop',
+    image: media.image28,
     tags: [
       { en: 'Dental Implants', bn: 'ডেন্টাল ইমপ্লান্ট' },
       { en: 'Dentures', bn: 'ডেনচার' },
@@ -153,7 +154,7 @@ const articles = [
     readTime: '4 min',
     date: 'February 28, 2026',
     gradient: 'from-green-400 to-green-600',
-    image: 'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=1600&q=80&fit=crop',
+    image: media.image21,
     tags: [
       { en: 'Preventive Care', bn: 'প্রতিরোধমূলক যত্ন' },
       { en: 'Dental Checkup', bn: 'ডেন্টাল চেকআপ' },
@@ -209,7 +210,7 @@ const articles = [
     readTime: '6 min',
     date: 'February 20, 2026',
     gradient: 'from-purple-400 to-purple-600',
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1600&q=80&fit=crop',
+    image: media.image35,
     tags: [
       { en: 'Orthodontics', bn: 'অর্থোডন্টিক্স' },
       { en: 'Braces', bn: 'ব্রেসেস' },
@@ -277,7 +278,7 @@ const articles = [
     readTime: '5 min',
     date: 'February 10, 2026',
     gradient: 'from-orange-400 to-orange-600',
-    image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1600&q=80&fit=crop',
+    image: media.image18,
     tags: [
       { en: 'Diet', bn: 'খাদ্যাভ্যাস' },
       { en: 'Enamel', bn: 'এনামেল' },
@@ -366,7 +367,7 @@ const articles = [
     readTime: '8 min',
     date: 'January 30, 2026',
     gradient: 'from-pink-400 to-pink-600',
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1600&q=80&fit=crop',
+    image: media.image35,
     tags: [
       { en: 'Dental Implants', bn: 'ডেন্টাল ইমপ্লান্ট' },
       { en: 'Consultation', bn: 'পরামর্শ' },

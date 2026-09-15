@@ -1,3 +1,4 @@
+import media from '../data/media.json';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
@@ -137,7 +138,7 @@ const RegisterPage = () => {
     trigger,
     getValues,
     reset,
-    watch,
+    _watch,
     formState: { errors },
   } = useForm({ mode: 'onTouched' });
 
@@ -877,7 +878,7 @@ const RegisterPage = () => {
       {/* ============================== HERO ============================== */}
       <section className="relative overflow-hidden min-h-[50vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1600&q=80&fit=crop"
+          src={media.image25}
           alt="Patient registration"
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -931,7 +932,7 @@ const RegisterPage = () => {
               {isSuccess ? (
                 <SuccessScreen />
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleSubmit(onSubmit)}>
                   <AnimatePresence mode="wait" custom={direction}>
                     {currentStep === 0 && <Step1 />}
                     {currentStep === 1 && <Step2 />}
@@ -988,7 +989,7 @@ const RegisterPage = () => {
                       </motion.button>
                     )}
                   </div>
-                </form>
+                </fieldset>
               )}
             </motion.div>
           </div>

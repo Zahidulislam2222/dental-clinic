@@ -1,12 +1,13 @@
 import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { runtime } from '../config/runtime';
 
 const AuthContext = createContext(null);
 
 // HIPAA 164.312(a)(2)(iii) — automatic logoff after inactivity
-const INACTIVITY_WARNING_MS = 14 * 60 * 1000; // 14 min → show warning
-const INACTIVITY_LOGOUT_MS = 15 * 60 * 1000;  // 15 min → force logout
-const SESSION_CHANNEL = 'eds-session-sync';    // BroadcastChannel for tab-aware timeout
+const INACTIVITY_WARNING_MS = runtime.inactivityWarningMs;
+const INACTIVITY_LOGOUT_MS = runtime.inactivityLogoutMs;
+const SESSION_CHANNEL = runtime.sessionChannel;
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

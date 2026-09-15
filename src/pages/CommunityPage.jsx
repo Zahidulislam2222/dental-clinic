@@ -1,3 +1,4 @@
+import media from '../data/media.json';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
@@ -28,15 +29,15 @@ import { useScrollReveal, useStaggerReveal } from '../hooks/useGsapAnimations';
 /*  PHOTOS                                                             */
 /* ------------------------------------------------------------------ */
 
-const HERO_IMG = 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1400&q=85&fit=crop';
+const HERO_IMG = media.image24;
 
 const PHOTOS = {
-  camp:       'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&q=85&fit=crop',
-  school:     'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=800&q=85&fit=crop',
-  awareness:  'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=800&q=85&fit=crop',
-  subsidized: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=85&fit=crop',
-  mentorship: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=85&fit=crop',
-  blood:      'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&q=85&fit=crop',
+  camp:       media.image41,
+  school:     media.image44,
+  awareness:  media.image20,
+  subsidized: media.image30,
+  mentorship: media.image27,
+  blood:      media.image17,
 };
 
 /* ------------------------------------------------------------------ */
@@ -126,12 +127,12 @@ const impactStats = [
 ];
 
 const galleryImages = [
-  { src: 'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=600&q=85&fit=crop', caption: { en: 'Free checkup camp at Kamrangirchar', bn: 'কামরাঙ্গীরচরে বিনামূল্যে চেকআপ ক্যাম্প' } },
-  { src: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&q=85&fit=crop', caption: { en: 'Teaching children proper brushing', bn: 'শিশুদের সঠিক ব্রাশিং শেখানো' } },
-  { src: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=600&q=85&fit=crop', caption: { en: 'Dental screening in progress', bn: 'ডেন্টাল স্ক্রিনিং চলছে' } },
-  { src: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=85&fit=crop', caption: { en: 'Community awareness event', bn: 'সম্প্রদায় সচেতনতা ইভেন্ট' } },
-  { src: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=85&fit=crop', caption: { en: 'Dr. Rafi mentoring interns', bn: 'ডা. রফি ইন্টার্নদের মেন্টরিং করছেন' } },
-  { src: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=600&q=85&fit=crop', caption: { en: 'Blood donation drive', bn: 'রক্তদান কর্মসূচি' } },
+  { src: media.image22, caption: { en: 'Free checkup camp at Kamrangirchar', bn: 'কামরাঙ্গীরচরে বিনামূল্যে চেকআপ ক্যাম্প' } },
+  { src: media.image8, caption: { en: 'Teaching children proper brushing', bn: 'শিশুদের সঠিক ব্রাশিং শেখানো' } },
+  { src: media.image33, caption: { en: 'Dental screening in progress', bn: 'ডেন্টাল স্ক্রিনিং চলছে' } },
+  { src: media.image36, caption: { en: 'Community awareness event', bn: 'সম্প্রদায় সচেতনতা ইভেন্ট' } },
+  { src: media.image39, caption: { en: 'Dr. Rafi mentoring interns', bn: 'ডা. রফি ইন্টার্নদের মেন্টরিং করছেন' } },
+  { src: media.image11, caption: { en: 'Blood donation drive', bn: 'রক্তদান কর্মসূচি' } },
 ];
 
 const upcomingEvents = [
@@ -142,7 +143,7 @@ const upcomingEvents = [
       en: 'Free dental screening, basic treatment, and oral hygiene kits for 200+ residents.',
       bn: '২০০+ বাসিন্দার জন্য বিনামূল্যে ডেন্টাল স্ক্রিনিং, মৌলিক চিকিৎসা এবং ওরাল হাইজিন কিট।',
     },
-    image: 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=600&q=85&fit=crop',
+    image: media.image16,
   },
   {
     title: { en: 'World Oral Health Day Celebration', bn: 'বিশ্ব মৌখিক স্বাস্থ্য দিবস উদযাপন' },
@@ -151,7 +152,7 @@ const upcomingEvents = [
       en: 'School visits, awareness rally, and free oral cancer screening across 5 locations in Dhaka.',
       bn: 'স্কুল পরিদর্শন, সচেতনতা র‍্যালি এবং ঢাকার ৫টি স্থানে বিনামূল্যে মুখের ক্যান্সার স্ক্রিনিং।',
     },
-    image: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&q=85&fit=crop',
+    image: media.image14,
   },
 ];
 
@@ -228,7 +229,7 @@ const CommunityPage = () => {
       <section className="relative py-16 md:py-20 bg-navy overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <img
-            src="https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=1400&q=50&fit=crop"
+            src={media.image10}
             alt=""
             className="w-full h-full object-cover"
           />
@@ -415,7 +416,7 @@ const CommunityPage = () => {
           >
             <div className="w-full md:w-2/5 h-64 md:h-auto md:min-h-[320px]">
               <img
-                src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=85&fit=crop&crop=face"
+                src={media.image40}
                 alt="Dr. Arman Hossain"
                 className="w-full h-full object-cover"
               />

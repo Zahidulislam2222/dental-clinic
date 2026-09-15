@@ -6,9 +6,9 @@
 
 import { supabase, isSupabaseConfigured } from './supabase';
 
-const STRIPE_PK = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+const STRIPE_PK = null; // Payments are outside the synthetic release boundary.
 
-export const isStripeConfigured = Boolean(STRIPE_PK) && !STRIPE_PK.includes('pk_test_placeholder');
+export const isStripeConfigured = false;
 
 /**
  * Create a payment intent via the backend Edge Function.

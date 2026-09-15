@@ -37,7 +37,7 @@ export default function CancelAppointment({ appointmentId, refNumber, onCancelle
     try {
       const finalReason = reason === 'Other' ? customReason : reason;
 
-      const { data, error: fnError } = await supabase.functions.invoke('cancel-appointment', {
+      const { _data, error: fnError } = await supabase.functions.invoke('cancel-appointment', {
         body: { appointmentId, reason: finalReason },
       });
 

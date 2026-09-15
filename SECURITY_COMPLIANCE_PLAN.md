@@ -1,3 +1,5 @@
+> HISTORICAL CLINICAL PROTOTYPE MATERIAL. This file is not current runtime or legal assurance. See docs/VERIFICATION.md and docs/CLINICAL-RELEASE.md for the synthetic release and unresolved clinical gates.
+
 # Security, Compliance & Data Flow Fix Plan
 
 **Created:** 2026-04-02

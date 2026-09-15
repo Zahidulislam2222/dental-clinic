@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * Appointment Cancellation — Supabase Edge Function
  * FLOW-APPT-002: Handles appointment cancellation with reason tracking
@@ -12,6 +13,8 @@ import { createLogger } from '../_shared/logger.ts';
 const log = createLogger('cancel-appointment');
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

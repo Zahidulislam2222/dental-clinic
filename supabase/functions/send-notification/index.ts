@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * HIPAA-Safe Email Notification — Supabase Edge Function
  * Sends admin/patient notifications via Resend.
@@ -67,6 +68,8 @@ function buildPatientConfirmationHtml(formType: string, refNumber: string): stri
 }
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

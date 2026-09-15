@@ -75,11 +75,11 @@ export default function MfaEnrollment() {
     }
   }, [factorId, verifyCode]);
 
-  const unenroll = useCallback(async () => {
+  const _unenroll = useCallback(async () => {
     if (!factorId) return;
     setLoading(true);
     try {
-      await supabase.auth.mfa.unenroll({ factorId });
+      await supabase.auth.mfa._unenroll({ factorId });
       setStep('idle');
       setQrCode(null);
       setSecret(null);

@@ -11,7 +11,7 @@ export const checkRateLimit = (key, max = 3, windowMs = 5 * 60 * 1000) => {
   const storageKey = `eds-rate-${key}`;
   const now = Date.now();
 
-  let timestamps = [];
+  let timestamps;
   try {
     timestamps = JSON.parse(localStorage.getItem(storageKey) || '[]');
   } catch {

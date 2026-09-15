@@ -52,7 +52,7 @@ const ResetPasswordPage = () => {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <div className="relative">
                 <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -109,7 +109,7 @@ const ResetPasswordPage = () => {
               }
               {!isSubmitting && <CheckCircle size={18} />}
             </button>
-          </form>
+          </fieldset>
         </motion.div>
       </section>
     </PageTransition>

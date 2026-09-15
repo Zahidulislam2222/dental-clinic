@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * FHIR R4 REST API — Supabase Edge Function
  * Implements read, search, create, update, and delete interactions per FHIR R4 4.0.1
@@ -497,6 +498,8 @@ async function handleDelete(ctx: AuthContext, resourceType: string, resourceId: 
 // ── Main Handler ──
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

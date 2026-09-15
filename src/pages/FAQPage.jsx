@@ -1,4 +1,5 @@
-import { useState, useRef } from 'react';
+import media from '../data/media.json';
+import { useState, } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -225,7 +226,7 @@ const FAQPage = () => {
       {/* ── Hero Section ── */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=1600&q=80&fit=crop"
+          src={media.image21}
           alt="Frequently asked questions"
           className="absolute inset-0 w-full h-full object-cover"
         />

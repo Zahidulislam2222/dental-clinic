@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * Admin User Management — Supabase Edge Function
  * Handles role changes and user account management.
@@ -14,6 +15,8 @@ const log = createLogger('admin-manage-user');
 const VALID_ROLES = ['patient', 'doctor', 'receptionist', 'admin'];
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

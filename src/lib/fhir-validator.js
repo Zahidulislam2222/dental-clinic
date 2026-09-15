@@ -52,7 +52,7 @@ const BUNDLE_TYPES = [
   'batch', 'batch-response', 'history', 'searchset', 'collection',
 ];
 
-const REFERENCE_PATTERN = /^[A-Za-z]+\/[A-Za-z0-9\-\.]+$/;
+const REFERENCE_PATTERN = /^[A-Za-z]+\/[A-Za-z0-9.-]+$/;
 
 /**
  * Validate a FHIR reference format (e.g., "Patient/123").

@@ -1,0 +1,17 @@
+{
+  "slug": "dental-clinic",
+  "hostname": "dental.zahidul-islam.com",
+  "hostPort": 18086,
+  "containerPort": 8080,
+  "image": "nginx@sha256:dc5069ad14f19660b141b21236140b91656bf89bbc3e2417c70ae650cd66104c",
+  "memory": "128m",
+  "cpus": "0.50",
+  "pidsLimit": 64,
+  "assetCacheSeconds": 31536000,
+  "imageCacheSeconds": 86400,
+  "healthInterval": "30s",
+  "healthTimeout": "3s",
+  "healthRetries": 3,
+  "clientTimeoutSeconds": 10,
+  "maxBodySize": "1k"
+}

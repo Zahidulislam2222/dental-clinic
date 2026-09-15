@@ -1,11 +1,10 @@
+import media from '../data/media.json';
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { lazy, Suspense } from 'react';
-const Lottie = lazy(() => import('lottie-react'));
 import {
   Shield, Wrench, Activity, Crown, CircleDot, GitBranch,
   Heart, Scissors, Baby, Sparkles, Monitor, Microscope,
@@ -14,14 +13,13 @@ import {
   Calendar, Clock, User, Phone, Mail, FileText,
   MessageCircle, Home, Download, Edit3,
   CreditCard, Wallet, Building2, Stethoscope,
-  ChevronRight, AlertCircle,
+  ChevronRight, AlertCircle, CheckCircle,
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { api } from '../utils/emailService';
 import { checkRateLimit, formatCooldown } from '../utils/rateLimit';
 import CONTACT from '../config/contact';
 import PageTransition from '../components/ui/PageTransition';
-import { successCheckAnimation } from '../data/lottieAnimations';
 
 /* ------------------------------------------------------------------ */
 /*  ICON MAP                                                           */
@@ -577,7 +575,7 @@ const AppointmentPage = () => {
         {t({ en: 'Your Details', bn: 'আপনার তথ্য' })}
       </h2>
 
-      <form onSubmit={handleSubmit(onDetailsSubmit)} className="space-y-5 max-w-lg">
+      <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleSubmit(onDetailsSubmit)} className="space-y-5 max-w-lg">
         <div>
           <label htmlFor="appt-name" className="flex items-center gap-2 text-navy font-heading font-semibold text-sm mb-2">
             <User size={16} className="text-teal" />
@@ -640,7 +638,7 @@ const AppointmentPage = () => {
         </div>
 
         <NavButtons canNext isForm />
-      </form>
+      </fieldset>
     </div>
   );
 
@@ -921,9 +919,7 @@ const AppointmentPage = () => {
       >
         {/* Lottie success animation */}
         <div className="w-28 h-28 mx-auto mb-4">
-          <Suspense fallback={<div className="w-full h-full rounded-full bg-teal/20 animate-pulse" />}>
-            <Lottie animationData={successCheckAnimation} loop={false} className="w-full h-full" />
-          </Suspense>
+          <CheckCircle className="w-full h-full text-teal" aria-hidden="true" />
         </div>
 
         <h2 className="font-heading text-2xl md:text-3xl font-bold text-navy mb-2">
@@ -1082,7 +1078,7 @@ const AppointmentPage = () => {
       {/* Hero */}
       <section className="relative overflow-hidden min-h-[50vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
+          src={media.image45}
           alt="Book dental appointment"
           className="absolute inset-0 w-full h-full object-cover"
         />

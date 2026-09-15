@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+
+import { runtime } from '../config/runtime';
 
 const LanguageContext = createContext();
 
@@ -10,13 +12,15 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState(() => {
-    return localStorage.getItem('eds-language') || 'en';
+    try { return localStorage.getItem(runtime.languageStorageKey) === 'bn' ? 'bn' : 'en'; } catch { return 'en'; }
   });
+
+  useEffect(() => { document.documentElement.lang = language; }, [language]);
 
   const toggleLanguage = useCallback(() => {
     setLanguage(prev => {
       const next = prev === 'en' ? 'bn' : 'en';
-      localStorage.setItem('eds-language', next);
+      try { localStorage.setItem(runtime.languageStorageKey, next); } catch { /* Preference remains in memory. */ }
       return next;
     });
   }, []);

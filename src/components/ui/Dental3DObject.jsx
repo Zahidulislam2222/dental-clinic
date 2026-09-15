@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
 
 /**
  * Dental3DObject — Premium 3D rotating glass tooth/implant

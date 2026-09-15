@@ -1,3 +1,4 @@
+import media from '../data/media.json';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { useParams, Link } from 'react-router-dom';
@@ -385,20 +386,20 @@ const ServiceNotFound = ({ t }) => (
 /* ------------------------------------------------------------------ */
 
 const SERVICE_IMAGES = {
-  'preventive-diagnostic-care': 'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=1600&q=80&fit=crop',
-  'restorative-dentistry': 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=1600&q=80&fit=crop',
-  'root-canal-treatment': 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=1600&q=80&fit=crop',
-  'crowns-bridges-dentures': 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1600&q=80&fit=crop',
-  'dental-implants': 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=1600&q=80&fit=crop',
-  'orthodontics-braces-aligners': 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=1600&q=80&fit=crop',
-  'periodontics-gum-treatment': 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=1600&q=80&fit=crop',
-  'oral-maxillofacial-surgery': 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=1600&q=80&fit=crop',
-  'pediatric-dentistry': 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=1600&q=80&fit=crop',
-  'cosmetic-dentistry': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=80&fit=crop',
-  'digital-imaging': 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=1600&q=80&fit=crop',
-  'oral-medicine-pathology': 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=1600&q=80&fit=crop',
-  'special-needs-dentistry': 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1600&q=80&fit=crop',
-  'laser-dentistry': 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=1600&q=80&fit=crop',
+  'preventive-diagnostic-care': media.image21,
+  'restorative-dentistry': media.image7,
+  'root-canal-treatment': media.image32,
+  'crowns-bridges-dentures': media.image35,
+  'dental-implants': media.image28,
+  'orthodontics-braces-aligners': media.image35,
+  'periodontics-gum-treatment': media.image4,
+  'oral-maxillofacial-surgery': media.image15,
+  'pediatric-dentistry': media.image42,
+  'cosmetic-dentistry': media.image1,
+  'digital-imaging': media.image4,
+  'oral-medicine-pathology': media.image18,
+  'special-needs-dentistry': media.image25,
+  'laser-dentistry': media.image38,
 };
 
 const GenericDetailView = ({ service, t, Icon }) => (
@@ -406,7 +407,7 @@ const GenericDetailView = ({ service, t, Icon }) => (
     {/* Hero */}
     <section className="relative overflow-hidden min-h-[50vh] flex items-end">
       <img
-        src={SERVICE_IMAGES[service.slug] || 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop'}
+        src={SERVICE_IMAGES[service.slug] || media.image45}
         alt={t(service.title)}
         className="absolute inset-0 w-full h-full object-cover"
       />
@@ -489,7 +490,7 @@ const FullDetailView = ({ service, t, Icon }) => (
     {/* Hero */}
     <section className="relative overflow-hidden min-h-[50vh] flex items-end">
       <img
-        src={SERVICE_IMAGES[service.slug] || 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop'}
+        src={SERVICE_IMAGES[service.slug] || media.image45}
         alt={t(service.title)}
         className="absolute inset-0 w-full h-full object-cover"
       />

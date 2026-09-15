@@ -119,7 +119,7 @@ const LoginPage = () => {
 
             {/* Email login */}
             {loginMethod === 'email' && (
-              <form onSubmit={handleSubmit(onEmailLogin)} className="space-y-4">
+              <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleSubmit(onEmailLogin)} className="space-y-4">
                 <div>
                   <div className="relative">
                     <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -177,12 +177,12 @@ const LoginPage = () => {
                   }
                   {!isSubmitting && <ArrowRight size={18} />}
                 </button>
-              </form>
+              </fieldset>
             )}
 
             {/* Phone OTP login */}
             {loginMethod === 'phone' && !otpSent && (
-              <form onSubmit={handleOtp(onSendOtp)} className="space-y-4">
+              <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleOtp(onSendOtp)} className="space-y-4">
                 <div>
                   <div className="relative">
                     <Phone size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -208,11 +208,11 @@ const LoginPage = () => {
                     : t({ en: 'Send OTP', bn: 'OTP পাঠান' })
                   }
                 </button>
-              </form>
+              </fieldset>
             )}
 
             {loginMethod === 'phone' && otpSent && (
-              <form onSubmit={handleOtp(onVerifyOtp)} className="space-y-4">
+              <fieldset disabled aria-label="Form preview — real submissions disabled" onSubmit={handleOtp(onVerifyOtp)} className="space-y-4">
                 <p className="text-sm text-gray-600 text-center mb-2">
                   {t({ en: `OTP sent to ${phoneNumber}`, bn: `${phoneNumber}-এ OTP পাঠানো হয়েছে` })}
                 </p>
@@ -247,7 +247,7 @@ const LoginPage = () => {
                 >
                   {t({ en: 'Change number', bn: 'নম্বর পরিবর্তন' })}
                 </button>
-              </form>
+              </fieldset>
             )}
 
             <div className="mt-6 text-center text-sm text-gray-500">

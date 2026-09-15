@@ -1,3 +1,4 @@
+import { clinicalReleaseBoundary } from '../_shared/release-boundary.ts';
 /**
  * PHI Data Access with Audit Logging
  * HIPAA: 164.312(b) — Logs every SELECT on PHI data
@@ -14,6 +15,8 @@ import { createLogger } from '../_shared/logger.ts';
 const log = createLogger('get-patient-data');
 
 serve(async (req: Request) => {
+  const releaseBlocked = clinicalReleaseBoundary();
+  if (releaseBlocked) return releaseBlocked;
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 

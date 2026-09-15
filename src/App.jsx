@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Lenis from 'lenis'
@@ -11,8 +11,10 @@ import AnnouncementBar from './components/layout/AnnouncementBar'
 import Navbar from './components/layout/Navbar'
 import Footer from './components/layout/Footer'
 import BackToTop from './components/ui/BackToTop'
-import WhatsAppFloat from './components/ui/WhatsAppFloat'
 import LoadingScreen from './components/ui/LoadingScreen'
+import DemoNotice from './components/ui/DemoNotice'
+import { Helmet } from 'react-helmet-async'
+import { runtime } from './config/runtime'
 
 // Lazy load pages for better performance
 const HomePage = lazy(() => import('./pages/HomePage'))
@@ -31,6 +33,9 @@ const CommunityPage = lazy(() => import('./pages/CommunityPage'))
 const ConferencesPage = lazy(() => import('./pages/ConferencesPage'))
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'))
 const TermsPage = lazy(() => import('./pages/TermsPage'))
+
+const DemoPage = lazy(() => import('./pages/DemoPage'))
+const TrustPage = lazy(() => import('./pages/TrustPage'))
 
 // Auth pages
 const LoginPage = lazy(() => import('./pages/LoginPage'))
@@ -75,6 +80,7 @@ const App = () => {
 
   // Lenis smooth scrolling
   useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -83,27 +89,35 @@ const App = () => {
     })
 
     lenis.on('scroll', ScrollTrigger.update)
-    gsap.ticker.add((time) => lenis.raf(time * 1000))
+    const tick = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(tick)
     gsap.ticker.lagSmoothing(0)
 
     return () => {
       lenis.destroy()
-      gsap.ticker.remove(lenis.raf)
+      gsap.ticker.remove(tick)
     }
   }, [])
 
   return (
     <>
+      <Helmet><link rel="canonical" href={runtime.siteUrl + location.pathname} /><meta name="robots" content="noindex, nofollow" /></Helmet>
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <LoadingScreen />
       <ScrollToTop />
       <div className="flex flex-col min-h-screen">
         <AnnouncementBar />
         <Navbar />
-        <main className="flex-grow pt-[100px] md:pt-[116px]">
+        <main id="main-content" tabIndex={-1} className="flex-grow pt-[100px] md:pt-[116px]">
+          <DemoNotice />
           <Suspense fallback={<PageLoader />}>
             <AnimatePresence mode="wait">
               <Routes location={location} key={location.pathname}>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/experience" element={<DemoPage />} />
+                <Route path="/trust" element={<TrustPage />} />
+                <Route path="/accessibility" element={<TrustPage />} />
+                <Route path="*" element={<div className="review-page"><h1>Page not found</h1><a href="/">Return home</a></div>} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/services" element={<ServicesPage />} />
                 <Route path="/services/:slug" element={<ServiceDetailPage />} />
@@ -137,7 +151,7 @@ const App = () => {
         <Footer />
       </div>
       <BackToTop />
-      <WhatsAppFloat />
+
     </>
   )
 }

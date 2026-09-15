@@ -1,3 +1,4 @@
+import media from '../data/media.json';
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
@@ -12,18 +13,18 @@ import RunningTooth from '../components/ui/RunningTooth';
 /* ------------------------------------------------------------------ */
 
 const galleryItems = [
-  { id: 1, category: 'clinic', label: 'Reception Area', labelBn: 'রিসেপশন এরিয়া', image: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=800&q=85&fit=crop' },
-  { id: 2, category: 'clinic', label: 'Treatment Room 1', labelBn: 'চিকিৎসা কক্ষ ১', image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=85&fit=crop' },
-  { id: 3, category: 'clinic', label: 'Sterilization Unit', labelBn: 'জীবাণুমুক্তকরণ ইউনিট', image: 'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=800&q=85&fit=crop' },
-  { id: 4, category: 'procedures', label: 'Digital X-Ray Setup', labelBn: 'ডিজিটাল এক্স-রে সেটআপ', image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&q=85&fit=crop' },
-  { id: 5, category: 'procedures', label: 'Implant Surgery', labelBn: 'ইমপ্লান্ট সার্জারি', image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&q=85&fit=crop' },
-  { id: 6, category: 'procedures', label: 'Laser Treatment', labelBn: 'লেজার চিকিৎসা', image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=800&q=85&fit=crop' },
-  { id: 7, category: 'team', label: 'Dr. Arman Hossain', labelBn: 'ডা. আরমান হোসেন', image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&q=85&fit=crop' },
-  { id: 8, category: 'team', label: 'Dental Team', labelBn: 'ডেন্টাল টিম', image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=800&q=85&fit=crop' },
-  { id: 9, category: 'team', label: 'Support Staff', labelBn: 'সহায়তা কর্মী', image: 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=800&q=85&fit=crop' },
-  { id: 10, category: 'before-after', label: 'Smile Makeover', labelBn: 'স্মাইল মেকওভার', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=85&fit=crop' },
-  { id: 11, category: 'before-after', label: 'Teeth Whitening Result', labelBn: 'দাঁত সাদাকরণ ফলাফল', image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=800&q=85&fit=crop' },
-  { id: 12, category: 'before-after', label: 'Braces Transformation', labelBn: 'ব্রেসেস পরিবর্তন', image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=800&q=85&fit=crop' },
+  { id: 1, category: 'clinic', label: 'Reception Area', labelBn: 'রিসেপশন এরিয়া', image: media.image34 },
+  { id: 2, category: 'clinic', label: 'Treatment Room 1', labelBn: 'চিকিৎসা কক্ষ ১', image: media.image47 },
+  { id: 3, category: 'clinic', label: 'Sterilization Unit', labelBn: 'জীবাণুমুক্তকরণ ইউনিট', image: media.image23 },
+  { id: 4, category: 'procedures', label: 'Digital X-Ray Setup', labelBn: 'ডিজিটাল এক্স-রে সেটআপ', image: media.image6 },
+  { id: 5, category: 'procedures', label: 'Implant Surgery', labelBn: 'ইমপ্লান্ট সার্জারি', image: media.image30 },
+  { id: 6, category: 'procedures', label: 'Laser Treatment', labelBn: 'লেজার চিকিৎসা', image: media.image41 },
+  { id: 7, category: 'team', label: 'Dr. Arman Hossain', labelBn: 'ডা. আরমান হোসেন', image: media.image12 },
+  { id: 8, category: 'team', label: 'Dental Team', labelBn: 'ডেন্টাল টিম', image: media.image12 },
+  { id: 9, category: 'team', label: 'Support Staff', labelBn: 'সহায়তা কর্মী', image: media.image17 },
+  { id: 10, category: 'before-after', label: 'Smile Makeover', labelBn: 'স্মাইল মেকওভার', image: media.image3 },
+  { id: 11, category: 'before-after', label: 'Teeth Whitening Result', labelBn: 'দাঁত সাদাকরণ ফলাফল', image: media.image37 },
+  { id: 12, category: 'before-after', label: 'Braces Transformation', labelBn: 'ব্রেসেস পরিবর্তন', image: media.image6 },
 ];
 
 const categories = [
@@ -153,7 +154,7 @@ const GalleryPage = () => {
       {/* ========================= HERO ================================= */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
+          src={media.image45}
           alt="Dental clinic gallery"
           width={800}
           height={600}

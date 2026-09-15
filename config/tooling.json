@@ -1,0 +1,15 @@
+{
+  "host": "127.0.0.1",
+  "devPort": 3000,
+  "previewPort": 4173,
+  "browserTimeoutMs": 30000,
+  "loadClients": 20,
+  "loadRequests": 400,
+  "maxLocalClients": 100,
+  "probeTimeoutMs": 10000,
+  "availabilityTarget": 0.99,
+  "windowDays": 30,
+  "secondsBetweenRequests": 30,
+  "requestsPerAction": 3,
+  "cacheHitRatio": 0.95
+}

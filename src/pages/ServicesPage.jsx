@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion } from 'framer-motion';
+import media from '../data/media.json';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import {
@@ -61,85 +60,85 @@ const iconMap = {
 const services = [
   {
     slug: 'preventive-diagnostic-care', icon: 'Shield',
-    image: 'https://images.unsplash.com/photo-1571772996211-2f02c9727629?w=600&q=85&fit=crop',
+    image: media.image22,
     title: { en: 'Preventive & Diagnostic Care', bn: 'প্রতিরোধমূলক ও ডায়াগনস্টিক কেয়ার' },
     desc: { en: 'Regular checkups, digital X-rays, OPG, and 3D CBCT scanning to catch problems early and maintain oral health.', bn: 'নিয়মিত চেকআপ, ডিজিটাল এক্স-রে, OPG, এবং 3D CBCT স্ক্যানিং সমস্যা তাড়াতাড়ি ধরতে।' },
   },
   {
     slug: 'restorative-dentistry', icon: 'Wrench',
-    image: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=600&q=85&fit=crop',
+    image: media.image8,
     title: { en: 'Restorative Dentistry', bn: 'পুনরুদ্ধার দন্তচিকিৎসা' },
     desc: { en: 'Composite fillings, GIC fillings, and dental bonding to restore damaged teeth to their natural form and function.', bn: 'ক্ষতিগ্রস্ত দাঁতকে তাদের স্বাভাবিক আকৃতি ও কার্যকারিতায় ফিরিয়ে আনতে কম্পোজিট ফিলিং।' },
   },
   {
     slug: 'root-canal-treatment', icon: 'Activity',
-    image: 'https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=600&q=85&fit=crop',
+    image: media.image33,
     title: { en: 'Root Canal Treatment', bn: 'রুট ক্যানাল চিকিৎসা' },
     desc: { en: 'Painless modern endodontic treatment using rotary technology. Save your natural tooth in as little as one visit.', bn: 'রোটারি প্রযুক্তি ব্যবহার করে ব্যথাহীন আধুনিক এন্ডোডন্টিক চিকিৎসা। এক ভিজিটেই দাঁত বাঁচান।' },
   },
   {
     slug: 'crowns-bridges-dentures', icon: 'Crown',
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=85&fit=crop',
+    image: media.image36,
     title: { en: 'Crowns, Bridges & Dentures', bn: 'ক্রাউন, ব্রিজ ও ডেনচার' },
     desc: { en: 'Zirconia crowns, E-Max crowns, dental bridges, and full/partial dentures for complete smile restoration.', bn: 'জিরকোনিয়া ক্রাউন, ই-ম্যাক্স ক্রাউন, ডেন্টাল ব্রিজ এবং সম্পূর্ণ/আংশিক ডেনচার।' },
   },
   {
     slug: 'dental-implants', icon: 'CircleDot',
-    image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=600&q=85&fit=crop',
+    image: media.image29,
     title: { en: 'Dental Implants', bn: 'ডেন্টাল ইমপ্লান্ট' },
     desc: { en: 'Permanent tooth replacement with titanium implants. UCLA-trained expertise for single tooth to full mouth rehabilitation.', bn: 'টাইটানিয়াম ইমপ্লান্ট দিয়ে স্থায়ী দাঁত প্রতিস্থাপন। UCLA-প্রশিক্ষিত দক্ষতা।' },
   },
   {
     slug: 'orthodontics-braces-aligners', icon: 'GitBranch',
-    image: 'https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=85&fit=crop',
+    image: media.image36,
     title: { en: 'Orthodontics — Braces & Aligners', bn: 'অর্থোডন্টিক্স — ব্রেসেস ও অ্যালাইনার' },
     desc: { en: 'Metal braces, ceramic braces, and clear aligners (Invisalign) for perfectly aligned teeth and beautiful smiles.', bn: 'মেটাল ব্রেসেস, সিরামিক ব্রেসেস এবং ক্লিয়ার অ্যালাইনার সুন্দর হাসির জন্য।' },
   },
   {
     slug: 'periodontics-gum-treatment', icon: 'Heart',
-    image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&q=85&fit=crop',
+    image: media.image5,
     title: { en: 'Periodontics — Gum Treatment', bn: 'পেরিওডন্টিক্স — মাড়ির চিকিৎসা' },
     desc: { en: 'Advanced gum disease treatment, deep cleaning, and laser therapy to protect your teeth foundation.', bn: 'উন্নত মাড়ির রোগের চিকিৎসা, গভীর পরিষ্কার এবং লেজার থেরাপি।' },
   },
   {
     slug: 'oral-maxillofacial-surgery', icon: 'Scissors',
-    image: 'https://images.unsplash.com/photo-1551601651-2a8555f1a136?w=600&q=85&fit=crop',
+    image: media.image16,
     title: { en: 'Oral & Maxillofacial Surgery', bn: 'ওরাল ও ম্যাক্সিলোফেসিয়াল সার্জারি' },
     desc: { en: 'Expert surgical procedures including wisdom tooth extraction, jaw surgery, and facial trauma management.', bn: 'আক্কেল দাঁত তোলা, চোয়ালের সার্জারি এবং মুখের আঘাত ব্যবস্থাপনা।' },
   },
   {
     slug: 'pediatric-dentistry', icon: 'Baby',
-    image: 'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=600&q=85&fit=crop',
+    image: media.image43,
     title: { en: 'Pediatric Dentistry', bn: 'শিশু দন্তচিকিৎসা' },
     desc: { en: 'Gentle dental care for children in a friendly environment. Preventive treatments, sealants, and habit counseling.', bn: 'বন্ধুত্বপূর্ণ পরিবেশে শিশুদের জন্য মৃদু দন্ত চিকিৎসা।' },
   },
   {
     slug: 'cosmetic-dentistry', icon: 'Sparkles',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=85&fit=crop',
+    image: media.image2,
     title: { en: 'Cosmetic Dentistry & Smile Makeover', bn: 'কসমেটিক ডেন্টিস্ট্রি ও স্মাইল মেকওভার' },
     desc: { en: 'Professional teeth whitening (ZOOM), porcelain veneers, and complete smile makeover packages.', bn: 'পেশাদার দাঁত সাদাকরণ (ZOOM), পোর্সেলিন ভেনিয়ার এবং সম্পূর্ণ স্মাইল মেকওভার।' },
   },
   {
     slug: 'digital-imaging', icon: 'Monitor',
-    image: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=600&q=85&fit=crop',
+    image: media.image5,
     title: { en: 'Digital Imaging — 3D CBCT, OPG', bn: 'ডিজিটাল ইমেজিং — 3D CBCT, OPG' },
     desc: { en: 'State-of-the-art digital periapical X-ray, panoramic OPG, and 3D CBCT scanning for precise diagnosis.', bn: 'অত্যাধুনিক ডিজিটাল পেরিয়াপিকাল এক্স-রে, প্যানোরামিক OPG এবং 3D CBCT স্ক্যানিং।' },
   },
   {
     slug: 'oral-medicine-pathology', icon: 'Microscope',
-    image: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&q=85&fit=crop',
+    image: media.image19,
     title: { en: 'Oral Medicine & Pathology', bn: 'ওরাল মেডিসিন ও প্যাথলজি' },
     desc: { en: 'Diagnosis and management of oral diseases, mouth ulcers, oral cancer screening, and mucosal disorders.', bn: 'মৌখিক রোগের নির্ণয় ও ব্যবস্থাপনা, মুখের আলসার, ওরাল ক্যান্সার স্ক্রিনিং।' },
   },
   {
     slug: 'special-needs-dentistry', icon: 'Accessibility',
-    image: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=600&q=85&fit=crop',
+    image: media.image26,
     title: { en: 'Special Needs Dentistry', bn: 'বিশেষ চাহিদা দন্তচিকিৎসা' },
     desc: { en: 'Compassionate dental care adapted for patients with physical, intellectual, or medical special needs.', bn: 'শারীরিক, মানসিক বা চিকিৎসা সংক্রান্ত বিশেষ চাহিদাসম্পন্ন রোগীদের জন্য সহানুভূতিশীল যত্ন।' },
   },
   {
     slug: 'laser-dentistry', icon: 'Zap',
-    image: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=85&fit=crop',
+    image: media.image39,
     title: { en: 'Laser Dentistry', bn: 'লেজার ডেন্টিস্ট্রি' },
     desc: { en: 'Advanced laser treatments for gum disease, cavity detection, teeth whitening, and soft tissue procedures.', bn: 'মাড়ির রোগ, ক্যাভিটি সনাক্তকরণ, দাঁত সাদাকরণের জন্য উন্নত লেজার চিকিৎসা।' },
   },
@@ -179,7 +178,7 @@ const ServicesPage = () => {
       {/* ========================= HERO BANNER ========================== */}
       <section className="relative overflow-hidden min-h-[60vh] flex items-center">
         <img
-          src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=1600&q=80&fit=crop"
+          src={media.image45}
           alt="Modern dental clinic"
           className="absolute inset-0 w-full h-full object-cover"
         />
