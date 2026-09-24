@@ -29,4 +29,10 @@ The loopback load tool refuses remote targets. Increase load only in an explicit
 
 ## Recovery records
 
-The private checkpoint stores deployment state before/after each significant action. The dossier stores durable incident lessons. CREDENTIALS.md is gitignored and must be reconciled privately when credentials change. Public verification contains counts and limits, not passwords, account IDs or server access details. Independent review is deferred to a separate session by the owner; do not record an invented approval.
+Keep recovery state and incident lessons in restricted operator records, and reconcile private credentials when they change. Public verification contains counts and limits, not passwords, account IDs or server access details. Record fresh-context review scope and verdict in the dated verification report; the clinical implementation remains unapproved.
+
+## GitHub publication
+
+Update the frontend/backend source and documentation as one reviewed snapshot. Fetch remote state, confirm the destination is an ancestor, stage an explicit public-file allowlist, scan history/tree/staged content and push normally. Verify the remote commit equals the reviewed local commit. Do not use force pushes or include private documents, generated artifacts or local plans.
+
+A source push does not itself execute the manual-only workflow or the repository's deployment script. Check separately configured external integrations before expecting deployment behavior. This publication does not request a live deploy or database change. See [testing](TESTING.md), [reliability](RELIABILITY.md) and [roadmap](../ROADMAP.md).

@@ -1,8 +1,33 @@
 # Release verification and limitations
 
-## Evidence scope
+## 2026-09-24 publication verification
 
-This is a synthetic portfolio release, not a clinical production approval. Verification was performed in September 2026. Independent fresh-context review is deferred to a separate session at the owner's request.
+Scope: public documentation and GitHub source publication. Runtime source, dependencies, migrations and live deployment are unchanged in this documentation commit. The publication includes the earlier hardening commit when advancing the default branch.
+
+| Gate | Current result |
+|---|---|
+| Automated tests | 15/15 passed |
+| Type check | Passed in the configured runtime/policy/guard scope |
+| Lint | Passed in the configured scope |
+| Build | Passed on Node 24.20.0; plugin-timing warning only |
+| Browser | 24/24 passed against local production preview |
+| npm audit | Zero reported vulnerabilities at this check |
+| Git-history Gitleaks | Nine commits scanned, zero detected leaks |
+| Outgoing tree / staged Gitleaks | 255-file publication snapshot and staged diff scanned; zero detected leaks |
+| Security edit hook | Invoked on public Markdown, ignore rules and local documentation checker; exit 0 |
+| Semgrep | 23 rules across 107 application/tooling targets; zero findings or parser errors |
+| Bandit | Not applicable: no shipped Python source |
+| Documentation links and consistency | 45 public Markdown files, 173 local links, nine READMEs; zero missing targets; 11 guards and 11 migrations confirmed |
+| Fresh-context review | Approved for documentation publication; no blocking defects; selected official legal sources checked |
+| Remote commit parity | Verified separately after push; see the repository commit history and publication handoff |
+
+The browser run exercised route rendering, disabled intake, sample role denial/consent/cancellation/hold/erasure/reset/export, protected-route redirection and limited accessibility checks. No clinical database, provider integration, large-scale load or observed monthly availability was tested. No new dependencies were introduced.
+
+Publication configuration audit: no real secrets detected in the scanned outgoing tree/history. Private credentials, environments, keys, recovery notes and project-view artifacts are ignored; inspected history contains none of the checked private paths. No changeable runtime values were moved or introduced in this documentation-only change. Existing historical provider/settings debt is explicitly retained behind clinical gates. HTTP/header/SQL protocol syntax remains fixed intentionally. This is not a full clinical configuration refactor.
+
+## Historical release evidence — September 2026
+
+This is a synthetic portfolio release, not a clinical production approval. The following measurements were recorded for the earlier September release. That release's independent review was deferred; the newer documentation review above does not replace a clinical implementation review.
 
 | Gate | Result |
 |---|---|

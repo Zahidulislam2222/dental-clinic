@@ -1,5 +1,7 @@
 # Clinical prototype release gate
 
+Scope note (2026-09-24): deployment counts below are historical September release evidence. This documentation publication does not retest or alter live clinical services. The [backend guide](../supabase/README.md), [API contract](API.md), [governance checklist](GOVERNANCE.md) and [roadmap](../ROADMAP.md) describe the current source and future implementation path.
+
 The `supabase/` directory preserves historical clinical prototypes. Every Edge Function entrypoint now returns a shared 503 boundary before processing a request. No environment variable can bypass it. The original function source was downloaded and all 15 recovered source files matched the Git baseline. The owner restored the historical project. After explicit owner approval, all 11 guards were deployed and each returned the expected HTTP 503 response. All 16 downloaded deployed source files matched local SHA256. No database records or migrations have been changed.
 
 The following defects were recorded in the previous dossier and reconfirmed in inspected source. They are not falsely relabeled as repaired by disabling public access. Removing the release guard requires a dedicated clinical implementation, isolated test database and independent review.

@@ -1,70 +1,13 @@
-# Data Classification Policy
+# Data classification and handling
 
-**Everyday Dental Surgery & Implant Center**
-**SOC 2 TSC: CC6 (Logical and Physical Access Controls)**
-**HIPAA: 164.312(a)(2)(iv)**
-**Version:** 1.0 | **Effective:** 2026-04-02 | **Review:** Annual
+**Draft for adoption — 2026-09-24.** Legal classifications must be mapped separately for each jurisdiction; this engineering table does not replace statutory definitions.
 
----
+| Class | Examples | Handling |
+|---|---|---|
+| Public | Approved clinic content, synthetic fixtures, public docs | Reviewed publishing and media rights |
+| Internal | Nonpublic plans and operating notes | Authenticated staff access, no public repository |
+| Personal | Contact/account/support information | Purpose limitation, access control and approved retention |
+| Clinical/restricted | Symptoms, records, appointment context, sensitive exports | Strong identity, subject/tenant scope, encryption, audit and approved regions |
+| Secrets | Keys, passwords, recovery codes and signing material | Secret store, least privilege, rotation and protected recovery |
 
-## 1. Classification Levels
-
-### Level 1: PHI (Protected Health Information)
-- **Definition:** Any individually identifiable health information
-- **Storage:** Encrypted at rest (pgcrypto AES-256), encrypted in transit (TLS 1.2+)
-- **Access:** Doctor, Admin only (via decrypted views). Receptionist sees masked views.
-- **Retention:** 7 years minimum (HIPAA)
-- **Disposal:** Automated purge per retention policy, logged
-
-**PHI Data Elements:**
-| Table | Column | Encrypted |
-|-------|--------|-----------|
-| registrations | medical_history | Yes (BYTEA) |
-| registrations | allergies | Yes (BYTEA) |
-| registrations | date_of_birth | Yes (BYTEA) |
-| registrations | blood_group | Yes (BYTEA) |
-| appointments | medical_notes | Yes (BYTEA) |
-
-### Level 2: PII (Personally Identifiable Information)
-- **Definition:** Information that can identify an individual but is not health-related
-- **Storage:** Database with RLS, not encrypted at column level
-- **Access:** Staff roles per RBAC policy
-- **Retention:** Per retention policy (1-7 years depending on table)
-
-**PII Data Elements:**
-| Table | Column |
-|-------|--------|
-| registrations / appointments | patient_name, patient_phone, patient_email |
-| contacts | from_name, from_phone, from_email |
-| user_profiles | full_name, phone |
-| audit_logs | user_email, ip_address |
-
-### Level 3: Internal
-- **Definition:** Business data not containing PHI or PII
-- **Storage:** Database with RLS
-- **Access:** Staff roles
-- **Examples:** Service types, appointment dates/times, ref numbers, newsletter emails
-
-### Level 4: Public
-- **Definition:** Information intended for public access
-- **Storage:** Static files, website content
-- **Access:** Anyone
-- **Examples:** Service descriptions, pricing, clinic hours, blog posts
-
-## 2. Handling Rules
-
-| Action | PHI | PII | Internal | Public |
-|--------|-----|-----|----------|--------|
-| Email | Never in body | Ref # only | OK | OK |
-| Logging | Stripped from audit | IP logged | OK | N/A |
-| Export | FHIR Bundle (authenticated) | Included in FHIR | N/A | N/A |
-| Screen Display | Authenticated + role check | Authenticated | Authenticated | Anyone |
-| Backup | Encrypted (Supabase PITR) | Encrypted | Standard | N/A |
-
-## 3. Data Flow
-
-```
-Patient Browser → HTTPS → Cloudflare CDN → Supabase Edge Functions → PostgreSQL (RLS + pgcrypto)
-                                                                   ↓
-                                                            Audit Log (no PHI)
-```
+Metadata can reveal health interests; do not assume an email address or appointment reference is harmless in context. Keep clinical data out of URLs, shared caches, telemetry and public screenshots. Store exports privately with bounded access. Encrypt backups and manage keys separately. Follow approved retention/holds and verify secure deletion/recovery behavior. Only synthetic records are permitted in demonstration fixtures and public tests.

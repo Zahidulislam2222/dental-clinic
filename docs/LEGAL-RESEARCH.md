@@ -1,5 +1,7 @@
 # US and EU privacy, health-data and accessibility readiness
 
+Publication review: 2026-09-24. Read this alongside the detailed [Bangladesh launch review](LEGAL-BANGLADESH.md) and [governance checklist](GOVERNANCE.md). The three markets require separate applicability decisions. Policies and BAA material are draft templates, not executed operating commitments.
+
 ## Executive assessment
 
 Everyday Dental is a fictional portfolio demonstration. Its useful professional claim is that it demonstrates selected privacy and security decisions, documents their limits, and provides a reviewable route to a production system. It is not a certified clinical platform. The sample patient journey uses fixed synthetic records in browser memory. Public intake is disabled, and the shipped frontend cannot connect to the historical clinical backend through environment variables.
@@ -124,6 +126,12 @@ The operator should own legal applicability, approved vendors, retention decisio
 A client acceptance review should walk through one normal and one denied action per role, one withdrawal, one export, one hold/deletion request and one restore. Review actual network requests and logs. Verify that a changed role takes effect immediately and that failure of a dependency does not open access. Budget and contracts must be approved before sending real data to any new service.
 
 Useful commercial wording is: “Synthetic dental-workflow demonstration with privacy-conscious delivery, tested sample access policies, documented production gates and a staged scaling design.” Avoid “HIPAA certified,” “GDPR compliant worldwide,” “SOC 2 audited,” “one million concurrent users supported,” or “guaranteed uptime” without the corresponding independent and operational evidence.
+
+## Launch decisions still required for US and EU
+
+For a US clinic, identify actual states of practice and patient residence; verify dental-board registration, advertising, minor/guardian consent, record retention, consumer/privacy exemptions, breach duties and telehealth scope. For an EU launch, identify the member state, controller/processor roles, health-professional confidentiality, national retention and hosting requirements, accessibility applicability, supervisory authority and international-transfer mechanism. California/Washington examples are not a complete US survey, and GDPR does not replace national health law.
+
+The engineering launch package should include a purpose/data inventory, approved notices and translations, request-verification and appeal procedures, processor agreements, incident recipient/deadline matrix, deletion/hold schedule, accessibility review and named owners. Map decisions to the actual service: brochure/contact, patient portal, multi-clinic SaaS, telemedicine or clinical decision support. A jurisdiction change triggers review before intake.
 
 ## Sources
 

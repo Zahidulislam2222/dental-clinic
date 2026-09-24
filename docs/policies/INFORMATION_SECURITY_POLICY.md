@@ -1,60 +1,15 @@
-# Information Security Policy
+# Information security policy
 
-**Everyday Dental Surgery & Implant Center**
-**SOC 2 TSC: CC1 (Control Environment)**
-**Version:** 1.0 | **Effective:** 2026-04-02 | **Review:** Annual
+**Draft for adoption — 2026-09-24.** Scope: future clinic staff, operators, vendors and systems handling clinic information. The current application is synthetic.
 
----
+| Responsibility | Proposed owner |
+|---|---|
+| Risk acceptance and funding | Operating entity leadership |
+| Control design, incidents and evidence | Security lead |
+| Lawful use, notices and rights | Privacy/legal lead |
+| Clinical safety and record integrity | Clinical lead |
+| Identity, backups, monitoring and releases | Platform operator |
 
-## 1. Purpose
+Require least privilege, staff MFA, approved devices, supported software, encrypted transport/storage, restricted backups, secure secret storage and traceable changes. Never share staff identities or put patient information in public issues, consumer AI tools or unapproved messaging services.
 
-This policy establishes the security framework for protecting patient data, business systems, and digital assets at Everyday Dental Surgery. It ensures compliance with HIPAA Security Rule (45 CFR Part 164), FHIR R4 data standards, and SOC 2 Trust Service Criteria.
-
-## 2. Scope
-
-Applies to all employees, contractors, and third-party service providers who access, process, or manage clinic information systems.
-
-## 3. Roles & Responsibilities
-
-| Role | Responsibilities |
-|------|-----------------|
-| **Security Officer** | Overall security program, risk assessment, incident response, policy maintenance |
-| **Clinic Administrator** | User account management, access reviews, BAA management |
-| **Doctor / Practitioner** | Patient data access per minimum necessary standard, HIPAA compliance |
-| **Receptionist** | Limited data access (no PHI medical details), appointment management |
-| **IT Administrator** | System configuration, patch management, backup verification |
-
-## 4. Acceptable Use
-
-- Clinic systems are for authorized business purposes only
-- Personal devices must not store PHI unless encrypted and approved
-- Sharing credentials is strictly prohibited
-- All PHI access must go through authenticated, audited systems
-- Screen locks must activate after 2 minutes of inactivity on workstations
-
-## 5. Password Policy
-
-- Minimum 8 characters with uppercase letter and number
-- Passwords must not be reused across 12 previous passwords
-- Multi-factor authentication (MFA) required for all staff accounts
-- Passwords must be changed every 90 days for staff
-- Failed login lockout: 5 attempts in 15 minutes = 30-minute lockout
-
-## 6. Remote Access
-
-- All remote access uses HTTPS/TLS 1.2+ encryption
-- VPN required for administrative access to Supabase dashboard
-- Session auto-logout after 15 minutes of inactivity (HIPAA 164.312(a)(2)(iii))
-- No PHI may be accessed on public/shared computers
-
-## 7. Data Classification
-
-See `DATA_CLASSIFICATION.md` for full classification schema.
-
-## 8. Enforcement
-
-Violations may result in disciplinary action up to and including termination. Security incidents must be reported immediately to the Security Officer.
-
-## 9. Review
-
-This policy is reviewed annually or upon significant changes to systems, regulations, or threat landscape.
+Apply [classification](DATA_CLASSIFICATION.md), [access](ACCESS_CONTROL_POLICY.md), [vendor](VENDOR_MANAGEMENT.md) and [incident](INCIDENT_RESPONSE_PLAN.md) policies. Review exceptions with owner, reason, expiry and compensating controls. Review policy at least annually and after incidents or material legal/system changes. Store approvals and workforce acknowledgements privately. Map controls to [OWASP ASVS](https://github.com/OWASP/ASVS) and applicable law; no certification is implied.

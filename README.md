@@ -1,70 +1,78 @@
-# Everyday Dental — synthetic portfolio demo
+# Everyday Dental
 
-A bilingual React dental-practice presentation with a working **synthetic patient journey**, privacy disclosures, explicit security boundaries and a staged capacity plan.
+A bilingual English/Bangla dental-clinic website and interactive synthetic patient journey built with React and Vite. This repository includes frontend source, preserved Supabase clinical prototypes, database migrations, automated checks and a staged production roadmap.
 
-**Public demo:** https://dental.zahidul-islam.com
-**Explore:** `/experience` · **Privacy and engineering:** `/trust`
+[Public demo](https://dental.zahidul-islam.com) · [Documentation](docs/README.md) · [Frontend](src/README.md) · [Backend](supabase/README.md) · [Roadmap](ROADMAP.md)
 
-No real patient intake, login, payment, email or SMS is enabled in the public demo. Sample records and changes exist only in browser memory. The role selector illustrates policy; it is not production authentication. Clinic profiles, offers, reviews and outcomes are fictional demonstration content.
+## Explore the project
 
-## What to review
+Browse clinic services, prices and articles, then open **/experience** for sample appointment cancellation, consent withdrawal, role denial, held erasure and FHIR-shaped export. **/trust** explains privacy and security boundaries. People, testimonials and outcomes are fictional demonstration content.
 
-- Sample cancellation, optional sharing, role denial, cross-patient policy, legal hold/erasure and FHIR-shaped export.
-- First-party media, strict CSP, read-only intake previews and no persistent patient storage.
-- Non-root static container, read-only filesystem, dropped capabilities, resource limits and loopback binding.
-- Automated policy/configuration tests, strict checks on the new policy boundary, lint, dependency audit and browser/accessibility checks.
-- [Verification](docs/VERIFICATION.md), [legal research](docs/LEGAL-RESEARCH.md), [threat model](docs/THREAT-MODEL.md), [scaling design](docs/SCALABILITY.md), [operations](docs/OPERATIONS.md) and [clinical release blockers](docs/CLINICAL-RELEASE.md).
+| Area | Current release | Future milestone |
+|---|---|---|
+| Website | Responsive SPA, bilingual presentation and local media | Broader accessibility and performance qualification |
+| Patient journey | Fixed synthetic records in browser memory | Authenticated, tenant-scoped clinical workflows |
+| Backend | 11 guarded Edge Function prototypes | Repair and verify clinical release gates |
+| Database | 11 historical migrations | Tested clean install, upgrade, RLS and recovery |
+| Capacity | Workload calculator and bounded local test | 10k → 100k → 1M+ concurrent-user qualification |
+| Reliability | Proposed 99% availability objective | Independent monitoring, measured recovery and redundancy |
 
-## Capacity and compliance claims
-
-10,000–1,000,000 simultaneous users and 99% availability are **planning targets**, not measured capacity or an SLA. The plan separates public readers from clinical transactions, models cache misses and defines staged measurement gates. A single shared origin is not high availability. Free tools and a clean codebase do not eliminate infrastructure or staffing costs at scale.
-
-No HIPAA/GDPR/SOC 2 certification or complete WCAG conformance is claimed. The legal report distinguishes applicable controls from contracts, organizational duties and jurisdiction-specific launch decisions.
+Real intake, clinical login, payment, email and SMS are disabled. Browser role selection illustrates policy; it does not authenticate users. [Clinical activation](docs/CLINICAL-RELEASE.md) is a separate engineering milestone.
 
 ## Run locally
 
-Use Node 24+ with the lockfile:
+Use Node.js 24+ and the committed lockfile. No cloud account or clinical credentials are required.
 
 ```bash
 npm ci
 npm run dev
 ```
 
-Copy `.env.example` only when changing the public origin. The release accepts synthetic mode only; old provider variables cannot activate clinical services.
+Vite prints the development URL; the configured default is http://localhost:3000. Optional public settings are in [.env.example](.env.example) and [configuration](docs/CONFIGURATION.md). VITE_ settings are public browser values, never secrets.
 
 ```bash
 npm run check
 npm audit
 npm run preview
-# In another terminal:
+# Keep preview running; use another terminal:
 npm run test:browser
-node scripts/load-local.mjs
+node scripts/security-check.mjs
 node scripts/capacity.mjs
-node scripts/build-deploy.mjs
+node scripts/load-local.mjs
 ```
 
-Install Playwright Chromium with `npx playwright install chromium` when the browser is absent. Browser checks target localhost by default; `TEST_BASE_URL` can point the same suite at an authorized deployment. The load script refuses non-loopback targets.
+Install Chromium when needed with `npx playwright install chromium`. Browser tests default to http://127.0.0.1:4173; the load script accepts loopback only. See [testing](docs/TESTING.md) for scope and limits.
 
-## Structure and configuration
+## Architecture
 
-| Location | Responsibility |
+```mermaid
+flowchart LR
+    Browser[Visitor browser] --> Edge[HTTPS gateway / CDN]
+    Edge --> Static[Static application and media]
+    Static --> Demo[In-memory synthetic journey]
+    Backend[Clinical prototypes] --> Guard[Unconditional 503 guard]
+```
+
+The frontend has no active clinical client. [Architecture](docs/ARCHITECTURE.md) describes the proposed authenticated API, tenant boundaries, database and queue design.
+
+## Documentation
+
+| Need | Guides |
 |---|---|
-| `src/config/runtime.js` | Validated public runtime and synthetic-only boundary |
-| `src/data/` | Maintained sample/privacy/media data and existing product content |
-| `src/lib/demo-policy.js` | Pure sample access and state transitions |
-| `src/pages/DemoPage.jsx` | Interactive synthetic patient journey |
-| `src/pages/TrustPage.jsx` | One privacy/security disclosure surface |
-| `public/_headers` | Canonical browser security header policy |
-| `deploy/settings.json` | Pinned image, hostname, ports and resource limits |
-| `scripts/build-deploy.mjs` | Generated nginx, Compose and gateway configuration |
-| `config/tooling.json` | Local test/load/probe assumptions |
-| `tests/automated/`, `tests/browser/` | Committed automated regression suites |
-| `supabase/` | Preserved clinical prototypes and release guard; see blocker register |
+| Develop | [Frontend](src/README.md), [backend](supabase/README.md), [configuration](docs/CONFIGURATION.md) |
+| Understand contracts | [Architecture](docs/ARCHITECTURE.md), [API](docs/API.md), [migrations](supabase/migrations/README.md) |
+| Plan growth | [Scalability](docs/SCALABILITY.md), [capacity qualification](docs/CAPACITY-PLAN.md), [roadmap](ROADMAP.md) |
+| Operate | [Reliability](docs/RELIABILITY.md), [operations](docs/OPERATIONS.md), [continuity](docs/policies/BUSINESS_CONTINUITY_PLAN.md) |
+| Assess risk | [Security](SECURITY.md), [threat model](docs/THREAT-MODEL.md), [US/EU legal research](docs/LEGAL-RESEARCH.md), [Bangladesh](docs/LEGAL-BANGLADESH.md), [governance](docs/GOVERNANCE.md) |
+| Review evidence | [Verification](docs/VERIFICATION.md), [testing](docs/TESTING.md), [clinical gates](docs/CLINICAL-RELEASE.md) |
+| Contribute or reuse | [Contributing](CONTRIBUTING.md), [support](SUPPORT.md), [licensing](docs/LICENSING.md), [media sources](docs/MEDIA-SOURCES.md) |
 
-Original clinical prototypes include 11 migrations and 11 Edge Functions for intake, roles, encrypted fields, FHIR, auditing, retention and incidents. They contain unresolved cross-module defects and are **not approved for clinical use**. The local and deployed function sources block their execution; 11/11 HTTP guard checks and 16/16 source hashes were verified. Existing database records were preserved; no migrations were applied.
+## Future scale and availability
 
-The historical `compliance/` scanner detects source patterns. Its percentage is not a security, legal or runtime certification. Use the release evidence instead. Private credentials, dossier and recovery checkpoints are Git-ignored. Independent review was explicitly deferred by the owner to a separate session.
+The roadmap targets **1M+ simultaneous users** using defined workloads, separate public/clinical capacity models, regional delivery, bounded database connections, asynchronous work and staged failure tests. The **99% availability objective** uses a rolling 30-day window. Stronger future objectives depend on measured readiness. Plans define assumptions, proposed thresholds, costs and acceptance evidence.
 
-## Release discipline
+## Publication and release
 
-Build locally, snapshot live state, verify drift, deploy a versioned allowlisted artifact, test the real public flow, and prove local/live hashes. Preserve a tested off-server recovery archive. Do not run migrations, activate billing, send messages or enable real payments as part of a static release. CI is manual-only to avoid automatically consuming an unverified private-repository Actions budget.
+Frontend and backend source are versioned together. GitHub publication, application deployment, database migrations and clinical activation are separate steps. CI is manual-only; verify the Actions allowance before dispatching hosted jobs. Private credentials and recovery artifacts stay excluded.
+
+See [release notes](CHANGELOG.md). No project-wide open-source license has been selected; [licensing](docs/LICENSING.md) explains reuse and third-party rights.

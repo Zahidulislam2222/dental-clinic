@@ -10,3 +10,4 @@
 | Smooth-scroll cleanup removed a different callback than the registered one | Lifecycle review and repeated-navigation testing | Exact callback cleanup; browser navigation checks |
 
 | Asset cache policy overridden by nginx extension regex | Public HTTP cache-header check | Removed redundant regex; public checks assert immutable headers on actual build assets |
+| Legacy policy/BAA documents asserted enabled backups, completed compliance and vendor arrangements without evidence | Whole-document consistency review before publication | Reconciled policies as proposed templates; added documentation publication review and reusable local link/inventory checks |

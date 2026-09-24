@@ -1,5 +1,7 @@
 # Capacity and availability design
 
+Related plans: [1M+ capacity qualification](CAPACITY-PLAN.md), [reliability objectives](RELIABILITY.md) and [roadmap](../ROADMAP.md). They define proposed test thresholds, clinical workload arithmetic, headroom, failure drills, ownership and cost review. This document retains the foundational architecture and calculator assumptions.
+
 ## Current release
 
 The public release serves static HTML, JavaScript, CSS and images. The sample patient journey executes in browser memory and causes no clinical database requests. This keeps a demo independent of a paused database and avoids maintaining patient data merely to demonstrate design. It does not prove the original clinical prototype is scalable.

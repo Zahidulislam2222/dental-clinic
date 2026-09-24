@@ -63,3 +63,11 @@ supabase/.temp/
 deploy/generated/
 playwright-report/
 test-results/
+
+# Private project documents and credential material
+my-project-view/
+.credentials/
+.env.*
+!.env.example
+*.pem
+*.key
