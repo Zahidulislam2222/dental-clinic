@@ -1072,7 +1072,6 @@ const AppointmentPage = () => {
         <title>{t({ en: 'Book Appointment | Everyday Dental Surgery', bn: 'অ্যাপয়েন্টমেন্ট বুক করুন | এভরিডে ডেন্টাল সার্জারি' })}</title>
         <meta name="description" content="Book your dental appointment online at Everyday Dental Surgery, Dhanmondi, Dhaka. Pre-payment, pay-at-clinic, or consultation-first booking. bKash, Nagad, Card accepted." />
         <meta property="og:title" content="Book Appointment | Everyday Dental Surgery" />
-        <link rel="canonical" href="https://example-dental.com/appointment" />
       </Helmet>
 
       {/* Hero */}

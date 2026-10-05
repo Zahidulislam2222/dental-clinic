@@ -15,10 +15,11 @@ import { createLogger } from '../_shared/logger.ts';
 
 const log = createLogger('stripe-payment');
 
-const ALLOWED_ORIGIN = Deno.env.get('ALLOWED_ORIGIN') || 'https://dental-clinic-anq.pages.dev';
+// No fallback origin: without ALLOWED_ORIGIN the header is omitted and browsers block cross-origin calls.
+const ALLOWED_ORIGIN = Deno.env.get('ALLOWED_ORIGIN');
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+const corsHeaders: Record<string, string> = {
+  ...(ALLOWED_ORIGIN ? { 'Access-Control-Allow-Origin': ALLOWED_ORIGIN } : {}),
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };

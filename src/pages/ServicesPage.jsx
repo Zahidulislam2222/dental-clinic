@@ -172,7 +172,6 @@ const ServicesPage = () => {
           property="og:description"
           content="Comprehensive dental services including implants, braces, cosmetic dentistry, oral surgery, and more."
         />
-        <link rel="canonical" href="https://example-dental.com/services" />
       </Helmet>
 
       {/* ========================= HERO BANNER ========================== */}

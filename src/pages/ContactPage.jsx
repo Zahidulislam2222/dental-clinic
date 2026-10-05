@@ -198,7 +198,6 @@ const ContactPage = () => {
           property="og:description"
           content="Contact Everyday Dental Surgery for appointments, inquiries, and directions. Located at Dhanmondi, Dhaka."
         />
-        <link rel="canonical" href="https://example-dental.com/contact" />
       </Helmet>
 
       {/* ============================== HERO ============================== */}

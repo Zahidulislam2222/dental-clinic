@@ -695,7 +695,6 @@ const ServiceDetailPage = () => {
         />
         <meta property="og:title" content={`${t(service.title)} | Everyday Dental Surgery`} />
         <meta property="og:description" content={t(service.desc)} />
-        <link rel="canonical" href={`https://example-dental.com/services/${service.slug}`} />
       </Helmet>
 
       {hasFullDetail ? (

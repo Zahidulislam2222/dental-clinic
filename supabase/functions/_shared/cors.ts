@@ -4,10 +4,11 @@
  * Audit fix: SEC-CORS-001 (CRITICAL)
  */
 
-const ALLOWED_ORIGIN = Deno.env.get('ALLOWED_ORIGIN') || 'https://dental-clinic-anq.pages.dev';
+// No fallback origin: without ALLOWED_ORIGIN the header is omitted and browsers block cross-origin calls.
+const ALLOWED_ORIGIN = Deno.env.get('ALLOWED_ORIGIN');
 
-export const corsHeaders = {
-  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+export const corsHeaders: Record<string, string> = {
+  ...(ALLOWED_ORIGIN ? { 'Access-Control-Allow-Origin': ALLOWED_ORIGIN } : {}),
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, accept',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
 };

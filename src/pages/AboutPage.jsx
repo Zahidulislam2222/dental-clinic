@@ -184,7 +184,6 @@ const AboutPage = () => {
           property="og:description"
           content="Senior Dental Surgeon specializing in Oral & Maxillofacial Surgery, Implant Dentistry, and Painless Procedures."
         />
-        <link rel="canonical" href="https://example-dental.com/about" />
       </Helmet>
 
       {/* ============================== HERO ============================== */}

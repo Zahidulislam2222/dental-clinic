@@ -1,2 +1,7 @@
+# LinkedIn may fetch the page for link previews; search engines stay blocked.
+# The page also sends noindex (meta tag and X-Robots-Tag header).
+User-agent: LinkedInBot
+Allow: /
+
 User-agent: *
 Disallow: /

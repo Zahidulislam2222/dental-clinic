@@ -148,7 +148,6 @@ const GalleryPage = () => {
           content="Explore our modern dental clinic, treatment rooms, advanced equipment, and team at Everyday Dental Surgery, Rangpur."
         />
         <meta property="og:title" content="Clinic Gallery | Everyday Dental Surgery" />
-        <link rel="canonical" href="https://example-dental.com/gallery" />
       </Helmet>
 
       {/* ========================= HERO ================================= */}

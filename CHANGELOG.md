@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-10-05 — Canonical links and retired host
+
+- Each page's canonical link now comes from `VITE_SITE_URL` in one place (`src/App.jsx`); page-level canonicals pointing at the retired pages.dev site or a placeholder domain were removed.
+- Supabase CORS helpers no longer fall back to the retired pages.dev origin; without `ALLOWED_ORIGIN` they send no allow-origin header.
+- Added `tests/automated/site-origin.test.js`. Deployed as release 20261005-canonical-origin. Supabase functions not redeployed (all still return the 503 release boundary before CORS runs).
+
+## 2026-10-05 — LinkedIn link preview
+
+- `robots.txt` now allows LinkedInBot so the live demo can show a link preview; every other crawler is still disallowed and the page keeps its noindex meta tag and header.
+- Added `tests/automated/robots.test.js` to pin the crawler rules and both noindex layers.
+- Deployed as release 20261005-linkedin-robots on the existing server container; only `robots.txt` changed.
+
 ## 2026-09-24 — GitHub documentation publication
 
 - Added frontend, backend, function, migration and documentation guides.

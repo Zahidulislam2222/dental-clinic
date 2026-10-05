@@ -872,7 +872,6 @@ const RegisterPage = () => {
           property="og:description"
           content="Complete your patient registration online for Everyday Dental Surgery, Dhanmondi, Dhaka."
         />
-        <link rel="canonical" href="https://example-dental.com/register" />
       </Helmet>
 
       {/* ============================== HERO ============================== */}

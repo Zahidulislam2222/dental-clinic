@@ -139,7 +139,6 @@ const BlogPage = () => {
           property="og:description"
           content="Read expert dental health articles on root canals, implants, orthodontics, oral hygiene, and more."
         />
-        <link rel="canonical" href="https://example-dental.com/blog" />
       </Helmet>
 
       {/* ========================= HERO BANNER ========================== */}

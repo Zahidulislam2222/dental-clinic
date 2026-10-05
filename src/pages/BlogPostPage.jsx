@@ -462,7 +462,6 @@ const BlogPostPage = () => {
           content={t(article.content).replace(/<[^>]+>/g, '').slice(0, 160)}
         />
         <meta property="og:title" content={`${t(article.title)} | Everyday Dental Surgery`} />
-        <link rel="canonical" href={`https://example-dental.com/blog/${article.slug}`} />
       </Helmet>
 
       {/* ========================= HERO ================================= */}

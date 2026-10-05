@@ -260,7 +260,6 @@ const HomePage = () => {
       <Helmet>
         <title>Everyday Dental Surgery & Implant Center | Dr. Arman Hossain — Dhaka</title>
         <meta name="description" content="Dhaka's most trusted dental surgeon. 15+ years of painless dental care — implants, root canals, braces, whitening & more. Book your appointment today." />
-        <link rel="canonical" href="https://dental-clinic-anq.pages.dev/" />
         <meta property="og:title" content="Everyday Dental Surgery & Implant Center | Dr. Arman Hossain" />
         <meta property="og:description" content="Dhaka's most trusted dental surgeon. 15+ years of painless dental care — implants, root canals, braces, whitening & more." />
         <meta property="og:type" content="website" />
