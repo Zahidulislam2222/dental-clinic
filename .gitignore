@@ -71,3 +71,11 @@ my-project-view/
 !.env.example
 *.pem
 *.key
+
+# GHL campaign demo build plan (private working plan)
+GHL-CAMPAIGN-DEMO-PLAN.md
+ghl-demo/
+# Private agent context (Rule 25/21): rules mirror, tracker, study notes
+AGENTS.md
+TASKS.md
+study/
