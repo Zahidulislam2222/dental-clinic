@@ -1,42 +1,43 @@
-# Frontend guide
+# Frontend
 
-React 18 SPA using Vite, Tailwind CSS, React Router, GSAP and Framer Motion. Run commands from the repository root; [package.json](../package.json) and its lockfile define the toolchain.
+A React 18 single-page app built with Vite, Tailwind CSS, React Router, GSAP and Framer Motion. Run all commands from the repository root; see the [development guide](../docs/DEVELOPMENT.md).
 
-```bash
-npm ci
-npm run dev
-npm run check
-npm run preview
-```
+## Layout
 
-Development defaults to port 3000 and preview to 4173, owned by [tooling settings](../config/tooling.json). No Supabase account is needed. See [configuration](../docs/CONFIGURATION.md).
-
-## Modules
-
-| Path | Responsibility |
+| Path | Contents |
 |---|---|
-| main.jsx / App.jsx | Providers, lazy routes, layout and animation lifecycle |
-| pages/ / components/ | Clinic presentation, synthetic workflow and preserved portal views |
-| context/ | Language and inactive clinical authentication presentation |
-| config/runtime.js | Synthetic boundary, public origin and session presentation settings |
-| config/contact.js / data/ | Maintained contact, product, privacy, media and sample content |
-| lib/demo-policy.js | Pure policy illustrations and sample transitions (file name kept for code stability) |
-| lib/supabase.js | Explicitly disabled clinical client |
-| index.css | Shared styling, keyboard focus and reduced motion |
+| `main.jsx`, `App.jsx` | Providers, lazy-loaded routes, layout, canonical link and scroll animation setup |
+| `pages/` | One component per route |
+| `components/` | Layout, UI kit (`ui/`), patient and admin portal views, auth and security components |
+| `context/` | Language provider; authentication context (inactive in this release) |
+| `config/runtime.js` | Release mode, site origin and session settings, validated at startup |
+| `config/contact.js` | Clinic contact details |
+| `data/` | Services, pricing, blog, FAQ, testimonials, media map and the sample patient record |
+| `lib/demo-policy.js` | Access rules and state transitions for the patient journey |
+| `lib/supabase.js` | Clinical client, intentionally disabled |
+| `hooks/`, `utils/` | Shared animation hooks and helpers |
+| `index.css` | Global styles, focus styles and reduced-motion rules |
 
 ## Routes
 
-| Family | Behavior |
+| Routes | Purpose |
 |---|---|
-| /, /about, /services, /services/:slug, /pricing | Clinic presentation (illustrative sample content) |
-| /blog, /blog/:slug, /faq, /gallery, /community, /conferences | Sample content |
-| /experience | Synthetic workflow and export |
-| /trust, /accessibility, /privacy-policy, /terms | Disclosure surfaces |
-| /contact, /register, /appointment | Read-only intake previews |
-| /login, /signup, /forgot-password, /reset-password | Clinical access unavailable |
-| /dashboard/*, /admin/* | Protected legacy views; no clinical session |
-| /unauthorized, unmatched paths | Denial and not-found presentation |
+| `/`, `/about`, `/services`, `/services/:slug`, `/pricing` | Clinic pages |
+| `/blog`, `/blog/:slug`, `/faq`, `/gallery`, `/community`, `/conferences` | Content pages |
+| `/experience` | Interactive patient journey on a sample record |
+| `/trust`, `/accessibility`, `/privacy-policy`, `/terms` | Privacy, engineering and legal pages |
+| `/contact`, `/register`, `/appointment` | Form previews (submission disabled) |
+| `/login`, `/signup`, `/forgot-password`, `/reset-password` | Sign-in pages (unavailable in this release) |
+| `/dashboard/*`, `/admin/*` | Patient and admin portal views, behind a protected route (always redirects to `/login` in this release) |
+| `/unauthorized`, `*` | Access-denied and not-found pages |
 
-Sample patient state stays in browser memory. Language preference is separate from patient state. Never place actual patient data in fixtures, browser storage, logs or issue screenshots. Browser-selected roles illustrate policy only; future authorization belongs on the server and in database policies.
+## Conventions
 
-Preserve first-party media, [security headers](../public/_headers), disabled intake, keyboard focus and reduced motion. Keep content in maintained data files and environment settings in central configuration. See [testing](../docs/TESTING.md); the strict type check covers selected modules, not all JSX. Broader accessibility, localization, bundle budgets and full typing are [roadmap](../ROADMAP.md) work.
+- **Bilingual text.** Every string is an `{ en, bn }` object rendered with `useLanguage().t()`. Leave room for longer Bangla text.
+- **New pages** go in `pages/`, are lazy-loaded in `App.jsx`, set a `<Helmet>` title and description, and wrap content in `PageTransition`. The canonical link is set only in `App.jsx`.
+- **Content** lives in `data/` and `config/`, not in components.
+- **Media** is stored under `public/`; no hotlinked images.
+- **Accessibility.** Keep visible keyboard focus, labelled controls and `prefers-reduced-motion` support. Check new color pairs against WCAG 2.2 AA.
+- **Patient data.** The sample record lives in memory only. Never put real personal data in fixtures, browser storage, logs or screenshots. The role selector is a simulation; real authorization belongs on the server.
+
+Styling rules and components are described in the [design system](../DESIGN.md).

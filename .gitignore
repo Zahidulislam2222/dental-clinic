@@ -52,7 +52,7 @@ AUDIT_REPORT.docx
 *.pdf
 
 # Signed BAA PDFs (sensitive legal documents — do NOT commit)
-docs/baa/*.pdf
+docs/templates/*.pdf
 
 # Private recovery and operational evidence
 CREDENTIALS.md

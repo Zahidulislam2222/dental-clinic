@@ -117,7 +117,7 @@
   "soc2": {
     "CC6-access": {
       "title": "Logical Access Controls",
-      "implementation": "supabase/migrations/003_rbac_policies.sql, docs/policies/ACCESS_CONTROL_POLICY.md",
+      "implementation": "supabase/migrations/003_rbac_policies.sql, docs/templates/OPERATING-POLICIES.md",
       "checks": ["SOC2-MFA-001", "SOC2-ACCESS-001"]
     },
     "CC7-operations": {
@@ -132,7 +132,7 @@
     },
     "vendor-management": {
       "title": "Vendor BAA Documentation",
-      "implementation": "docs/baa/",
+      "implementation": "docs/templates/BAA.md",
       "checks": ["SOC2-BAA-001"]
     },
     "privacy": {

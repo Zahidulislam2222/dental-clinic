@@ -1,17 +1,32 @@
 # Security policy
 
-## Supported scope
+## Scope
 
-The maintained release is a synthetic portfolio application. The Supabase clinical prototypes are guarded and not approved for real patient use. See [threat model](docs/THREAT-MODEL.md), [clinical blockers](docs/CLINICAL-RELEASE.md) and [verification](docs/VERIFICATION.md).
+This policy covers the public website, its deployment configuration and the clinical backend prototype in `supabase/`. The clinical backend is disabled and has not been approved for real patient data; its known issues are listed in [Clinical release](docs/CLINICAL-RELEASE.md#engineering-blockers).
 
 ## Reporting a vulnerability
 
-Do not put tokens, patient data, exploit payloads containing personal information, or private infrastructure details in public issues. If GitHub shows **Security → Report a vulnerability**, use that private channel. Its availability must be verified in the repository; this document does not claim it is enabled. Otherwise open a minimal issue requesting a private contact route without disclosing exploit details, and wait for a maintainer to supply one.
+Please report vulnerabilities privately, not in a public issue.
 
-Provide affected commit, component, impact and a minimal synthetic reproduction privately. Test only your own local copy or an explicitly authorized environment. There is no bug bounty or guaranteed response SLA.
+1. If the repository shows **Security → Report a vulnerability**, use it.
+2. Otherwise, open an issue asking for a private contact, without any technical details, and wait for a maintainer to reply.
 
-## Engineering requirements
+Include the affected commit or URL, the component, the impact and minimal reproduction steps. Never include real personal data, tokens or credentials. Test only against your own local copy.
 
-Use least privilege, verified server identity, subject/tenant authorization, input schemas, bounded requests and protected audit trails. Never expose service credentials to the browser. Keep secrets in approved stores and excluded recovery files. Review dependency changes and run history/tree/staged secret scans before publication. Never bypass scanner findings or the clinical release guard.
+This is a portfolio project maintained by one person: there is no bug bounty and no guaranteed response time, but every report is read.
 
-Future clinical controls should be mapped to [OWASP ASVS](https://github.com/OWASP/ASVS), with implementation evidence and negative tests. A framework checklist is not a certification. Incident ownership, notification and recovery are described in [governance](docs/GOVERNANCE.md) and [incident response](docs/policies/INCIDENT_RESPONSE_PLAN.md).
+## In place today
+
+- Strict Content Security Policy and hardened HTTP headers (`public/_headers`).
+- No service credentials in the browser; secrets kept out of Git.
+- Secret scanning (gitleaks), static analysis (semgrep) and dependency audits before every publication.
+- A hardened, non-root, read-only container for the public site.
+- A release guard that keeps every clinical endpoint disabled.
+
+## Required before any clinical release
+
+- Server-side identity, MFA and authorization on every request, with tenant and patient scope.
+- Validated input, bounded requests and atomic rate limits.
+- Durable, protected audit logging.
+
+Clinical controls will be mapped to the [OWASP Application Security Verification Standard](https://github.com/OWASP/ASVS). See the [threat model](docs/THREAT-MODEL.md) for trust boundaries and controls, and the [incident response template](docs/templates/OPERATING-POLICIES.md#6-incident-response).

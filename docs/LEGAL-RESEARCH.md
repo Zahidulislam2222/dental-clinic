@@ -1,12 +1,12 @@
-# US and EU privacy, health-data and accessibility readiness
+# US and EU legal research
 
-Publication review: 2026-09-24. Read this alongside the detailed [Bangladesh launch review](LEGAL-BANGLADESH.md) and [governance checklist](GOVERNANCE.md). The three markets require separate applicability decisions. Policies and BAA material are draft templates, not executed operating commitments.
+Research into the US and EU laws that would apply if Everyday Dental became a real clinical service, and how the project responds to each. Sources were checked against primary references in September 2026. This is engineering research to guide design, not legal advice; a real launch needs review by qualified counsel for the specific jurisdiction. Bangladesh is covered in [Bangladesh legal research](LEGAL-BANGLADESH.md).
 
-## Executive assessment
+## Summary
 
-Everyday Dental's public release runs on sample records. Its useful professional claim is that it implements selected privacy and security decisions, documents their limits, and provides a reviewable route to a production system. It is not a certified clinical platform. The sample patient journey uses fixed synthetic records in browser memory. Public intake is disabled, and the shipped frontend cannot connect to the historical clinical backend through environment variables.
-
-This distinction is important commercially. A client can examine the design, tests and release evidence without trusting invented compliance badges. The architecture supports a future separated clinical service, but deploying that service is a new engineering and governance milestone. It is not a configuration toggle. Findings below distinguish legal requirements, applicability questions and project recommendations. Research was checked against primary sources in September 2026; jurisdiction and product changes require reassessment.
+- The public site runs on sample data in the browser. It collects no patient information, uses no tracking and has no connection to the clinical backend. The obligations below become relevant once real patient data is processed.
+- A real service would bring in HIPAA (if the operator is a US covered entity or business associate), state laws such as California's CCPA and CMIA and Washington's My Health My Data Act, GDPR and ePrivacy for EU patients, and accessibility law in both regions.
+- The project's position is to implement the privacy and security controls it can demonstrate, document their limits, and make no certification claims ("HIPAA compliant", "SOC 2 audited") without independent evidence.
 
 ## Scope and applicability
 
@@ -30,7 +30,7 @@ HIPAA applies to covered entities and business associates, not automatically to 
 
 **Project decision:** do not accept real patient records on the public release. Do not describe HTTPS, encryption libraries or a policy folder as proof of HIPAA compliance. A real engagement should maintain a vendor matrix recording service, purpose, data classes, BAA status, subcontractors, access roles and termination/export process.
 
-Supabase’s documented HIPAA configuration requires a signed BAA and its HIPAA add-on for PHI, with designated high-compliance projects. Its shared-responsibility documentation identifies the required plan level. The old repository instruction that an ordinary Pro subscription alone enables HIPAA use was therefore unsuitable. No paid plan or add-on is activated by this work.[2]
+Supabase requires a signed BAA and its HIPAA add-on, on a qualifying plan, before a project may hold PHI; an ordinary paid subscription is not enough. This project has no such agreement or add-on.[2]
 
 ### Security Rule and evidence
 
@@ -123,13 +123,12 @@ The current release makes no clinical AI decision, diagnosis, prescription or me
 | Incidents | Documented response design | Named responders, tested deadlines, evidence handling and exercises |
 | Availability | Stated target and repeatable probes | Sustained measurements and funded redundancy for stronger guarantees |
 
-## Operating model and client acceptance
+## Operating model and acceptance
 
-The operator should own legal applicability, approved vendors, retention decisions and notices. Engineering owns the implemented controls and reproducible evidence. A privacy/security lead owns risk review and incident coordination. These responsibilities need named people in a real engagement; a repository cannot appoint an absent compliance officer.
+The operator should own legal applicability, approved vendors, retention decisions and notices. Engineering owns the implemented controls and reproducible evidence. A privacy/security lead owns risk review and incident coordination. These responsibilities need named people in a real engagement; the repository cannot fill these roles.
 
 A client acceptance review should walk through one normal and one denied action per role, one withdrawal, one export, one hold/deletion request and one restore. Review actual network requests and logs. Verify that a changed role takes effect immediately and that failure of a dependency does not open access. Budget and contracts must be approved before sending real data to any new service.
 
-Useful commercial wording is: “Dental-workflow platform running on sample records, with privacy-conscious delivery, tested sample access policies, documented production gates and a staged scaling design.” Avoid “HIPAA certified,” “GDPR compliant worldwide,” “SOC 2 audited,” “one million concurrent users supported,” or “guaranteed uptime” without the corresponding independent and operational evidence.
 
 ## Launch decisions still required for US and EU
 

@@ -1,33 +1,57 @@
 # Changelog
 
-## 2026-11-25 — Patient messaging service and documentation refresh
+Notable changes to this project. Releases are identified by date.
 
-- Added [patient messaging](docs/PATIENT-MESSAGING.md): campaigns, current release, safety controls, security, recovery, verification, scaling path and pre-launch legal gates for the HighLevel campaign service (live release 20261125-05 on sample records; sending off).
-- Messaging service fixes in that release: enrolments go only into published workflows (a Draft workflow accepted enrolments and enrolled nobody), and contacts are created or updated by id, so the service no longer merges patients who share a phone or email.
-- README, roadmap, reliability, architecture and legal research now cover the messaging service; wording across the public documents describes the release scope directly. No website code changed.
+## 2026-11-26
 
-## 2026-10-05 — Canonical links and retired host
+### Changed
 
-- Each page's canonical link now comes from `VITE_SITE_URL` in one place (`src/App.jsx`); page-level canonicals pointing at the retired pages.dev site or a placeholder domain were removed.
-- Supabase CORS helpers no longer fall back to the retired pages.dev origin; without `ALLOWED_ORIGIN` they send no allow-origin header.
-- Added `tests/automated/site-origin.test.js`. Deployed as release 20261005-canonical-origin. Supabase functions not redeployed (all still return the 503 release boundary before CORS runs).
+- Rewrote and consolidated the documentation: a new README with screenshots, a development guide replacing the separate configuration and testing pages, operations and reliability merged into one guide, scalability and capacity planning merged, and the ten policy drafts and three BAA files combined into two templates under `docs/templates/`.
+- Merged the governance checklist, security plan and compliance progress page into [Clinical release](docs/CLINICAL-RELEASE.md).
 
-## 2026-10-05 — LinkedIn link preview
+## 2026-11-25
 
-- `robots.txt` now allows LinkedInBot so the live site can show a link preview; every other crawler is still disallowed and the page keeps its noindex meta tag and header.
-- Added `tests/automated/robots.test.js` to pin the crawler rules and both noindex layers.
-- Deployed as release 20261005-linkedin-robots on the existing server container; only `robots.txt` changed.
+### Added
 
-## 2026-09-24 — GitHub documentation publication
+- [Patient messaging](docs/PATIENT-MESSAGING.md) documentation for the HighLevel campaign service: campaigns, safety controls, security, recovery, verification, scaling and pre-launch legal requirements.
 
-- Added frontend, backend, function, migration and documentation guides.
-- Defined an engineering roadmap for 1M+ concurrent users, capacity qualification, 99% availability and future reliability targets.
-- Expanded US/EU/Bangladesh legal launch planning, governance, security disclosure, configuration and contribution guidance.
-- Reconciled legacy policy/compliance wording with current synthetic behavior and future clinical gates.
-- Published the existing frontend hardening and guarded backend source to the default branch with the documentation refresh; see verification evidence for publication status.
+### Fixed (messaging service)
 
-This documentation change does not activate clinical services, run migrations or deploy the live website.
+- Enrolments now go only into published workflows. HighLevel accepted enrolments into Draft workflows but enrolled nobody.
+- Contacts are created or updated by ID, so patients who share a phone number or email are no longer merged.
 
-## 2026-09-15 — Synthetic release foundation
+## 2026-10-05
 
-Commit 1e0d773 introduced the in-memory patient journey, disabled clinical frontend client, eleven backend guards, local media, tests and release/scaling evidence. Earlier clinical modules remain preserved behind release gates. Historical measurements are recorded in [verification](docs/VERIFICATION.md).
+### Changed
+
+- The canonical link is set in one place (`src/App.jsx`) from `VITE_SITE_URL`. Page-level canonicals pointing at a retired host were removed.
+- Supabase CORS helpers no longer fall back to the retired host; without `ALLOWED_ORIGIN` they send no allow-origin header.
+- `robots.txt` allows LinkedInBot so shared links show a preview. All other crawlers remain disallowed, and pages stay `noindex`.
+
+### Added
+
+- Regression tests for the canonical origin (`tests/automated/site-origin.test.js`) and crawler rules (`tests/automated/robots.test.js`).
+
+## 2026-09-24
+
+### Added
+
+- Frontend, backend, Edge Function and migration guides.
+- Roadmap, capacity plan and availability objectives.
+- US, EU and Bangladesh legal research, security policy and contribution guide.
+
+### Changed
+
+- Replaced older compliance claims in policy documents with drafts clearly marked as not yet adopted.
+
+## 2026-09-15
+
+### Added
+
+- Interactive patient journey on sample data, in browser memory.
+- Release guard on all 11 Supabase Edge Functions.
+- Self-hosted media, automated tests, deployment tooling and release verification.
+
+### Changed
+
+- Disabled the clinical frontend client and all real intake forms.

@@ -1,9 +1,15 @@
-# Historical source-pattern scanner
+# Source pattern scanner
 
-This directory contains a JavaScript pattern scanner, control registry, historical JSON report and [progress summary](PROGRESS.md). Its output counts source patterns; it cannot determine legal compliance, clinical safety, deployed control behavior or security certification.
+`audit.js` scans the source for code patterns associated with HIPAA, FHIR, SOC 2 and general security controls, and writes a report. `registry.json` is a separate reference map from each control to the files that implement it.
 
-The committed audit-report.json is dated 2026-04-03. Its complianceScore field is a historical schema label, not a current compliance percentage. It predates the synthetic release and must not appear as a badge or production acceptance result.
+```bash
+npm run audit:compliance          # summary
+npm run audit:json                # JSON output
+npm run audit:security            # one category; also audit:hipaa, audit:fhir, audit:soc2
+```
 
-Commands in package.json include audit:compliance, audit:json, audit:ci and category filters. Inspect audit.js before running report-writing modes so historical evidence is not overwritten accidentally. Prefer current [verification](../docs/VERIFICATION.md), real backend tests and [clinical gates](../docs/CLINICAL-RELEASE.md) for decisions.
+**What the score means.** It counts matching code patterns. It does not measure legal compliance, security, clinical safety or runtime behavior, and it is not a certification. A passing pattern never closes a [clinical release](../docs/CLINICAL-RELEASE.md) blocker.
 
-A future replacement should map each control to implementation, test, operator evidence, applicability, owner and review date; retain historical results with explicit scope. Passing a regex check must never close an authorization or legal blocker.
+`audit-report.json` is a historical report from April 2026, kept for reference; its `complianceScore` field is a pattern-match ratio, and it cites policy file paths from before the documentation was reorganized. Every run overwrites this file, so restore it afterwards with `git checkout -- compliance/audit-report.json` unless you mean to replace it.
+
+A future version should map each control to its implementation, test, owner and review date.

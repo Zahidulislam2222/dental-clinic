@@ -1,28 +1,31 @@
-# Backend guide
+# Clinical backend (prototype)
 
-This directory preserves **11 Edge Function prototypes and 11 SQL migrations**. Every function returns the shared release boundary before business logic. It is a foundation for future clinical implementation.
+This directory contains the prototype clinical backend: **11 Supabase Edge Functions** (Deno, TypeScript) and **11 PostgreSQL migrations** covering intake, roles and row-level security, encryption, audit logging, consent, FHIR resources, retention and breach detection.
 
-## Current contract
+The backend is **disabled**. Every function returns `503 Service Unavailable` from a shared guard, [`functions/_shared/release-boundary.ts`](functions/_shared/release-boundary.ts), before running any logic. No environment variable can turn it on, and the frontend has no client configured for it.
 
-[The guard](functions/_shared/release-boundary.ts) returns HTTP 503 with a fixed JSON message and no-store caching. No environment flag enables execution. The frontend has no configured clinical client. See [API contracts](../docs/API.md).
-
-| Directory | Purpose |
+| Directory | Contents |
 |---|---|
-| [functions](functions/README.md) | Eleven Deno/TypeScript entrypoints and shared helpers |
-| [migrations](migrations/README.md) | Eleven ordered historical schema migrations |
+| [`functions/`](functions/README.md) | Edge Function entry points and shared helpers |
+| [`migrations/`](migrations/README.md) | Ordered SQL migrations |
 
 ## Local development
 
-The root `npm ci` installs the project CLI dependency. Synthetic frontend development requires neither Docker nor a cloud project. Root `npm test` checks guard behavior/source coverage; `npm run typecheck` covers the guard, not the entire backend.
+The public site does not need this backend, Docker or a Supabase account. `npm test` checks that every function is guarded, and `npm run typecheck` covers the guard module.
 
-A clinical workstream must establish an isolated local Supabase environment, pinned CLI configuration, synthetic fixtures and a tested migration chain. There is no committed config.toml in this snapshot, so the backend is not a one-command bootstrap. Follow [local development](https://supabase.com/docs/guides/local-development) and [database testing](https://supabase.com/docs/guides/database/testing). Do not link experiments to production or remove guards to make a test pass.
+To work on the backend itself you need an isolated local Supabase environment with a pinned CLI version and sample data. There is no `config.toml` in the repository yet, so this is not a one-command setup. Follow Supabase's guides to [local development](https://supabase.com/docs/guides/local-development) and [database testing](https://supabase.com/docs/guides/database/testing), and never link experiments to the production project.
 
-## Activation requirements
+## Enabling the backend
 
-Repair schema/encryption compatibility, table allowlists, subject/tenant ownership, privileged caller authentication, consent, atomic rate limiting, payment verification, retention, MFA and audit persistence. Establish typed server settings and safe environment examples. The authoritative [clinical blocker register](../docs/CLINICAL-RELEASE.md) also requires vendor contracts, operating ownership and recovery evidence.
+The guard is removed only after every item in [Clinical release](../docs/CLINICAL-RELEASE.md) is closed, including:
 
-Validate fresh/upgrade migrations, RLS denial, cross-tenant access, revoked roles, concurrent booking and retry behavior. Graduate through [roadmap](../ROADMAP.md) gates.
+- encrypted reads and writes aligned with the final schema;
+- fixed table and column allowlists with tenant and patient scope;
+- authenticated callers for admin, notification and scheduled functions;
+- atomic rate limiting, verified payments, consent, retention, MFA and durable audit logging;
+- one typed settings module for all provider configuration;
+- tests for clean install and upgrade, RLS denial, cross-tenant access, revoked roles, concurrent bookings and retries.
 
 ## Deployment
 
-GitHub publication does not deploy functions or execute SQL. Before deployment, snapshot and compare live code/schema, reconcile drift locally, test migrations and recovery, deploy a reviewed artifact and verify source parity. Service-role keys never belong in frontend configuration.
+Publishing to GitHub does not deploy functions or run SQL. Before a deployment, snapshot and compare the live code and schema, reconcile any differences locally, test migrations and recovery, deploy a reviewed build and confirm the deployed source matches. Service-role keys never belong in frontend configuration.

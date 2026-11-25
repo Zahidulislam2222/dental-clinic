@@ -1,15 +1,16 @@
 # Defect log
 
-| Escaped defect | Gate that should have caught it | Added or required gate |
-|---|---|---|
-| Legacy README claimed HIPAA compliance despite unverified clinical flows | Evidence review against actual implementation | Research-based scope and explicit clinical release blockers |
-| Plaintext clinical writer diverged from encryption migration | Empty/upgrade database contract tests | Required before clinical release; public clinical path disabled |
-| Clinical helper functions had insufficient caller/subject checks | Negative authorization matrix | Unconditional release guard and regression test; real clinical repair remains separate |
-| Retired storage mock could persist personal input if reused | Data-flow and storage review | Compatibility export to disabled backend plus storage regression checks |
-| Dependency graph contained published advisories | Lockfile audit on each release | Updated dependencies and mandatory audit |
-| Smooth-scroll cleanup removed a different callback than the registered one | Lifecycle review and repeated-navigation testing | Exact callback cleanup; browser navigation checks |
+Defects that reached a release or publication, the check that should have caught them, and the check added in response.
 
-| Asset cache policy overridden by nginx extension regex | Public HTTP cache-header check | Removed redundant regex; public checks assert immutable headers on actual build assets |
-| Legacy policy/BAA documents asserted enabled backups, completed compliance and vendor arrangements without evidence | Whole-document consistency review before publication | Reconciled policies as proposed templates; added documentation publication review and reusable local link/inventory checks |
-| 2026-10-05: `robots.txt` Disallow for every crawler also blocked LinkedIn link previews for the live site | Public link-preview check (LinkedIn Post Inspector) before sharing the URL | LinkedInBot allow group plus `tests/automated/robots.test.js`; noindex layers still asserted |
-| 2026-10-05: page-level canonical tags (retired pages.dev host, placeholder domain) overrode the configured canonical; CORS fell back to the retired host | Config single-owner audit (Rule 12) and a rendered-head check | `tests/automated/site-origin.test.js`; live canonical check on four routes |
+| Date | Defect | Missed check | Check added |
+|---|---|---|---|
+| 2026-09 | Original README claimed HIPAA compliance without verified clinical flows | Review of claims against the implementation | Research-based scope and a clinical release blocker list |
+| 2026-09 | Clinical writers stored plaintext while migration 010 expected encrypted fields | Clean-install and upgrade database tests | Clinical endpoints disabled; database tests required before release |
+| 2026-09 | Clinical helper functions did not check the caller or patient properly | Denial test matrix | Release guard on every endpoint, with a regression test |
+| 2026-09 | Retired storage mock could have persisted personal input if reused | Data-flow and storage review | Storage regression checks; export routed to the disabled backend |
+| 2026-09 | Dependencies had published security advisories | Lockfile audit on every release | Updated dependencies; `npm audit` required before release |
+| 2026-09 | Smooth-scroll cleanup removed a different callback than it registered | Lifecycle review and repeated-navigation tests | Exact callback cleanup; browser navigation checks |
+| 2026-09 | An nginx regex overrode the immutable cache policy for built assets | Public cache-header check | Regex removed; public checks assert immutable headers on real build assets |
+| 2026-09 | Policy and BAA documents claimed backups, compliance and vendor agreements that did not exist | Whole-document consistency review | Policies rewritten as drafts; documentation review and link checks before publication |
+| 2026-10-05 | `robots.txt` blocked LinkedIn link previews | Link-preview check before sharing the URL | LinkedInBot allowed; `tests/automated/robots.test.js` |
+| 2026-10-05 | Page-level canonical tags pointed at a retired host; CORS fell back to it | Single-owner configuration audit and rendered-head check | `tests/automated/site-origin.test.js`; live canonical check on four routes |

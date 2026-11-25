@@ -831,7 +831,7 @@ check('FHIR-MISSING-001', 'FHIR', SEVERITY.HIGH, 'Missing critical FHIR resource
 // ═══════════════════════════════════════════════════════════════════
 
 check('SOC2-MFA-001', 'SOC2', SEVERITY.HIGH, 'MFA promised in policy but not implemented', 'CC6 Logical Access', () => {
-  const policy = readFile('docs/policies/INFORMATION_SECURITY_POLICY.md') || '';
+  const policy = readFile('docs/templates/OPERATING-POLICIES.md') || '';
   const policyPromisesMFA = /MFA|multi.?factor|two.?factor|2FA/i.test(policy);
 
   // Check if MFA is actually implemented
@@ -851,14 +851,14 @@ check('SOC2-MFA-001', 'SOC2', SEVERITY.HIGH, 'MFA promised in policy but not imp
     return {
       status: STATUS.FAIL,
       evidence: 'Policy promises MFA but no MFA enrollment or verification code exists.',
-      file: 'docs/policies/INFORMATION_SECURITY_POLICY.md'
+      file: 'docs/templates/OPERATING-POLICIES.md'
     };
   }
   return { status: STATUS.PASS, evidence: 'MFA enrollment component exists' };
 });
 
 check('SOC2-RETENTION-001', 'SOC2', SEVERITY.CRITICAL, 'Data retention policy promises nightly purge but pg_cron is not scheduled', 'A1 Availability', () => {
-  const policy = readFile('docs/policies/DATA_CLASSIFICATION.md') || readFile('docs/policies/INFORMATION_SECURITY_POLICY.md') || '';
+  const policy = readFile('docs/templates/OPERATING-POLICIES.md') || '';
   const migration = readFile('supabase/migrations/008_data_retention.sql') || '';
 
   const allSQL = globFiles('supabase/migrations', /\.sql$/).map(f => fs.readFileSync(f, 'utf-8')).join('\n');
@@ -877,7 +877,7 @@ check('SOC2-RETENTION-001', 'SOC2', SEVERITY.CRITICAL, 'Data retention policy pr
 });
 
 check('SOC2-BREACH-001', 'SOC2', SEVERITY.MEDIUM, 'Incident Response promises hourly breach detection but it is manual-only', 'CC7 Operations', () => {
-  const policy = readFile('docs/policies/INCIDENT_RESPONSE_PLAN.md') || '';
+  const policy = readFile('docs/templates/OPERATING-POLICIES.md') || '';
   const migration = readFile('supabase/migrations/009_breach_notification.sql') || '';
 
   const allSQL = globFiles('supabase/migrations', /\.sql$/).map(f => fs.readFileSync(f, 'utf-8')).join('\n');
@@ -888,41 +888,41 @@ check('SOC2-BREACH-001', 'SOC2', SEVERITY.MEDIUM, 'Incident Response promises ho
     return {
       status: STATUS.FAIL,
       evidence: 'Incident Response Plan promises automated/hourly detection. breach-check Edge Function exists but no cron schedule is active. Detection is manual-only.',
-      file: 'docs/policies/INCIDENT_RESPONSE_PLAN.md'
+      file: 'docs/templates/OPERATING-POLICIES.md'
     };
   }
   return { status: STATUS.PASS, evidence: 'Breach detection is automated as promised' };
 });
 
 check('SOC2-BAA-001', 'SOC2', SEVERITY.MEDIUM, 'BAA checklist exists but no signed BAA documents', 'Vendor Management', () => {
-  const baaDir = path.join(ROOT, 'docs', 'baa');
+  const baaDir = path.join(ROOT, 'docs', 'templates');
   if (!fs.existsSync(baaDir)) {
-    return { status: STATUS.FAIL, evidence: 'docs/baa/ directory does not exist' };
+    return { status: STATUS.FAIL, evidence: 'docs/templates/ directory does not exist' };
   }
 
   const files = fs.readdirSync(baaDir);
-  const hasTemplate = files.some(f => /template/i.test(f));
+  const hasTemplate = files.includes('BAA.md') || files.some(f => /template/i.test(f));
   const signedDocs = files.filter(f => /signed|executed|baa[^_]*\.(pdf|docx)/i.test(f));
 
   if (!hasTemplate && signedDocs.length === 0) {
     return {
       status: STATUS.FAIL,
-      evidence: `docs/baa/ contains: [${files.join(', ')}]. No BAA template or signed documents.`,
-      file: 'docs/baa/'
+      evidence: `docs/templates/ contains: [${files.join(', ')}]. No BAA template or signed documents.`,
+      file: 'docs/templates/'
     };
   }
   if (hasTemplate && signedDocs.length === 0) {
     return {
       status: STATUS.WARN,
       evidence: `BAA template exists. No signed BAA documents yet — vendor agreements pending.`,
-      file: 'docs/baa/'
+      file: 'docs/templates/'
     };
   }
   return { status: STATUS.PASS, evidence: `BAA template + ${signedDocs.length} signed document(s) found` };
 });
 
 check('SOC2-CONSENT-001', 'SOC2', SEVERITY.HIGH, 'Privacy Impact Assessment promises consent enforcement but it is not implemented', 'Privacy', () => {
-  const policy = readFile('docs/policies/PRIVACY_IMPACT_ASSESSMENT.md') || '';
+  const policy = readFile('docs/templates/OPERATING-POLICIES.md') || '';
   const hasConsentSection = /consent/i.test(policy);
 
   // Check ALL migrations for consent-gated RLS on PHI tables
@@ -933,7 +933,7 @@ check('SOC2-CONSENT-001', 'SOC2', SEVERITY.HIGH, 'Privacy Impact Assessment prom
     return {
       status: STATUS.FAIL,
       evidence: 'Privacy Impact Assessment references consent. But PHI table RLS policies (appointments, registrations) do NOT check consent_records.revoked_at. Revoked consent has no effect on data access.',
-      file: 'docs/policies/PRIVACY_IMPACT_ASSESSMENT.md'
+      file: 'docs/templates/OPERATING-POLICIES.md'
     };
   }
   return { status: STATUS.PASS, evidence: 'Consent enforcement matches policy' };
