@@ -4,7 +4,7 @@ Publication review: 2026-09-24. Read this alongside the detailed [Bangladesh lau
 
 ## Executive assessment
 
-Everyday Dental is a fictional portfolio demonstration. Its useful professional claim is that it demonstrates selected privacy and security decisions, documents their limits, and provides a reviewable route to a production system. It is not a certified clinical platform. The sample patient journey uses fixed synthetic records in browser memory. Public intake is disabled, and the shipped frontend cannot connect to the historical clinical backend through environment variables.
+Everyday Dental's public release runs on sample records. Its useful professional claim is that it implements selected privacy and security decisions, documents their limits, and provides a reviewable route to a production system. It is not a certified clinical platform. The sample patient journey uses fixed synthetic records in browser memory. Public intake is disabled, and the shipped frontend cannot connect to the historical clinical backend through environment variables.
 
 This distinction is important commercially. A client can examine the design, tests and release evidence without trusting invented compliance badges. The architecture supports a future separated clinical service, but deploying that service is a new engineering and governance milestone. It is not a configuration toggle. Findings below distinguish legal requirements, applicability questions and project recommendations. Research was checked against primary sources in September 2026; jurisdiction and product changes require reassessment.
 
@@ -14,11 +14,11 @@ The baseline covers US federal health/privacy law, California and Washington exa
 
 | Deployment | Recommended boundary | Additional review before launch |
 |---|---|---|
-| Public portfolio | Fictional content, no real patient intake, no payment or messaging | Truthful claims, accessibility, hosting metadata and asset rights |
+| Public release | Illustrative sample content, no real patient intake, no payment; messaging service on sample records with sending off | Truthful claims, accessibility, hosting metadata and asset rights |
 | Clinic brochure/contact site | Minimum administrative contact data | Advertising, privacy notice, retention, tracking, patient expectations |
 | Patient portal | Verified identity and server-side access controls | Health confidentiality, contracts, consent/legal basis, rights and incident handling |
 | Multi-clinic SaaS | Tenant-scoped clinical service | Processor/business-associate obligations, regional hosting, auditability, vendor chain |
-| Clinical AI or diagnostic software | Separate product classification | Medical-device and AI-specific assessment; no inference from this demo |
+| Clinical AI or diagnostic software | Separate product classification | Medical-device and AI-specific assessment; no inference from this release |
 
 Synthetic records do not eliminate all privacy considerations: hosting providers still handle network traffic. The release avoids application analytics and automatic third-party media loads. An operator must still understand provider security logs, contractual roles, retention and cross-border processing. “No patient database” is narrower and more defensible than “we process no personal data.”
 
@@ -28,7 +28,7 @@ Synthetic records do not eliminate all privacy considerations: hosting providers
 
 HIPAA applies to covered entities and business associates, not automatically to every health-themed website. A healthcare provider conducting covered electronic transactions may be a covered entity. A vendor handling protected health information on its behalf may be a business associate. Cloud storage can create business-associate responsibilities even when a provider does not hold the decryption key. Appropriate BAAs and a shared responsibility allocation are essential before a relevant cloud service handles ePHI.[1]
 
-**Project decision:** do not accept real patient records on the demo. Do not describe HTTPS, encryption libraries or a policy folder as proof of HIPAA compliance. A real engagement should maintain a vendor matrix recording service, purpose, data classes, BAA status, subcontractors, access roles and termination/export process.
+**Project decision:** do not accept real patient records on the public release. Do not describe HTTPS, encryption libraries or a policy folder as proof of HIPAA compliance. A real engagement should maintain a vendor matrix recording service, purpose, data classes, BAA status, subcontractors, access roles and termination/export process.
 
 Supabase’s documented HIPAA configuration requires a signed BAA and its HIPAA add-on for PHI, with designated high-compliance projects. Its shared-responsibility documentation identifies the required plan level. The old repository instruction that an ordinary Pro subscription alone enables HIPAA use was therefore unsuitable. No paid plan or add-on is activated by this work.[2]
 
@@ -61,6 +61,10 @@ California’s Confidentiality of Medical Information Act separately restricts d
 Washington’s My Health My Data Act addresses consumer health data beyond traditional HIPAA coverage. Its text includes consumer-health notices, consent rules, rights, security practices, processor duties, separate authorization for sale and healthcare geofencing restrictions. Scope includes certain residents and health data collected in Washington; exemptions need a data-specific assessment. A broad terms checkbox is not a substitute for the required consent.[9]
 
 **Project decision:** no geolocation/geofencing, no advertising sale, no embedded map and optional sharing off in the sample. A real product should inventory inferred health data and acquisition sources as well as direct clinical fields. Evaluate the exact consent, deletion, backup and appeal workflow under the statute; do not assume a generic GDPR screen is enough.
+
+### Patient messaging (email and SMS)
+
+Campaign messages add TCPA consent and revocation duties, carrier A2P 10DLC registration for US SMS, CAN-SPAM sender identity and unsubscribe requirements, and a business associate agreement with the CRM vendor before any patient data reaches it. The service enforces consent and suppression in code; send-time quiet-hours windows are defined in configuration and checked in simulation, but are not yet enforced in the HighLevel workflows. The contractual and registration steps belong to the operator. See [patient messaging](PATIENT-MESSAGING.md#before-real-patients).
 
 ## European Union
 
@@ -102,7 +106,7 @@ Before onboarding a clinic in a named member state, confirm professional registr
 
 The European Commission describes phased application of the European Health Data Space, including major primary-use milestones in 2029 and 2031. A FHIR-shaped JSON export does not prove EHDS interoperability, conformity assessment, national integration or patient identity matching.[17]
 
-The demonstration makes no clinical AI decision, diagnosis, prescription or medical-device claim. Adding AI or clinical decision support requires a separate intended-purpose and regulatory-classification review. The project should not invent an AI Act or medical-device certification for functionality it does not implement.
+The current release makes no clinical AI decision, diagnosis, prescription or medical-device claim. Adding AI or clinical decision support requires a separate intended-purpose and regulatory-classification review. The project should not invent an AI Act or medical-device certification for functionality it does not implement.
 
 ## Implementation matrix
 
@@ -115,7 +119,7 @@ The demonstration makes no clinical AI decision, diagnosis, prescription or medi
 | Export | Synthetic Patient bundle | Partner implementation guide, authorized scope, terminology, validation and secure delivery |
 | Audit | Temporary sample outcomes | Restricted durable server events, tamper evidence, monitoring and retention |
 | Tracking | No application analytics or advertising | Provider inventory and approval before adding new processors |
-| Encryption | HTTPS and no clinical database in demo | Key management, encrypted storage/backups, recovery and rotation tests |
+| Encryption | HTTPS and no clinical database in the public release | Key management, encrypted storage/backups, recovery and rotation tests |
 | Incidents | Documented response design | Named responders, tested deadlines, evidence handling and exercises |
 | Availability | Stated target and repeatable probes | Sustained measurements and funded redundancy for stronger guarantees |
 
@@ -125,7 +129,7 @@ The operator should own legal applicability, approved vendors, retention decisio
 
 A client acceptance review should walk through one normal and one denied action per role, one withdrawal, one export, one hold/deletion request and one restore. Review actual network requests and logs. Verify that a changed role takes effect immediately and that failure of a dependency does not open access. Budget and contracts must be approved before sending real data to any new service.
 
-Useful commercial wording is: “Synthetic dental-workflow demonstration with privacy-conscious delivery, tested sample access policies, documented production gates and a staged scaling design.” Avoid “HIPAA certified,” “GDPR compliant worldwide,” “SOC 2 audited,” “one million concurrent users supported,” or “guaranteed uptime” without the corresponding independent and operational evidence.
+Useful commercial wording is: “Dental-workflow platform running on sample records, with privacy-conscious delivery, tested sample access policies, documented production gates and a staged scaling design.” Avoid “HIPAA certified,” “GDPR compliant worldwide,” “SOC 2 audited,” “one million concurrent users supported,” or “guaranteed uptime” without the corresponding independent and operational evidence.
 
 ## Launch decisions still required for US and EU
 

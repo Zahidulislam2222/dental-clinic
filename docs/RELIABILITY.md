@@ -12,6 +12,8 @@
 
 99% can permit substantial downtime for a clinic; a real clinical service must select a target from patient impact and support commitments. Stronger targets are roadmap decisions, not automatic guarantees. Definitions follow [Google SRE](https://sre.google/workbook/implementing-slos/).
 
+The patient messaging service has its own objectives, because its users would be patients receiving messages, not page visitors. Proposed indicators: share of accepted events processed within 5 minutes, share of opt-outs applied in HighLevel within 15 minutes, and age of the oldest pending outbox operation. Its metrics endpoint already exports backlog age and failed, waiting and parked counts; see [patient messaging](PATIENT-MESSAGING.md#reliability-and-recovery).
+
 ## Measurement contract
 
 Proposed time-based SLI: one observation each minute from at least two independent regions; TLS, expected body and response within the configured latency budget must pass. Maintain regional results. Count a minute good only when all designated required probes pass; treat missing observations as unavailable/unknown conservatively and report coverage separately. Count planned maintenance in the budget. Changes to scope or probe locations require a recorded review, not retroactive removal of outages.

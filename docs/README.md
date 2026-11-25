@@ -5,6 +5,7 @@ Start with the [project overview](../README.md). **Current** describes observabl
 ## Build and understand
 
 - [Frontend](../src/README.md), [backend](../supabase/README.md) and [configuration](CONFIGURATION.md).
+- [Patient messaging service](PATIENT-MESSAGING.md): campaigns, safety controls, security, recovery, verification and scaling path.
 - [Architecture](ARCHITECTURE.md), [API contracts](API.md) and [database migrations](../supabase/migrations/README.md).
 - [Testing](TESTING.md) and [verification](VERIFICATION.md).
 

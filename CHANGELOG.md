@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-25 — Patient messaging service and documentation refresh
+
+- Added [patient messaging](docs/PATIENT-MESSAGING.md): campaigns, current release, safety controls, security, recovery, verification, scaling path and pre-launch legal gates for the HighLevel campaign service (live release 20261125-05 on sample records; sending off).
+- Messaging service fixes in that release: enrolments go only into published workflows (a Draft workflow accepted enrolments and enrolled nobody), and contacts are created or updated by id, so the service no longer merges patients who share a phone or email.
+- README, roadmap, reliability, architecture and legal research now cover the messaging service; wording across the public documents describes the release scope directly. No website code changed.
+
 ## 2026-10-05 — Canonical links and retired host
 
 - Each page's canonical link now comes from `VITE_SITE_URL` in one place (`src/App.jsx`); page-level canonicals pointing at the retired pages.dev site or a placeholder domain were removed.
@@ -8,7 +14,7 @@
 
 ## 2026-10-05 — LinkedIn link preview
 
-- `robots.txt` now allows LinkedInBot so the live demo can show a link preview; every other crawler is still disallowed and the page keeps its noindex meta tag and header.
+- `robots.txt` now allows LinkedInBot so the live site can show a link preview; every other crawler is still disallowed and the page keeps its noindex meta tag and header.
 - Added `tests/automated/robots.test.js` to pin the crawler rules and both noindex layers.
 - Deployed as release 20261005-linkedin-robots on the existing server container; only `robots.txt` changed.
 

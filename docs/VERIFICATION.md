@@ -72,4 +72,4 @@ This is not a complete refactor of every historical module: dormant clinical Den
 
 ## Acceptance accounting
 
-Of the original 14 draft criteria, 10 are addressed by this synthetic release (1, 2, 6–11, 13, 14); document synchronization is recorded in the final handoff. Criteria 3–5 are only partially satisfied: the demo is isolated, but full clinical authorization/schema/configuration remediation remains blocked from production use. Criterion 12 is explicitly deferred to a separate review session. A future reviewer must assess the final diff against these limitations; do not report 14/14 or production readiness.
+Of the original 14 draft criteria, 10 are addressed by this synthetic release (1, 2, 6–11, 13, 14); document synchronization is recorded in the final handoff. Criteria 3–5 are only partially satisfied: the public release is isolated, but full clinical authorization/schema/configuration remediation remains blocked from production use. Criterion 12 is explicitly deferred to a separate review session. A future reviewer must assess the final diff against these limitations; do not report 14/14 or production readiness.

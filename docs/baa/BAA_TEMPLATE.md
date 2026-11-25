@@ -18,4 +18,4 @@
 | Commercial terms | Liability, indemnity, governing law, priority between agreements and dispute provisions |
 | Execution | Authorized signatories, dates and restricted storage location |
 
-Do not insert fictional clinic details or assume generic 24/72-hour reporting and 15-business-day access terms are statutory BAA deadlines. Negotiate operational deadlines against applicable law and customer obligations. Security representations must match actual provider evidence. Keep all completed values and signatures outside this public worksheet.
+Do not insert sample clinic details or assume generic 24/72-hour reporting and 15-business-day access terms are statutory BAA deadlines. Negotiate operational deadlines against applicable law and customer obligations. Security representations must match actual provider evidence. Keep all completed values and signatures outside this public worksheet.

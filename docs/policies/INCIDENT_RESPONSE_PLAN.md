@@ -1,6 +1,6 @@
 # Incident response plan
 
-**Draft for adoption — 2026-09-24.** Assign an incident commander, technical responder, clinical lead, privacy/legal lead and communications owner before operating a clinical service. No staffed response SLA exists for this demo.
+**Draft for adoption — 2026-09-24 (wording revised 2026-11-25).** Assign an incident commander, technical responder, clinical lead, privacy/legal lead and communications owner before operating a clinical service. No staffed response SLA exists for the current release.
 
 1. Detect and triage: record discovery time, affected systems and evidence; distinguish availability failure from suspected disclosure or integrity loss.
 2. Contain: restrict compromised identities/paths using reviewed changes; preserve evidence and avoid destructive cleanup. Rotate exposed credentials through the approved process.

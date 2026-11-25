@@ -2,7 +2,7 @@
 
 ## Current release
 
-An HTTPS gateway/CDN serves the static React application and local media. Lazy routes render clinic presentation. Synthetic actions call pure policy/state functions in browser memory. Intake is read-only, the clinical client is disabled, and all eleven preserved Edge Functions return a fixed guard. The demo has no clinical runtime dependency.
+An HTTPS gateway/CDN serves the static React application and local media. Lazy routes render clinic presentation. Synthetic actions call pure policy/state functions in browser memory. Intake is read-only, the clinical client is disabled, and all eleven preserved Edge Functions return a fixed guard. The public release has no clinical runtime dependency. A separate [patient messaging service](PATIENT-MESSAGING.md) (Python, Postgres, containerized) receives signed events from a synthetic patient-record feed and projects campaign decisions into the HighLevel CRM; it shares no database with the website.
 
 ## Proposed clinical design
 

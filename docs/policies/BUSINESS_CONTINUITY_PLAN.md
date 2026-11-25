@@ -1,8 +1,8 @@
 # Business continuity plan
 
-**Draft for adoption — 2026-09-24.** [Reliability](../RELIABILITY.md) owns proposed SLO/RTO/RPO values. No paid backup plan, automatic failover or achieved recovery guarantee is asserted.
+**Draft for adoption — 2026-09-24 (wording revised 2026-11-25).** [Reliability](../RELIABILITY.md) owns proposed SLO/RTO/RPO values. No paid backup plan, automatic failover or achieved recovery guarantee is asserted.
 
-Current demo recovery uses a reviewed static release and configuration. Future clinical recovery must include database, uploads, identity configuration, audit records and usable decryption keys. Protect an independent encrypted copy, restrict deletion authority and test restoration. Source control alone is not a patient-data backup.
+Current public-release recovery uses a reviewed static release and configuration. Future clinical recovery must include database, uploads, identity configuration, audit records and usable decryption keys. Protect an independent encrypted copy, restrict deletion authority and test restoration. Source control alone is not a patient-data backup.
 
 ## Recovery sequence
 

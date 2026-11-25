@@ -1,6 +1,6 @@
 # Media sources
 
-Existing Unsplash images are served locally to avoid third-party image requests. Photos are illustrative stock; people shown are not endorsed practitioners or patients of this fictional practice. License: https://unsplash.com/license .
+Existing Unsplash images are served locally to avoid third-party image requests. Photos are illustrative stock; people shown are stock models, not endorsed practitioners or patients. License: https://unsplash.com/license .
 
 - https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600&q=80&fit=crop → /images/stock/a3dbbc25bb41cd66.jpg
 - https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=85&fit=crop → /images/stock/46851bb99a4291be.jpg

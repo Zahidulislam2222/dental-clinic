@@ -1,6 +1,6 @@
 # Privacy impact assessment template
 
-**Draft for adoption — 2026-09-24.** The current sample keeps fictional patient records in memory; hosting still processes network metadata. No clinical DPIA approval is claimed.
+**Draft for adoption — 2026-09-24 (wording revised 2026-11-25).** The current release keeps sample patient records in memory; hosting still processes network metadata. No clinical DPIA approval is claimed.
 
 For each proposed workflow record data subject/category, purpose, legal basis, collection source, recipient, processor, region, retention, rights mechanism and necessity. Assess children/guardians, sensitive data, profiling, transfers, support access and backups. Determine whether a formal impact assessment or consultation is required under applicable law.
 

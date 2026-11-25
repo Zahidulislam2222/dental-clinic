@@ -13,7 +13,7 @@ VITE_ values are public browser code. TEST_BASE_URL is test tooling, not applica
 | File owner | Values |
 |---|---|
 | src/config/runtime.js | Runtime validation and session presentation defaults |
-| src/config/contact.js / src/data/ | Maintained business, demo, privacy and media content |
+| src/config/contact.js / src/data/ | Maintained business, sample, privacy and media content |
 | config/tooling.json | Ports, test/probe timeouts, local load and capacity assumptions |
 | deploy/settings.json | Image, hostname, ports and resource limits |
 | public/_headers | Browser security policy |

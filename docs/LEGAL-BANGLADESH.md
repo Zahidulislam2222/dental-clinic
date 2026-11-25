@@ -1,6 +1,6 @@
 # Bangladesh legal and clinical launch planning
 
-Research date: 2026-09-24. This is a source-backed engineering launch checklist, not a legal opinion or a statement that the demo operates a licensed clinic. Review Bengali statutory text, current regulations, gazettes and the actual service model with qualified local counsel before patient intake.
+Research date: 2026-09-24. This is a source-backed engineering launch checklist, not a legal opinion or a statement that the current release operates a licensed clinic. Review Bengali statutory text, current regulations, gazettes and the actual service model with qualified local counsel before patient intake.
 
 ## Current legal baseline
 
@@ -29,7 +29,7 @@ Do not import GDPR's 72-hour notification timer as Bangladesh law. Do not treat 
 
 BMDC publishes a professional ethics code with medical-record confidentiality and professional-information/promotion sections. Use it to review actual clinician identity, qualifications, clinical claims, patient images, testimonials and disclosure workflows. The official site also publishes telemedicine guidelines; adding video/chat diagnosis or prescribing requires a separate clinical and professional-scope assessment. A booking website does not establish permission for telemedicine. [BMDC](https://www.bmdc.org.bd/), [ethics code](https://www.bmdc.org.bd/docs/EthicsBookMakeupfinal.pdf), [telemedicine guidelines](https://www.bmdc.org.bd/docs/BMDC_Telemedicine_Guidelines_July2020.pdf).
 
-Proposed project gates: verify practitioners against the relevant register; replace fictional profiles with approved facts; obtain specific permissions for patient media; review advertising and outcome statements; define record access, amendment and emergency referral; and confirm whether any proposed remote dental service is within professional scope. No production medical advice or prescribing is enabled by this repository.
+Proposed project gates: verify practitioners against the relevant register; replace sample profiles with approved facts; obtain specific permissions for patient media; review advertising and outcome statements; define record access, amendment and emergency referral; and confirm whether any proposed remote dental service is within professional scope. No production medical advice or prescribing is enabled by this repository.
 
 ## Facility and business operation
 
@@ -45,4 +45,4 @@ Verify payment-provider country availability, merchant eligibility, currency/set
 
 ## Open decisions before launch
 
-A named operator must approve the final statutory version/commencement register, implementing-rule review, data classification/transfer position, professional/facility licensing, rights/incident deadlines, notices, retention, vendor terms and clinical escalation. This task does not establish those operator-specific approvals. Recheck the official legal database at each launch and material scope change; the 2025-to-2026 replacement demonstrates why old checklists can become unsafe.
+A named operator must approve the final statutory version/commencement register, implementing-rule review, data classification/transfer position, professional/facility licensing, rights/incident deadlines, notices, retention, vendor terms and clinical escalation. This task does not establish those operator-specific approvals. Recheck the official legal database at each launch and material scope change; the 2025-to-2026 replacement shows why old checklists can become unsafe.

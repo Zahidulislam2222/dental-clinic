@@ -19,8 +19,8 @@ Development defaults to port 3000 and preview to 4173, owned by [tooling setting
 | pages/ / components/ | Clinic presentation, synthetic workflow and preserved portal views |
 | context/ | Language and inactive clinical authentication presentation |
 | config/runtime.js | Synthetic boundary, public origin and session presentation settings |
-| config/contact.js / data/ | Maintained contact, product, privacy, media and demo content |
-| lib/demo-policy.js | Pure policy illustrations and sample transitions |
+| config/contact.js / data/ | Maintained contact, product, privacy, media and sample content |
+| lib/demo-policy.js | Pure policy illustrations and sample transitions (file name kept for code stability) |
 | lib/supabase.js | Explicitly disabled clinical client |
 | index.css | Shared styling, keyboard focus and reduced motion |
 
@@ -28,7 +28,7 @@ Development defaults to port 3000 and preview to 4173, owned by [tooling setting
 
 | Family | Behavior |
 |---|---|
-| /, /about, /services, /services/:slug, /pricing | Fictional clinic presentation |
+| /, /about, /services, /services/:slug, /pricing | Clinic presentation (illustrative sample content) |
 | /blog, /blog/:slug, /faq, /gallery, /community, /conferences | Sample content |
 | /experience | Synthetic workflow and export |
 | /trust, /accessibility, /privacy-policy, /terms | Disclosure surfaces |

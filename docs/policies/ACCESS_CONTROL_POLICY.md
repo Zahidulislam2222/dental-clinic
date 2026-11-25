@@ -1,6 +1,6 @@
 # Access control policy
 
-**Draft for adoption — 2026-09-24.** Browser role selection in the demo is not authentication. The following is the proposed clinical model.
+**Draft for adoption — 2026-09-24 (wording revised 2026-11-25).** Browser role selection in the public release is not authentication. The following is the proposed clinical model.
 
 | Role | Allowed scope |
 |---|---|

@@ -27,6 +27,7 @@ Roles are responsibilities to assign, not claims that a staffed team exists. Cli
 | Legal | US, EU and Bangladesh applicability and current national/state requirements | Named operator, current sources, approved notices and contracts |
 | Reliability | Independent probes, service indicators, error-budget policy and recovery drills | Measured rolling windows and owner-approved objectives |
 | Capacity | Instrument, model, test and size public and clinical workloads separately | [Capacity plan](docs/CAPACITY-PLAN.md) acceptance report |
+| Patient messaging | Publish decision, real sender identity and postal address, A2P 10DLC registration, CRM BAA, deliverability monitoring, multi-clinic tenancy | Published workflows with measured delivery; [messaging gates](docs/PATIENT-MESSAGING.md#before-real-patients) closed |
 | Commercial | Ownership/license, vendor terms, support hours, paid infrastructure estimates | Explicit owner decisions; no automatic paid upgrades |
 
 ## Release gate for real patient data

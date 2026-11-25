@@ -1,6 +1,6 @@
 # Public launch and governance checklist
 
-This document defines proposed operating responsibilities for a future real clinic. The demo's fictional content and synthetic workflows are not a deployed governance program. Assign named owners privately before launch.
+This document defines proposed operating responsibilities for a future real clinic. The current release's sample content and workflows are not a deployed governance program. Assign named owners privately before launch.
 
 ## Jurisdiction and accountability
 
@@ -16,7 +16,7 @@ Read [US/EU research](LEGAL-RESEARCH.md) and [Bangladesh research](LEGAL-BANGLAD
 
 ## Required public surfaces
 
-Publish the actual operator identity, verified contact channel, service scope, accurate clinician qualifications, current pricing/cancellation/refund terms, privacy notice, terms and accessibility/help contact. Explain data categories, purposes, applicable legal bases, vendors/transfers, retention, rights and complaints. Use reviewed translations; do not reuse fictional demo identities or assume a translated privacy notice resolves legal differences.
+Publish the actual operator identity, verified contact channel, service scope, accurate clinician qualifications, current pricing/cancellation/refund terms, privacy notice, terms and accessibility/help contact. Explain data categories, purposes, applicable legal bases, vendors/transfers, retention, rights and complaints. Use reviewed translations; do not reuse sample identities or assume a translated privacy notice resolves legal differences.
 
 Keep optional marketing consent separate from treatment/administration and terms acceptance. Do not embed advertising pixels or session replay on clinical pages. Explain cookies/storage according to actual runtime behavior. An emergency disclaimer must point users toward appropriate local care and must not replace a clinical escalation process.
 

@@ -11,7 +11,7 @@ Updated 2026-09-24. The earlier “complete / 93% compliance” heading describe
 | Consent/retention | Sample illustration; real legal/operational workflow remains gated |
 | MFA/session/audit | Component/helper presence is not proof of end-to-end enforcement |
 | Notifications/incidents | Caller/scheduler authority and recipient/rule coverage need repair |
-| Public demo | Separate synthetic policy/browser tests and release evidence |
+| Public release | Separate sample-data policy/browser tests and release evidence |
 | Governance | Proposed templates; no signed BAA or certification asserted |
 
 Track implementation completion against [clinical gates](../docs/CLINICAL-RELEASE.md), [roadmap](../ROADMAP.md) and dated [verification](../docs/VERIFICATION.md). Historical code can inform design but must not be described as deployed working clinical functionality.

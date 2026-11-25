@@ -2,9 +2,9 @@
 
 ## Assets and trust boundaries
 
-The public release contains fictional clinic content, stock media, a synthetic Patient fixture, deployment configuration and source code. It holds no clinical account session, payment key or patient database connection. A visitor controls their browser, URL and role selector. Browser state must therefore never be trusted as production identity or permission.
+The public release contains illustrative clinic content, stock media, a sample Patient fixture, deployment configuration and source code. It holds no clinical account session, payment key or patient database connection. A visitor controls their browser, URL and role selector. Browser state must therefore never be trusted as production identity or permission.
 
-Trust boundaries are: visitor → CDN; CDN/direct-origin visitor → TLS gateway; gateway → loopback static container; static files → browser; operator workstation → pinned SSH deployment; and maintainer → Git/CI. The preserved Supabase prototype is a separate, unapproved clinical surface. Its runtime controls cannot be inferred from the public static demo.
+Trust boundaries are: visitor → CDN; CDN/direct-origin visitor → TLS gateway; gateway → loopback static container; static files → browser; operator workstation → pinned SSH deployment; and maintainer → Git/CI. The preserved Supabase prototype is a separate, unapproved clinical surface. Its runtime controls cannot be inferred from the public static release.
 
 ## Threat and control matrix
 
@@ -25,7 +25,7 @@ Trust boundaries are: visitor → CDN; CDN/direct-origin visitor → TLS gateway
 
 ## Security assumptions and residual risks
 
-TLS gateway administration is shared with other applications. The VPS remains a single failure domain, and the existing infrastructure permits origin web access. Cloudflare does not replace origin authorization. This demo has no sensitive API to authenticate, but a future clinical service must enforce authorization even when the CDN is bypassed.
+TLS gateway administration is shared with other applications. The VPS remains a single failure domain, and the existing infrastructure permits origin web access. Cloudflare does not replace origin authorization. The static release has no sensitive API to authenticate, but a future clinical service must enforce authorization even when the CDN is bypassed.
 
 The sample audit list is temporary and editable by a browser owner. It is an illustration, not a protected audit trail. The sample staff policy is intentionally simplified and does not model care assignment, tenant membership or emergency access. Those are production release blockers.
 

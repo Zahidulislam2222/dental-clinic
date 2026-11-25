@@ -1,11 +1,11 @@
 # Security and clinical readiness delivery plan
 
-Updated 2026-09-24. This plan supersedes the old frontend/prototype completion checklist. The current application is a synthetic demo with guarded clinical functions. Source-pattern matches and policy documents are not completed legal or clinical assurance.
+Updated 2026-09-24 (wording revised 2026-11-25). This plan supersedes the old frontend/prototype completion checklist. The current release runs on sample records with guarded clinical functions. Source-pattern matches and policy documents are not completed legal or clinical assurance.
 
 | Workstream | Current boundary | Next acceptance gate |
 |---|---|---|
 | Frontend | Synthetic fixtures, read-only intake, no clinical client | Preserve browser privacy/accessibility regressions; extend full typing |
-| Identity/authorization | Demo policy only; prototypes guarded | Verified identity/MFA, care assignment, tenant/subject scope and revocation tests |
+| Identity/authorization | Browser policy illustration only; prototypes guarded | Verified identity/MFA, care assignment, tenant/subject scope and revocation tests |
 | Database/encryption | Historical migrations retained | Fresh/upgrade compatibility, RLS, key recovery and integrity tests |
 | APIs | Fixed 503 guard | Typed contracts, payload bounds, atomic rate limits and denial tests |
 | Payments/messages | Disabled | Approved provider, sandbox signature/idempotency/recipient validation |

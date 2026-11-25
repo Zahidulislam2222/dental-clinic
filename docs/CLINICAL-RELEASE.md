@@ -23,4 +23,4 @@ The following defects were recorded in the previous dossier and reconfirmed in i
 
 Do not apply historical migrations to an unknown live database. Inventory and export the schema/functions first, compare them with local source, preserve existing records, and build a tested upgrade/rollback plan. Never place service-role credentials in frontend configuration. Never send real patient data to a free-tier provider without verified legal and contractual suitability.
 
-The frontend sample is deliberately not a substitute for this gate. Browser-selected roles only illustrate policy decisions. The static demo proves neither database RLS nor backend encryption nor clinical FHIR interoperability. These limits should remain visible to clients and developers.
+The frontend sample is deliberately not a substitute for this gate. Browser-selected roles only illustrate policy decisions. The static release proves neither database RLS nor backend encryption nor clinical FHIR interoperability. These limits should remain visible to clients and developers.

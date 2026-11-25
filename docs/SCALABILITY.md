@@ -4,9 +4,9 @@ Related plans: [1M+ capacity qualification](CAPACITY-PLAN.md), [reliability obje
 
 ## Current release
 
-The public release serves static HTML, JavaScript, CSS and images. The sample patient journey executes in browser memory and causes no clinical database requests. This keeps a demo independent of a paused database and avoids maintaining patient data merely to demonstrate design. It does not prove the original clinical prototype is scalable.
+The public release serves static HTML, JavaScript, CSS and images. The sample patient journey executes in browser memory and causes no clinical database requests. This keeps the public release independent of a paused database and avoids holding patient data that the release does not need. It does not prove the original clinical prototype is scalable.
 
-The initial Supabase CLI inventory found the linked dental project inactive. The owner subsequently restored it through the dashboard. It has not been deleted or replaced. The public demo deliberately does not depend on that service. A free service that can pause on inactivity cannot be assumed to deliver a sustained availability commitment. See [Supabase project pausing](https://supabase.com/docs/guides/platform/free-project-pausing).
+The initial Supabase CLI inventory found the linked dental project inactive. The owner subsequently restored it through the dashboard. It has not been deleted or replaced. The public release deliberately does not depend on that service. A free service that can pause on inactivity cannot be assumed to deliver a sustained availability commitment. See [Supabase project pausing](https://supabase.com/docs/guides/platform/free-project-pausing).
 
 ## Workload definitions
 
@@ -26,7 +26,7 @@ Cloudflare does not cache HTML or JSON by default; eligible assets and origin di
 
 ## Staged architecture
 
-### Stage A: current demonstration
+### Stage A: current public release
 
 Use a CDN for eligible immutable assets and a bounded static origin. Keep hashed asset filenames, compression, explicit routes, a small health endpoint, no public write API and no database dependency. Limit the origin container’s CPU, memory and process count and bind it to loopback behind HTTPS. Retain versioned releases and an off-server archive.
 
@@ -64,7 +64,7 @@ The release includes `scripts/probe.mjs`, which emits a timestamp, success and l
 
 ## Recovery design
 
-| Recovery concern | Public demo | Future clinical service |
+| Recovery concern | Public release | Future clinical service |
 |---|---|---|
 | State | Static release + configuration | Database, uploads, keys, identity and audit state |
 | Backup | Off-server release archive with SHA256 manifest | Application-consistent encrypted backups and protected key recovery |
@@ -77,6 +77,6 @@ Do not advertise an unmeasured recovery time. Keep the previous release availabl
 
 ## Cost and acceptance boundary
 
-The demo reuses existing hosting and free tools. Existing hosting still has the owner’s pre-existing cost; no new paid service is necessary for this static release. Free tiers do not promise unlimited capacity, contractual uptime or health-data processing approval. Before any paid upgrade, obtain explicit approval for price, scope and recurrence.
+The current release reuses existing hosting and free tools. Existing hosting still has the owner’s pre-existing cost; no new paid service is necessary for this static release. Free tiers do not promise unlimited capacity, contractual uptime or health-data processing approval. Before any paid upgrade, obtain explicit approval for price, scope and recurrence.
 
 A production proposal should budget regional hosts, database capacity, backup storage, monitoring, security support, contractual vendor options, test infrastructure and operations. Provider price changes belong in configuration/procurement records, not hardcoded business logic. Progress from one stage only when measurements show why the next investment is necessary.
