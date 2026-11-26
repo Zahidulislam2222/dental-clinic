@@ -40,7 +40,7 @@ Design rules that apply at every stage:
 
 ## Capacity test plan
 
-Each stage is accepted only after a test in isolated infrastructure with synthetic data and approved spending limits.
+Each stage is accepted only after a test in isolated infrastructure with generated test data and approved spending limits.
 
 **Profile:** 10-minute ramp, 60 minutes at target load, a 10-minute burst at twice the arrival rate, then a 4-hour soak.
 

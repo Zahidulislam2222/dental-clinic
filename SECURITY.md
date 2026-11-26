@@ -2,7 +2,7 @@
 
 ## Scope
 
-This policy covers the public website, its deployment configuration and the clinical backend prototype in `supabase/`. The clinical backend is disabled and has not been approved for real patient data; its known issues are listed in [Clinical release](docs/CLINICAL-RELEASE.md#engineering-blockers).
+This policy covers the public website, its deployment configuration and the clinical backend (early build) in `supabase/`. The clinical backend is disabled and has not been approved for real patient data; its known issues are listed in [Clinical release](docs/CLINICAL-RELEASE.md#engineering-blockers).
 
 ## Reporting a vulnerability
 

@@ -512,7 +512,7 @@ const ContactPage = () => {
             ref={mapRef}
             className="max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-gray-100"
           >
-            <p className="p-8 text-center">Fictional demonstration location. No map is loaded automatically.</p>
+            <p className="p-8 text-center">Sample location, not a real clinic address. No map is loaded automatically.</p>
             {/* Fallback: Direct link to Google Maps */}
             <div className="bg-gray-50 p-4 text-center border-t border-gray-100">
               <a

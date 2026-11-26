@@ -8,7 +8,7 @@ Start with the [project README](../README.md) for an overview and quick start.
 |---|---|
 | [Development](DEVELOPMENT.md) | Local setup, configuration, commands and testing |
 | [Frontend](../src/README.md) | Source layout, routes and conventions |
-| [Backend](../supabase/README.md) | Clinical backend prototype, [Edge Functions](../supabase/functions/README.md) and [migrations](../supabase/migrations/README.md) |
+| [Backend](../supabase/README.md) | Clinical backend (early build), [Edge Functions](../supabase/functions/README.md) and [migrations](../supabase/migrations/README.md) |
 | [Design system](../DESIGN.md) | Colors, typography, components and motion |
 
 ## Understand

@@ -1,12 +1,12 @@
 # Everyday Dental Surgery
 
-A bilingual (English / বাংলা) dental clinic website and patient platform, built with React and Vite. It pairs a polished public site with an interactive patient-records demo, a campaign messaging service connected to the HighLevel CRM, and a documented path to a production clinical system.
+A bilingual (English / বাংলা) dental clinic website and patient platform, built with React and Vite. It pairs a polished public site with an interactive sample patient journey, a campaign messaging service connected to the HighLevel CRM, and a documented path to a production clinical system.
 
 **[Live site](https://dental.zahidul-islam.com)** · [Documentation](docs/README.md) · [Architecture](docs/ARCHITECTURE.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md)
 
 ![Everyday Dental Surgery home page](docs/assets/home.png)
 
-> **Portfolio project.** Everyday Dental Surgery is a fictional practice. Its clinicians, prices, reviews and contact details are sample content, and the site does not accept real appointments, patient data or payments. See [Project status](#project-status).
+> **Independent build.** Everyday Dental Surgery is not a real practice. Its clinicians, prices, reviews and contact details are sample content, and the site does not accept real appointments, patient data or payments. See [Project status](#project-status).
 
 ## Highlights
 
@@ -32,7 +32,7 @@ A bilingual (English / বাংলা) dental clinic website and patient platfo
 | Forms and SEO | React Hook Form, react-helmet-async |
 | Testing | Node test runner, Playwright, axe-core, ESLint, TypeScript checks |
 | Hosting | nginx container behind a TLS gateway and CDN |
-| Clinical backend (prototype) | Supabase Postgres, 11 Deno Edge Functions, 11 SQL migrations |
+| Clinical backend (early build) | Supabase Postgres, 11 Deno Edge Functions, 11 SQL migrations |
 | Messaging service | Python, PostgreSQL, HighLevel CRM API (separate repository) |
 
 ## Getting started
@@ -65,17 +65,17 @@ flowchart LR
     Site --> Journey[Patient journey<br/>sample data in browser memory]
     Feed[Patient-record feed] -- signed events --> Messaging[Messaging service]
     Messaging --> CRM[HighLevel CRM workflows]
-    Backend[Clinical backend prototype] -.-> Gate[Disabled until clinical release]
+    Backend["Clinical backend (early build)"] -.-> Gate[Disabled until clinical release]
 ```
 
-The public site is a static single-page app with no backend dependency. The messaging service runs separately with its own database. The Supabase clinical backend is kept in this repository as a prototype; every endpoint returns `503 Service Unavailable` until it passes the [clinical release gates](docs/CLINICAL-RELEASE.md). Read more in [Architecture](docs/ARCHITECTURE.md).
+The public site is a static single-page app with no backend dependency. The messaging service runs separately with its own database. The Supabase clinical backend is kept in this repository as an early build; every endpoint returns `503 Service Unavailable` until it passes the [clinical release gates](docs/CLINICAL-RELEASE.md). Read more in [Architecture](docs/ARCHITECTURE.md).
 
 ## Project structure
 
 ```text
 src/               React application (pages, components, data, config)
 public/            Static assets, security headers, robots.txt
-supabase/          Clinical backend prototype: Edge Functions and migrations
+supabase/          Clinical backend (early build): Edge Functions and migrations
 scripts/           Deployment build, health probe, capacity and load tools
 tests/automated/   Unit and regression tests
 tests/browser/     Playwright end-to-end and accessibility tests
@@ -100,7 +100,7 @@ docs/              Project documentation
 | Public website | Live at [dental.zahidul-islam.com](https://dental.zahidul-islam.com) |
 | Patient journey | Live, using sample records held only in the visitor's browser |
 | Messaging service | Running on sample records against a HighLevel sandbox; message sending is switched off |
-| Clinical backend | Prototype; disabled until the [clinical release gates](docs/CLINICAL-RELEASE.md) pass |
+| Clinical backend | Early build; disabled until the [clinical release gates](docs/CLINICAL-RELEASE.md) pass |
 
 The project has not been certified against HIPAA, GDPR, SOC 2 or any other standard, and it should not be used with real patient information. The [roadmap](ROADMAP.md) sets out what a real clinical launch requires.
 

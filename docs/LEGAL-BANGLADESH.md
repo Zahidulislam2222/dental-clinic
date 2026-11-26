@@ -41,7 +41,7 @@ Local launch decisions still required: operating entity and trade permissions, t
 
 Proposed architecture keeps clinical data segregated from public CDN delivery and records all transfer/backup paths. Select regions only after the legal data-classification decision. Assess whether scale changes regulatory classification, audit/officer requirements or risk-assessment scope. A million-user target cannot be used to justify collecting extra identity data.
 
-Verify payment-provider country availability, merchant eligibility, currency/settlement, refund rules and contracts before implementation. The preserved Stripe prototype is not evidence that a Bangladesh operator can onboard to Stripe. Use provider sandbox tests only until the commercial and clinical release gates are approved.
+Verify payment-provider country availability, merchant eligibility, currency/settlement, refund rules and contracts before implementation. The preserved Stripe code is not evidence that a Bangladesh operator can onboard to Stripe. Use provider sandbox tests only until the commercial and clinical release gates are approved.
 
 ## Open decisions before launch
 

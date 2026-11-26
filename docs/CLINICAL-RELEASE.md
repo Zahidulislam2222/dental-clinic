@@ -4,7 +4,7 @@ This document lists everything that must be true before Everyday Dental handles 
 
 ## Current state
 
-- The `supabase/` directory holds the clinical prototype: 11 Edge Functions and 11 SQL migrations.
+- The `supabase/` directory holds the clinical backend (early build): 11 Edge Functions and 11 SQL migrations.
 - Every function returns `503 Service Unavailable` before running any logic. No environment variable can bypass this.
 - The guarded functions were deployed to the Supabase project in September 2026; all 11 returned the expected 503 response, and the downloaded deployed source matched the repository file for file (SHA-256). A later CORS cleanup (October 2026) changed shared helper code but was not redeployed, because the guard returns before that code runs.
 - No database records or migrations were changed when the guard was deployed.
@@ -12,7 +12,7 @@ This document lists everything that must be true before Everyday Dental handles 
 
 ## Engineering blockers
 
-These defects were found in the prototype code. Disabling the endpoints contains them; it does not fix them. Each needs a repair and the listed verification.
+These defects were found in the early backend code. Disabling the endpoints contains them; it does not fix them. Each needs a repair and the listed verification.
 
 | Area | Problem | Repair and verification |
 |---|---|---|

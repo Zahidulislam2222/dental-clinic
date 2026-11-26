@@ -37,7 +37,7 @@ The Supabase clinical backend is a separate surface, disabled at every entry poi
 - **Shared infrastructure.** The TLS gateway and server host other applications, and the server is a single failure domain. The origin is reachable directly, so a future clinical service must enforce authorization even if the CDN is bypassed.
 - **Sample audit log.** The activity list on `/experience` is a temporary, editable illustration, not a protected audit trail.
 - **Simplified access model.** The sample policy does not model care assignment, tenant membership or emergency access. These are required before a clinical release.
-- **Prototype code.** The clinical modules and migrations remain in the repository for design review, with their known defects listed in [Clinical release](CLINICAL-RELEASE.md). They are not running functionality.
+- **Early backend code.** The clinical modules and migrations remain in the repository for design review, with their known defects listed in [Clinical release](CLINICAL-RELEASE.md). They are not running functionality.
 - **Pattern scanner.** The score from `compliance/` counts source patterns. It does not measure legal compliance, attack resistance or runtime behavior.
 
 ## Incident procedure

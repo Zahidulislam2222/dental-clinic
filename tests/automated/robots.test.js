@@ -12,7 +12,7 @@ test('robots.txt lets LinkedIn build link previews but blocks every other crawle
  assert.deepEqual(group('*'), ['User-agent: *', 'Disallow: /']);
 });
 
-test('the demo stays noindex for search engines', () => {
+test('the site stays noindex for search engines', () => {
  const read = file => readFileSync(new URL(`../../${file}`, import.meta.url), 'utf8');
  assert.match(read('index.html'), /<meta name="robots" content="noindex, nofollow"/);
  assert.match(read('src/App.jsx'), /<meta name="robots" content="noindex, nofollow"/);

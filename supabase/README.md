@@ -1,6 +1,6 @@
-# Clinical backend (prototype)
+# Clinical backend (early build)
 
-This directory contains the prototype clinical backend: **11 Supabase Edge Functions** (Deno, TypeScript) and **11 PostgreSQL migrations** covering intake, roles and row-level security, encryption, audit logging, consent, FHIR resources, retention and breach detection.
+This directory contains the early clinical backend: **11 Supabase Edge Functions** (Deno, TypeScript) and **11 PostgreSQL migrations** covering intake, roles and row-level security, encryption, audit logging, consent, FHIR resources, retention and breach detection.
 
 The backend is **disabled**. Every function returns `503 Service Unavailable` from a shared guard, [`functions/_shared/release-boundary.ts`](functions/_shared/release-boundary.ts), before running any logic. No environment variable can turn it on, and the frontend has no client configured for it.
 

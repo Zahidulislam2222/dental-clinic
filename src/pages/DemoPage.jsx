@@ -16,12 +16,12 @@ export default function DemoPage() {
     setEvents(items => [{ role, action, outcome: result.outcome }, ...items].slice(0, runtime.maxAuditEvents));
     if (action === 'export' && result.outcome === 'allowed') {
       const url = URL.createObjectURL(new Blob([JSON.stringify(sampleBundle(), null, 2)], { type: 'application/fhir+json' }));
-      const link = document.createElement('a'); link.href = url; link.download = 'synthetic-patient.fhir.json'; link.click();
+      const link = document.createElement('a'); link.href = url; link.download = 'sample-patient.fhir.json'; link.click();
       setTimeout(() => URL.revokeObjectURL(url), 0);
     }
   }
   return <section className="review-page">
-    <Helmet><title>Patient journey demo — Everyday Dental</title></Helmet>
+    <Helmet><title>Sample patient journey | Everyday Dental</title></Helmet>
     <h1>{demo.title}</h1><p>{demo.intro}</p>
     <p><strong>Role selection is a simulation, not a login.</strong> The production design requires verified identity and server-enforced authorization.</p>
     <label htmlFor="demo-role">View as </label>
@@ -37,11 +37,11 @@ export default function DemoPage() {
     </div>
     <p role="status" aria-live="polite" className="review-notice">{message}</p>
     <h2>Cross-patient access example</h2>
-    <p>Current role accessing another synthetic patient’s clinical record: <strong>{canAccess(role, 'clinical', demo.otherPatientId) ? 'Allowed in this simplified policy' : 'Denied'}</strong>.</p>
+    <p>Current role accessing another sample patient’s clinical record: <strong>{canAccess(role, 'clinical', demo.otherPatientId) ? 'Allowed in this simplified policy' : 'Denied'}</strong>.</p>
     <p>Real staff access additionally needs assigned-care scope, purpose checks, tenant isolation and monitored emergency access.</p>
-    <h2>Session activity</h2><p>This temporary list demonstrates outcomes. It is not an immutable server audit log.</p>
+    <h2>Session activity</h2><p>This temporary list shows outcomes. It is not an immutable server audit log.</p>
     <ol>{events.map((e,i) => <li key={i}>{e.role} · {e.action} · {e.outcome}</li>)}</ol>
-    <button onClick={() => { setState(initialDemo()); setEvents([]); setRole('patient'); setMessage('Example reset.'); }}>Reset demonstration</button>
+    <button onClick={() => { setState(initialDemo()); setEvents([]); setRole('patient'); setMessage('Example reset.'); }}>Reset example</button>
     <p><Link to="/trust">Read privacy, security and scaling information</Link></p>
   </section>;
 }

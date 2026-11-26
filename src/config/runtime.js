@@ -6,7 +6,7 @@ export function readRuntime(env) {
     throw new Error('VITE_SITE_URL must be an HTTPS origin without credentials or query parameters.');
   }
   if (env.VITE_APP_MODE && env.VITE_APP_MODE !== 'synthetic') {
-    throw new Error('This release supports synthetic demonstration mode only.');
+    throw new Error('Unsupported VITE_APP_MODE. See docs/DEVELOPMENT.md.');
   }
   return Object.freeze({
     mode: 'synthetic',

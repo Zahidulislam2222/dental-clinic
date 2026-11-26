@@ -19,7 +19,7 @@ flowchart LR
 
 **Messaging service.** A separate Python service with its own Postgres database. It receives signed events from a patient-record feed, decides which campaign each patient belongs in, and projects that state into HighLevel CRM workflows. It shares no database or code with the website. See [Patient messaging](PATIENT-MESSAGING.md).
 
-**Clinical backend prototype.** Eleven Supabase Edge Functions and eleven SQL migrations for intake, records, consent, FHIR export, notifications and payments. Every function returns `503 Service Unavailable` before running any logic, and the frontend has no client configured for it. It stays disabled until the [clinical release gates](CLINICAL-RELEASE.md) pass.
+**Clinical backend (early build).** Eleven Supabase Edge Functions and eleven SQL migrations for intake, records, consent, FHIR export, notifications and payments. Every function returns `503 Service Unavailable` before running any logic, and the frontend has no client configured for it. It stays disabled until the [clinical release gates](CLINICAL-RELEASE.md) pass.
 
 ## Target clinical architecture
 

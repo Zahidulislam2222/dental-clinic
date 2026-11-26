@@ -6,7 +6,7 @@ Everyday Dental grows in stages, from today's public site on sample data to a re
 
 | Stage | Goal | Exit criteria |
 |---|---|---|
-| **A. Public foundation** ✅ | Public site, patient-journey demo, disabled clinical backend, tests and documentation | Reviewed source, published repository, reproducible verification |
+| **A. Public foundation** ✅ | Public site, sample patient journey, disabled clinical backend, tests and documentation | Reviewed source, published repository, reproducible verification |
 | **B. Clinical correctness** | Fix the clinical backend: typed settings, schema, tenant and patient scope, consent, payments, audit | Every [clinical blocker](docs/CLINICAL-RELEASE.md#engineering-blockers) closed with migration, RLS, integration and denial tests |
 | **C. Controlled pilot** | One clinic, one jurisdiction, with support and recovery in place | Legal and vendor approval, staff training, rehearsed restore, limited pilot |
 | **D. 10,000 readers** | Measured public capacity with performance budgets and monitoring | Agreed traffic mix passes cold, warm, burst and sustained tests |

@@ -14,13 +14,13 @@ The baseline covers US federal health/privacy law, California and Washington exa
 
 | Deployment | Recommended boundary | Additional review before launch |
 |---|---|---|
-| Public release | Illustrative sample content, no real patient intake, no payment; messaging service on sample records with sending off | Truthful claims, accessibility, hosting metadata and asset rights |
+| Public release | Sample content, no real patient intake, no payment; messaging service on sample records with sending off | Truthful claims, accessibility, hosting metadata and asset rights |
 | Clinic brochure/contact site | Minimum administrative contact data | Advertising, privacy notice, retention, tracking, patient expectations |
 | Patient portal | Verified identity and server-side access controls | Health confidentiality, contracts, consent/legal basis, rights and incident handling |
 | Multi-clinic SaaS | Tenant-scoped clinical service | Processor/business-associate obligations, regional hosting, auditability, vendor chain |
 | Clinical AI or diagnostic software | Separate product classification | Medical-device and AI-specific assessment; no inference from this release |
 
-Synthetic records do not eliminate all privacy considerations: hosting providers still handle network traffic. The release avoids application analytics and automatic third-party media loads. An operator must still understand provider security logs, contractual roles, retention and cross-border processing. “No patient database” is narrower and more defensible than “we process no personal data.”
+Sample records do not eliminate all privacy considerations: hosting providers still handle network traffic. The release avoids application analytics and automatic third-party media loads. An operator must still understand provider security logs, contractual roles, retention and cross-border processing. “No patient database” is narrower and more defensible than “we process no personal data.”
 
 ## United States
 
@@ -112,11 +112,11 @@ The current release makes no clinical AI decision, diagnosis, prescription or me
 
 | Concern | This public release | Production evidence still required |
 |---|---|---|
-| Patient data collection | Disabled; fixed synthetic workflow | Final schema, lawful purpose, data minimization and negative authorization tests |
+| Patient data collection | Disabled; fixed sample workflow | Final schema, lawful purpose, data minimization and negative authorization tests |
 | Identity and access | Sample role-policy model | Verified identity, MFA, tenant/patient scope, session revocation, care-assignment policy |
 | Consent | Optional sharing off; reversible sample toggle | Versioned notices, proof, purpose separation and downstream withdrawal propagation |
 | Erasure/retention | Sample hold and erasure transition | Legal schedule, restricted review, backup strategy and verified deletion/exception response |
-| Export | Synthetic Patient bundle | Partner implementation guide, authorized scope, terminology, validation and secure delivery |
+| Export | Sample Patient bundle | Partner implementation guide, authorized scope, terminology, validation and secure delivery |
 | Audit | Temporary sample outcomes | Restricted durable server events, tamper evidence, monitoring and retention |
 | Tracking | No application analytics or advertising | Provider inventory and approval before adding new processors |
 | Encryption | HTTPS and no clinical database in the public release | Key management, encrypted storage/backups, recovery and rotation tests |
