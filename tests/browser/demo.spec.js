@@ -7,6 +7,8 @@ for (const route of paths) test(`route ${route}: no external traffic, no active 
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(route); await expect(page.getByRole('main')).toBeVisible();
  await expect(page.getByLabel('Site notice')).toBeVisible();
+ // Walk the whole page so lazy-loaded media below the fold is requested too.
+ await page.evaluate(async()=>{for(let y=0;y<document.documentElement.scrollHeight;y+=600){window.scrollTo(0,y);await new Promise(r=>setTimeout(r,60));}});
  await page.waitForTimeout(1100);
  expect(errors).toEqual([]);expect(requests).toEqual([]);
  expect(await page.locator('form').count()).toBe(0);
