@@ -10,7 +10,7 @@ Content-Type: application/json
 Cache-Control: no-store
 Retry-After: 86400
 
-{"error":"Clinical services are not available in this demonstration."}
+{"error":"Clinical services are not available on this site."}
 ```
 
 A hosting gateway may answer some requests itself (for example with an authentication error) before they reach the function, so check the response body, not only the status code. The guard lives in [`supabase/functions/_shared/release-boundary.ts`](../supabase/functions/_shared/release-boundary.ts); the [function inventory](../supabase/functions/README.md) lists what each endpoint is designed to do.
