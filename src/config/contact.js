@@ -8,7 +8,7 @@ import { runtime } from './runtime';
 export const CONTACT = {
   phone: '+880 1712-345678',
   phoneRaw: '8801712345678',          // For WhatsApp / tel: links
-  email: 'demo@example.invalid',
+  email: 'hello@example.invalid',
   website: runtime.siteUrl,
 
   address: {

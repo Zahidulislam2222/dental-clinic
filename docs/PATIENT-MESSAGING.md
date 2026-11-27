@@ -1,145 +1,109 @@
 # Patient messaging service
 
-The patient messaging service links a patient-record (EHR) event feed to the HighLevel (GoHighLevel)
-CRM. It decides which follow-up campaign each patient belongs in, keeps consent and opt-outs
-authoritative, and lets HighLevel workflows send the email and SMS steps. Status is as of 2026-11-25.
-The source is kept in a separate private repository.
+The messaging service connects a patient-record (EHR) event feed to the HighLevel CRM. It decides which follow-up campaign each patient belongs in, keeps consent and opt-outs authoritative, and lets HighLevel workflows deliver the email and SMS steps. Its source lives in a separate private repository; this page documents its design and current status.
+
+## Status
+
+| Area | Status (November 2026) |
+|---|---|
+| Service | Live on its own HTTPS host, release pinned and verified against the local build |
+| CRM | HighLevel developer sandbox location with sample contacts only |
+| HighLevel setup | Custom fields, tags and all three workflows created and wired by ID |
+| Sending | **Off.** Workflows are unpublished; enrolments wait until a publish decision. SMS steps are log-only |
+| Data | Sample patient records only; no real patient feed is connected |
+| Alerting | Email alerts through the project mail server; the server accepted a live alert, delivery to the mailbox not yet confirmed |
 
 ## Campaigns
 
 | Campaign | Purpose | Steps | Channels |
 |---|---|---|---|
-| A: New patient intake | Welcome, first-visit preparation and booking follow-up | 9 | Email, SMS |
-| B: Recall / reactivation | Patients with no visit inside the recall window | 11 | Email, SMS |
-| C: Treatment follow-through | Accepted treatment plans that are not yet scheduled | 8 | Email, SMS |
+| A. New patient intake | Welcome, first-visit preparation and booking follow-up | 9 | Email, SMS |
+| B. Recall and reactivation | Patients with no visit inside the recall window | 11 | Email, SMS |
+| C. Treatment follow-through | Accepted treatment plans not yet scheduled | 8 | Email, SMS |
 
-All 28 messages are versioned templates. They render with fallbacks (a missing first name becomes
-"there"), and links come only from a registry with fixed tracking parameters. Each patient is in at
-most one campaign at a time, ranked A > C > B, with per-campaign and global cool-downs.
+All 28 messages are versioned templates with fallbacks (a missing first name becomes "there"). Links come only from a registry with fixed tracking parameters. A patient is in at most one campaign at a time, ranked A, then C, then B, with per-campaign and global cool-down periods.
 
-## Current release
-
-| Area | Status on 2026-11-25 |
-|---|---|
-| Event service and worker | Live on its own HTTPS host on the project server, release 20261125-05, pinned, with hash parity checked |
-| HighLevel location | A HighLevel developer sandbox sub-account holding sample contacts only. Production sending needs a production location as well as a publish decision |
-| HighLevel configuration | Contract custom fields and tags are created. The three workflows are built and wired by id |
-| Sending | **Off.** The workflows are not published, and enrolments wait (`waiting_config`) until a publish decision. SMS steps are log-only |
-| Data | Sample patient records only. No real patient feed is connected |
-| Alerting | E-mail alerts through the project mail server; the mail server accepted a real alert, and arrival in the mailbox has not yet been checked |
+## How it works
 
 ```mermaid
 flowchart LR
     EHR[Patient-record feed] -- signed event --> Intake[Intake API]
     Intake --> Inbox[(Durable inbox)]
-    Inbox --> Worker[Worker: validate, decide]
+    Inbox --> Worker[Worker: validate and decide]
     Worker --> State[(Contacts, consent, enrolments)]
     Worker --> Outbox[(Outbox)]
-    Outbox -- bounded, rate-limited --> HL[HighLevel API]
+    Outbox -- rate-limited --> HL[HighLevel API]
     HL --> WF[Campaign workflows]
-    HL -. signed do-not-disturb webhooks (not yet connected) .-> Intake
+    HL -. do-not-disturb webhooks (not yet connected) .-> Intake
 ```
 
-## How it works
-
-1. **Intake.** Each event is signed with HMAC-SHA256 over the timestamp and body. The service checks
-   the size and the signature before parsing. Stale timestamps and replays are refused. Accepted
-   events are written to a durable Postgres inbox before the service acknowledges them.
-2. **Validation.** An invalid event is quarantined whole, with the reason recorded. An event that
-   arrives before its patient's registration is retried. Fact ordering is tracked per field, so an
-   older event never overwrites newer data.
-3. **Decision.** A single conditional update claims a campaign, so only one of several concurrent
-   claims can win, and a partial unique index acts as a second guard. Opt-outs, deaths and merges are
-   safety events: they are never shed for backlog, and they always end active campaigns.
-4. **Projection.** Every decision goes to an outbox. The outbox writes campaign state, managed tags
-   and workflow enrolments into HighLevel, ordered per patient, with timeouts, bounded retries and a
-   daily request budget. Each workflow step is built to re-check the projected state, suppression
-   tags and consent before sending; because the workflows are unpublished, this gate has not yet run.
+1. **Intake.** Each event is signed with HMAC-SHA256 over its timestamp and body. Size and signature are checked before parsing; stale timestamps and replays are rejected. Accepted events are stored in a durable Postgres inbox before the service acknowledges them.
+2. **Validation.** Invalid events are quarantined with a recorded reason. An event that arrives before its patient's registration is retried. Each field tracks its own ordering, so an older event never overwrites newer data.
+3. **Decision.** A single conditional update claims a campaign, so only one of several concurrent claims can win; a partial unique index is a second guard. Opt-outs, deaths and record merges are safety events: they are never dropped under load and always end active campaigns.
+4. **Projection.** Each decision is written to an outbox, which syncs campaign state, tags and enrolments to HighLevel in per-patient order, with timeouts, bounded retries and a daily request budget. Every workflow step is designed to re-check consent and suppression before sending; because the workflows are unpublished, this check has not run yet.
 
 ## Safety controls
 
-| Control | Behaviour |
+| Control | Behavior |
 |---|---|
-| Consent and suppression | Explicit or implied consent per channel. An opt-out immediately blocks new campaign claims for that channel (or all channels) and queues the suppression to HighLevel ahead of the budget limit. HighLevel do-not-disturb webhooks are built and signature-checked in code; the webhook is not yet registered in HighLevel, so this path is not live |
-| Quiet hours | Configured windows in the patient's own timezone (email 08:00–20:00, SMS 09:00–19:00, inside the US TCPA 8 a.m.–9 p.m. bound) are checked in simulation and tests. Enforcing them in the HighLevel workflows is a pre-publish step and is not verified |
-| Kill switch | Pause and resume are audited; while paused, no new campaign is claimed. Measured at about 0.1 s in a local container built from the release image; on the live service, pause and resume flipped the HighLevel pause value |
-| Volume limits | Per-run and per-hour enrolment caps. A daily HighLevel request budget holds back new enrolments only; stop traffic is not held by the budget (it is still subject to HighLevel's own rate limits) |
-| Published-only enrolment | An enrolment goes only into a **published** workflow. HighLevel accepts an enrolment into a Draft workflow and enrols nobody, so those enrolments wait instead |
-| Identity protection | Contacts are created, or updated by id. When two patients share an email or phone, HighLevel's duplicate refusal leaves the shared field off the second contact, and an alert is raised. The service no longer writes one patient's data onto another's contact (verified live for a shared phone) |
-| Content lint | A copy lint flags sensitive clinical terms in subjects, preheaders, SMS text, sender names and URLs, and refuses tracking pixels and unknown image hosts (strict sensitive-term profile; all 28 templates pass it) |
-| Link integrity | All 28 registered links passed a live check on 2026-11-25; the checker also fails redirects that strip tracking parameters (tested in code) |
-| Configuration drift | Fields, tags and workflow names, ids and status are compared with the contract. Draft workflows are reported |
-| Alerting | Failed projections, refused credentials, missing fields, unpublished workflows, identity collisions and budget exhaustion. Keys are rate-limited so a stuck condition cannot flood the mailbox |
+| Consent and suppression | Explicit or implied consent per channel. An opt-out immediately blocks new campaigns on that channel and is sent to HighLevel ahead of the request budget. Do-not-disturb webhooks are built and signature-checked but not yet registered in HighLevel |
+| Quiet hours | Email 08:00–20:00 and SMS 09:00–19:00 in the patient's time zone, inside the US TCPA 8 a.m.–9 p.m. limit. Verified in simulation and tests; enforcement inside the HighLevel workflows is a pre-launch step |
+| Kill switch | Audited pause and resume; while paused no new campaign is claimed. Pause takes about 0.1 s locally and was confirmed to flip HighLevel's pause flag on the live service |
+| Volume limits | Per-run and per-hour enrolment caps. The daily budget holds back new enrolments only, never opt-outs (opt-outs remain subject to HighLevel's own rate limits) |
+| Published workflows only | HighLevel accepts enrolments into Draft workflows but enrols nobody, so the service only enrols into published workflows and holds the rest |
+| Identity protection | Contacts are created or updated by ID. When two patients share an email or phone, the shared field is left off the second contact and an alert is raised (verified live for a shared phone number) |
+| Content lint | Flags sensitive clinical terms in subjects, previews, SMS text, sender names and URLs; rejects tracking pixels and unknown image hosts. All 28 templates pass |
+| Link integrity | All 28 links passed a live check on 2026-11-25; the checker fails redirects that strip tracking parameters |
+| Configuration drift | Fields, tags and workflow names, IDs and status are compared with the contract; Draft workflows are reported |
+| Alerting | Failed syncs, rejected credentials, missing fields, unpublished workflows, identity collisions and budget exhaustion, rate-limited so a stuck condition cannot flood the inbox |
 
 ## Security
 
-- Secrets come from the environment only. Changeable values are in one typed configuration file,
-  and a regression test fails on hard-coded URLs or addresses in source.
-- Database roles are separate: migration, runtime with DML only, and a read-only backup role.
-- Containers run with a read-only root filesystem, all capabilities dropped and `no-new-privileges`.
-  The admin and metrics endpoints are reachable only on the server's loopback interface. The public
-  gateway answers 404 for them.
-- Inbound webhooks are signature-checked, and their ids are remembered beyond the replay window.
-- Every commit runs gitleaks, bandit and semgrep. Releases run dependency audits (pip-audit), strict
-  typing (mypy) and lint.
+- Secrets come from the environment only. All changeable values live in one typed configuration file, and a test fails on hard-coded URLs or addresses.
+- Separate database roles for migrations, runtime (data changes only) and read-only backups.
+- Containers run with a read-only root filesystem, no Linux capabilities and `no-new-privileges`. Admin and metrics endpoints listen on loopback only; the public gateway returns 404 for them.
+- Inbound webhooks are signature-checked and their IDs are remembered beyond the replay window.
+- Every commit runs gitleaks, bandit and semgrep; every release runs pip-audit, mypy (strict) and lint.
 
 ## Reliability and recovery
 
-- The inbox and outbox are durable, and processing is idempotent: the same event id is stored and
-  applied once. Workers use row locks (`SKIP LOCKED`) and per-patient ordering, so several workers
-  can run in parallel.
-- When HighLevel refuses the token, work is parked rather than failed. Each sweep then probes one op
-  per kind, so recovery after a credential fix is designed to be bounded and not to cascade (tested
-  against a mock transport).
-- Health, readiness and metrics endpoints report backlog age, failed, waiting and parked operations,
-  and the request budget.
-- Daily logical backups are taken with a read-only role and kept for 14 days. A local restore drill
-  into an isolated container passed in 4 seconds, with every migration, contact and enrolment present.
-  Backups are not yet encrypted and sit on the same host as the database; encryption and an off-host
-  copy are required before any real data. Server restore and rollback have not yet been drilled.
-- Every release is installed by a hash-checked owner step, pinned, and verified against the local
-  build, with the previous release kept for rollback.
+- Durable inbox and outbox with idempotent processing: each event ID is applied once. Workers use `SKIP LOCKED` row locks with per-patient ordering, so several can run in parallel.
+- If HighLevel rejects the access token, work is parked rather than failed, and recovery probes one operation per type, designed to avoid a retry storm after the credential is fixed (tested against a mock transport).
+- Health, readiness and metrics endpoints report backlog age, failed, waiting and parked operations, and the remaining request budget.
+- Daily logical backups (read-only role, 14-day retention). A local restore drill into an isolated container completed in 4 seconds with all migrations, contacts and enrolments present.
+- Each release is installed by a hash-checked step, pinned and verified against the local build; the previous release is kept for rollback.
+
+**Before real data:** backups must be encrypted and copied off the host, and a server-level restore and rollback must be rehearsed.
 
 ## Verification
 
 | Evidence | Result |
 |---|---|
-| Automated tests | 157 pass. Database, permission and concurrency tests run on real Postgres 18.6 |
-| Independent review | 16 fresh-context review rounds; code findings were fixed with regression tests |
-| Mutation checks | 57 builder-run mutation checks (review rounds 6–13): each reverted fix is now caught by a test; five first survived and their tests were tightened |
-| Live end-to-end (2026-11-25, HighLevel sandbox location) | Signature refusal and replay handling; campaign decisions for A, B and C projected to HighLevel (contact, fields, tags); opt-out projection (suppression tag set, unenrolment accepted); pause and resume flipping the HighLevel pause value; identity separation for patients sharing a phone; enrolments into unpublished workflows parked instead of sent. No contact has been enrolled into a running workflow: the workflows are unpublished |
+| Automated tests | 157 passing; database, permission and concurrency tests run against real PostgreSQL 18 |
+| Code review | 16 fresh-context review rounds; code findings fixed with regression tests |
+| Mutation testing | 57 mutation checks run by the developer: each reverted fix is now caught by a test (five initially survived and their tests were tightened) |
+| Live end-to-end (HighLevel sandbox) | Signature rejection and replay handling; campaigns A, B and C synced to HighLevel; opt-out sync; pause and resume; identity separation for a shared phone; enrolments into unpublished workflows held back |
 
-What is **not** verified yet: inbox placement, carrier SMS delivery and sender reputation. These need
-published workflows on a production CRM location and real sending, which is a separate decision with
-per-message costs.
+Not yet verified: inbox placement, carrier SMS delivery and sender reputation. These need published workflows on a production CRM location and real sending, which carries per-message costs and is a separate decision.
 
 ## Scaling path
 
-The binding limit is expected to be the CRM API, not the service. Each HighLevel location has a burst limit and a
-daily request quota (the configuration keeps a safety margin under both). A contact sync costs 3
-requests and an enrolment 4.
+The expected bottleneck is the CRM API, not the service. Each HighLevel location has a burst limit and a daily request quota; the configuration keeps a safety margin under both. A contact sync costs 3 requests and an enrolment 4.
 
-| Stage | Target | Design step |
+| Stage | Scale | Design |
 |---|---|---|
-| Current | One clinic location, sample data | One worker, shared server, daily request budget |
-| Multi-clinic | Many clinic locations | One HighLevel location per clinic, per-location budgets and tokens, tenant-scoped outbox |
-| High volume | Hundreds of thousands of patients per day | Horizontal workers (already lock-safe), partitioned outbox, managed Postgres with pooling, an agency-level marketplace app with OAuth |
-| Regional | 1M+ patients under management | Regional deployments near each clinic group, an asynchronous bulk projection path, measured headroom of at least 25% |
+| Current | One clinic, sample data | One worker, shared server, daily request budget |
+| Multi-clinic | Many clinic locations | One HighLevel location per clinic with its own budget and token; tenant-scoped outbox |
+| High volume | Hundreds of thousands of patients per day | Horizontal workers (already lock-safe), partitioned outbox, managed Postgres with pooling, agency-level OAuth app |
+| Regional | 1M+ patients | Regional deployments near each clinic group, bulk sync path, at least 25% measured headroom |
 
-Each stage is accepted only on measured evidence (see [capacity plan](CAPACITY-PLAN.md)).
+Each stage is accepted on measured evidence; see [Scalability](SCALABILITY.md).
 
 ## Before real patients
 
-- **HIPAA (US):** a signed business associate agreement with the CRM vendor and every subprocessor
-  that touches patient data. Appointment and treatment communications must be separated from
-  marketing.
-- **TCPA and A2P 10DLC (US SMS):** documented consent capture, honouring revocation on any channel,
-  and registered sender campaigns. Whether implied consent is sufficient per channel and campaign is a
-  legal decision; marketing SMS may require prior express written consent.
-- **CAN-SPAM:** the operator's real postal address and identity in every email, and working
-  unsubscribe. The address field is a placeholder until a real operator is named.
-- **GDPR / ePrivacy (EU) and Bangladesh:** lawful basis for each campaign, transfer assessment and
-  retention.
+- **HIPAA (US):** a signed business associate agreement with the CRM vendor and every subprocessor handling patient data; appointment and treatment messages kept separate from marketing.
+- **TCPA and A2P 10DLC (US SMS):** documented consent, revocation honored on any channel, and registered sender campaigns. Marketing SMS may require prior express written consent; that is a legal decision per campaign.
+- **CAN-SPAM:** the operator's real identity and postal address in every email, and a working unsubscribe. The address is a placeholder until a real operator is named.
+- **GDPR, ePrivacy and Bangladesh law:** a lawful basis for each campaign, a transfer assessment and a retention schedule.
 
-See [US/EU legal research](LEGAL-RESEARCH.md), [Bangladesh](LEGAL-BANGLADESH.md) and
-[clinical release gates](CLINICAL-RELEASE.md).
+See [US and EU law](LEGAL-RESEARCH.md), [Bangladesh law](LEGAL-BANGLADESH.md) and [Clinical release](CLINICAL-RELEASE.md).

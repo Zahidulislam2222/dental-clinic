@@ -1,82 +1,66 @@
-# Capacity and availability design
+# Scalability
 
-Related plans: [1M+ capacity qualification](CAPACITY-PLAN.md), [reliability objectives](RELIABILITY.md) and [roadmap](../ROADMAP.md). They define proposed test thresholds, clinical workload arithmetic, headroom, failure drills, ownership and cost review. This document retains the foundational architecture and calculator assumptions.
+This document defines how the platform is expected to grow from today's static site to a regional clinical service, and how each stage is proven before the next begins. The large-scale figures below are models and targets; the only measured result so far is a small local benchmark (see [Verification](VERIFICATION.md#capacity)).
 
-## Current release
+## Workload model
 
-The public release serves static HTML, JavaScript, CSS and images. The sample patient journey executes in browser memory and causes no clinical database requests. This keeps the public release independent of a paused database and avoids holding patient data that the release does not need. It does not prove the original clinical prototype is scalable.
+"Simultaneous users" can mean open tabs, active readers, signed-in sessions, in-flight requests or database transactions, and each needs very different resources. Capacity is therefore always stated against a defined workload.
 
-The initial Supabase CLI inventory found the linked dental project inactive. The owner subsequently restored it through the dashboard. It has not been deleted or replaced. The public release deliberately does not depend on that service. A free service that can pause on inactivity cannot be assumed to deliver a sustained availability commitment. See [Supabase project pausing](https://supabase.com/docs/guides/platform/free-project-pausing).
+**Public site model.** Each active reader performs one action every 30 seconds, and each action makes three HTTP requests. Cached responses are served by the CDN; misses reach the origin.
 
-## Workload definitions
+- Edge requests per second = readers × 3 ÷ 30
+- Origin requests per second = edge requests × (1 − cache hit ratio)
 
-“Simultaneous users” is ambiguous. Open tabs, actively browsing readers, authenticated sessions, concurrent HTTP requests and database transactions have different resource requirements. Agree on the workload before capacity acceptance.
+| Active readers | Edge requests/s | Origin requests/s at 95% cache hits | Origin requests/s with no cache |
+|---:|---:|---:|---:|
+| 10,000 | 1,000 | 50 | 1,000 |
+| 100,000 | 10,000 | 500 | 10,000 |
+| 1,000,000 | 100,000 | 5,000 | 100,000 |
+| 1,250,000 (25% headroom) | 125,000 | 6,250 | 125,000 |
 
-The following is planning arithmetic: each active user performs one action every 30 seconds, with three HTTP requests per action. At a 95% cache hit rate, five percent of those requests reach the origin. A clinical API cannot apply that public-cache assumption to personalized responses.
+`node scripts/capacity.mjs` reproduces the first three rows from `config/tooling.json`. At an average response of 100 KB, 100,000 requests per second is about 10 GB/s, so cold caches, launches and cache purges are critical scenarios. The 95% hit ratio must be measured per route; Cloudflare, for example, does not cache HTML by default.
 
-| Active readers | Edge requests/second | Origin requests/second at 95% hit |
-|---:|---:|---:|
-| 10,000 | 1,000 | 50 |
-| 100,000 | 10,000 | 500 |
-| 1,000,000 | 100,000 | 5,000 |
-
-`node scripts/capacity.mjs` reproduces the table from `config/tooling.json`. The numbers are a workload model, not tested capacity. At zero cache hits, the million-reader scenario reaches 100,000 origin requests/second. If each response is 100 KB, that is approximately 10 GB/second before protocol overhead. Cold caches, launches and cache purges are meaningful failure scenarios.
-
-Cloudflare does not cache HTML or JSON by default; eligible assets and origin directives must be checked separately. An origin `public` header alone does not prove edge HTML caching. Personalized records, authentication, exports and error responses must not enter a shared public cache. Verify cache behavior with response headers and separate cold/warm measurements. [Cloudflare cache behavior](https://developers.cloudflare.com/cache/concepts/default-cache-behavior/).
+**Clinical model.** Personalized responses are never cached, so clinical capacity is modeled separately. As an illustration, 1 million active clinical users making one API call every 30 seconds generate about 33,000 requests per second; at an 80/20 read/write mix that is roughly 26,700 reads and 6,700 writes per second, before audit writes, internal queries and retries. Real sizing waits for agreed workflows.
 
 ## Staged architecture
 
-### Stage A: current public release
+| Stage | Target | What changes | Entry condition |
+|---|---|---|---|
+| A. Current | Public site | CDN for hashed assets, bounded static origin, no database, versioned releases | Browser tests, headers, health checks and parity evidence |
+| B. 10,000 readers | Measured public capacity | Isolated test environment; clinical service split from public delivery as soon as real workflows start | Agreed traffic mix passes cold, warm, burst and slow-network tests |
+| C. 100,000 readers | Multi-origin resilience | Origins in separate failure domains, pooled database connections, indexed tenant queries, background queues with backpressure | Failure-domain drill and database saturation results |
+| D. 1M+ readers | Regional delivery | Regional routing, rehearsed failover, staffed operations; clinical data partitioned only once access patterns are known | Distributed load test at 1M plus 25% headroom, regional failure and restore tests |
 
-Use a CDN for eligible immutable assets and a bounded static origin. Keep hashed asset filenames, compression, explicit routes, a small health endpoint, no public write API and no database dependency. Limit the origin container’s CPU, memory and process count and bind it to loopback behind HTTPS. Retain versioned releases and an off-server archive.
+Design rules that apply at every stage:
 
-Admission gate: browser flows, read-only form boundary, headers, isolated deployment, health checks and restore/parity evidence. Run a small loopback HTTP test; do not stress a shared production server. Current measurements belong in VERIFICATION.md, not in this planning table.
+- **One user is not one database connection.** Pool sizes come from measured database capacity, not from raising `max_connections`.
+- **Replica lag must never make permissions, consent withdrawals or appointment confirmations stale.**
+- **Queues need limits.** Notifications and exports run in idempotent workers with retry budgets, backoff and a dead-letter path. When a queue is full, the system returns a controlled error.
+- **Kubernetes, microservices and multi-region writes are options, not goals.** They are adopted only when measurements justify them.
 
-### Stage B: measured 10,000-reader target
+## Capacity test plan
 
-Create an isolated test environment. Generate the agreed traffic mix including images, page transitions, cold requests and slow connections. Measure p50/p95/p99 latency, errors, origin CPU/memory, egress and cache hit rate. Repeat with a deployment in progress. Define pass thresholds before the test and retain generator saturation evidence; an overloaded load generator cannot establish server capacity.
+Each stage is accepted only after a test in isolated infrastructure with generated test data and approved spending limits.
 
-If introducing real clinical workflows, split public delivery from the authenticated service immediately. Use a separately tested identity provider, staff MFA, short-lived sessions, server-side role/patient/tenant scope, bounded payloads, timeouts, idempotency and audit persistence. Cache public service descriptions; never use those caches for patient responses.
+**Profile:** 10-minute ramp, 60 minutes at target load, a 10-minute burst at twice the arrival rate, then a 4-hour soak.
 
-### Stage C: 100,000-reader and transactional growth
+| Dimension | Pass criterion |
+|---|---|
+| Public pages | p95 ≤ 500 ms and p99 ≤ 1.5 s in every test region |
+| Clinical reads | p95 ≤ 500 ms and p99 ≤ 1.5 s per operation |
+| Clinical writes | p95 ≤ 1 s and p99 ≤ 2 s to a committed result |
+| Errors | Under 0.1% of valid requests |
+| Correctness | Zero cross-tenant disclosures, duplicate bookings or lost acknowledged writes |
+| Resources | No unbounded memory or queue growth; 30% steady-state headroom |
+| Recovery | Queues drain and latency returns to baseline within the agreed window |
+| Test validity | Offered vs. achieved load, dropped iterations and load-generator saturation recorded |
 
-Introduce multiple origins across failure domains when measurements or availability requirements justify them. Regional ingress directs public requests to healthy origins. Clinical services remain stateless where practical; authoritative patient data stays in its approved region. Use a bounded connection pool, indexed tenant/subject queries, keyset pagination, query deadlines and per-operation concurrency limits.
+**Failure scenarios:** cold cache and cache purge, hot content or tenant, retry storms, rolling release under load, expired-token bursts, database pool saturation, queue backlog, failed workers, region loss, DNS or TLS failure, and restore.
 
-Do not map one user to one database connection. PostgreSQL allocates resources based on connection limits, so indiscriminately increasing max_connections is not scaling. Benchmark the pool against actual query latency and database capacity. Replica lag must not make permissions, consent withdrawal or appointment confirmation stale. [PostgreSQL connection settings](https://www.postgresql.org/docs/current/runtime-config-connection.html).
+**Stage report:** commit and configuration, workload assumptions, environment, offered and achieved traffic, latency and errors per region, correctness results, bottlenecks, recovery behavior, cost estimate and sign-off.
 
-Move notifications, large exports and noninteractive work into queues with idempotent consumers, retry budgets, backoff and a dead-letter path. A booking confirmation must be based on a committed authoritative record, not optimistic email delivery. Apply backpressure and return a controlled failure when a queue or downstream service is saturated.
+## Cost
 
-### Stage D: million-reader design target
+The current site runs on existing hosting with no added services, and deliberately does not depend on the Supabase project, which can pause after inactivity on the free plan ([Supabase project pausing](https://supabase.com/docs/guides/platform/free-project-pausing)). A production proposal must price CDN requests and egress, origins, database compute and storage, replicas, backups, monitoring and log retention, security support, load generators and on-call staffing from current provider quotes. Free tiers are not a capacity or uptime commitment, and no paid resource is provisioned without explicit approval.
 
-At this scale, architecture and operations need separately funded capacity testing, regional delivery, traffic engineering and a staffed response model. Test hot keys, cold cache storms, failed regions, certificate/DNS incidents, database failover, queue backlog and restoration. Partition clinical data only after tenant boundaries, access patterns, regional law and recovery behavior are understood.
-
-A million open static tabs is not a million simultaneous clinical transactions. The latter demands a different budget, workload model and data architecture. This repository offers a migration path and reproducible small-scale tools; it does not make either workload “easy” by assertion. Kubernetes is optional and is not installed merely to make the repository look sophisticated.
-
-## Availability objectives
-
-A service-level indicator measures behavior; an objective defines its target; an SLA is a contractual commitment. Keep these separate. [Google SRE: Service Level Objectives](https://sre.google/sre-book/service-level-objectives/).
-
-Proposed public availability objective: 99% of one-minute observation intervals over a rolling 30-day window have a valid TLS response and expected health body within the agreed latency limit. Count planned maintenance as unavailable unless a contract explicitly says otherwise. A 30-day window contains 43,200 minutes; one percent is 432 minutes, or 7 hours 12 minutes. Do not mix this time-based budget with a request-success denominator.
-
-Clinical availability needs separate indicators for login, reading a permitted record, submitting an appointment and performing an authorized write. A static health page says nothing about database correctness. Measure from at least two independent locations and investigate disagreements; do not mask a regional outage by averaging it away.
-
-The release includes `scripts/probe.mjs`, which emits a timestamp, success and latency without credentials or a patient identifier. Scheduling it on an independent always-on monitor is an operator task. A laptop that loses power is not an availability monitor. No 30-day observation period or external monitoring SLA is claimed by this deployment.
-
-## Recovery design
-
-| Recovery concern | Public release | Future clinical service |
-|---|---|---|
-| State | Static release + configuration | Database, uploads, keys, identity and audit state |
-| Backup | Off-server release archive with SHA256 manifest | Application-consistent encrypted backups and protected key recovery |
-| Restore test | Extract archive and compare all release files | Restore to isolated region-approved environment; test application reads/writes |
-| RPO | No user-generated clinical state in this release | Proposed target set by client; validate against backup/replication cadence |
-| RTO | Measure actual release rollback/restore | Proposed target set by clinical impact; include DNS, keys, identity and staffing |
-| Failure domain | One shared origin | Multiple independently recoverable domains if funded |
-
-Do not advertise an unmeasured recovery time. Keep the previous release available. When restoring a clinical backup, reapply deletion/consent restrictions and legal holds where required; restoring a database must not silently resurrect permissions or erased data.
-
-## Cost and acceptance boundary
-
-The current release reuses existing hosting and free tools. Existing hosting still has the owner’s pre-existing cost; no new paid service is necessary for this static release. Free tiers do not promise unlimited capacity, contractual uptime or health-data processing approval. Before any paid upgrade, obtain explicit approval for price, scope and recurrence.
-
-A production proposal should budget regional hosts, database capacity, backup storage, monitoring, security support, contractual vendor options, test infrastructure and operations. Provider price changes belong in configuration/procurement records, not hardcoded business logic. Progress from one stage only when measurements show why the next investment is necessary.
+References: [PostgreSQL connection settings](https://www.postgresql.org/docs/current/runtime-config-connection.html) · [Cloudflare default cache behavior](https://developers.cloudflare.com/cache/concepts/default-cache-behavior/) · [Supabase production checklist](https://supabase.com/docs/guides/deployment/going-into-prod)

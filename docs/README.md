@@ -1,30 +1,43 @@
-# Documentation index
+# Documentation
 
-Start with the [project overview](../README.md). **Current** describes observable source or dated evidence; **proposed** describes future work; **historical** preserves earlier results. Policies become effective only when adopted by a real operator.
+Start with the [project README](../README.md) for an overview and quick start.
 
-## Build and understand
+## Build
 
-- [Frontend](../src/README.md), [backend](../supabase/README.md) and [configuration](CONFIGURATION.md).
-- [Patient messaging service](PATIENT-MESSAGING.md): campaigns, safety controls, security, recovery, verification and scaling path.
-- [Architecture](ARCHITECTURE.md), [API contracts](API.md) and [database migrations](../supabase/migrations/README.md).
-- [Testing](TESTING.md) and [verification](VERIFICATION.md).
+| Guide | Covers |
+|---|---|
+| [Development](DEVELOPMENT.md) | Local setup, configuration, commands and testing |
+| [Frontend](../src/README.md) | Source layout, routes and conventions |
+| [Backend](../supabase/README.md) | Clinical backend (early build), [Edge Functions](../supabase/functions/README.md) and [migrations](../supabase/migrations/README.md) |
+| [Design system](../DESIGN.md) | Colors, typography, components and motion |
 
-## Plan and operate
+## Understand
 
-- [Roadmap](../ROADMAP.md): dependencies, owners and exit criteria.
-- [Scalability](SCALABILITY.md) and [capacity qualification](CAPACITY-PLAN.md): 10k, 100k, 1M+ stages.
-- [Reliability](RELIABILITY.md): 99% SLO, monitoring, alerting and recovery.
-- [Operations](OPERATIONS.md) and [clinical release gates](CLINICAL-RELEASE.md).
+| Guide | Covers |
+|---|---|
+| [Architecture](ARCHITECTURE.md) | Current system, target clinical design and key decisions |
+| [API](API.md) | Current endpoint behavior and the contract standard for the clinical API |
+| [Patient messaging](PATIENT-MESSAGING.md) | Campaign service, safety controls and HighLevel integration |
 
-## Security, law and governance
+## Operate and scale
 
-- [Security](../SECURITY.md), [threat model](THREAT-MODEL.md), [security delivery plan](../SECURITY_COMPLIANCE_PLAN.md).
-- [US/EU legal research](LEGAL-RESEARCH.md), [Bangladesh legal research](LEGAL-BANGLADESH.md) and [governance](GOVERNANCE.md).
-- [Policy catalog](policies/README.md) and [BAA guidance](baa/README.md).
-- [Compliance scanner](../compliance/README.md), [licensing](LICENSING.md) and [media sources](MEDIA-SOURCES.md).
+| Guide | Covers |
+|---|---|
+| [Operations and reliability](OPERATIONS.md) | Deployment, rollback, monitoring, availability objectives and recovery |
+| [Scalability](SCALABILITY.md) | Workload model, staged architecture and capacity testing plan |
 
-## Maintain
+## Security and compliance
 
-[Contributing](../CONTRIBUTING.md) · [Support](../SUPPORT.md) · [Changelog](../CHANGELOG.md) · [Defect log](../DEFECT-LOG.md)
+| Guide | Covers |
+|---|---|
+| [Security policy](../SECURITY.md) | Reporting vulnerabilities and security standards |
+| [Threat model](THREAT-MODEL.md) | Trust boundaries, threats and controls |
+| [Clinical release](CLINICAL-RELEASE.md) | Everything required before the platform handles real patient data |
+| [US and EU law](LEGAL-RESEARCH.md) | HIPAA, state privacy law, GDPR, ePrivacy and accessibility |
+| [Bangladesh law](LEGAL-BANGLADESH.md) | Data protection, cyber law, professional and facility rules |
+| [Policy templates](templates/OPERATING-POLICIES.md) | Draft operating policies for a future clinic operator |
+| [BAA templates](templates/BAA.md) | Business associate agreement checklist and drafting worksheet |
 
-Every implemented-control or capacity claim needs dated evidence. Keep patient data, signed agreements, credentials, recovery records and infrastructure access details outside public Git history.
+## Project records
+
+[Verification report](VERIFICATION.md) · [Roadmap](../ROADMAP.md) · [Changelog](../CHANGELOG.md) · [Defect log](../DEFECT-LOG.md) · [Contributing](../CONTRIBUTING.md) · [Licensing and credits](LICENSING.md)

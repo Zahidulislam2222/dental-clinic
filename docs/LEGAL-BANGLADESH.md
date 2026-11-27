@@ -1,6 +1,6 @@
-# Bangladesh legal and clinical launch planning
+# Bangladesh legal research
 
-Research date: 2026-09-24. This is a source-backed engineering launch checklist, not a legal opinion or a statement that the current release operates a licensed clinic. Review Bengali statutory text, current regulations, gazettes and the actual service model with qualified local counsel before patient intake.
+Research into the Bangladesh laws and professional rules that would apply if Everyday Dental operated as a real clinic, checked against official sources in September 2026. It is an engineering checklist, not legal advice: the Bengali statutory text, current regulations, gazette notices and the actual service model must be reviewed with qualified local counsel before any patient intake. US and EU law is covered in [US and EU legal research](LEGAL-RESEARCH.md).
 
 ## Current legal baseline
 
@@ -33,7 +33,7 @@ Proposed project gates: verify practitioners against the relevant register; repl
 
 ## Facility and business operation
 
-The 1982 Medical Practice and Private Clinics and Laboratories Ordinance regulates medical practice and private clinics/laboratories. Its definition of private clinic concerns facilities where patients are admitted and kept for treatment; do not automatically classify every outpatient dental chamber identically. DGHS publishes private-facility registration guidance. Confirm the actual facility category and applicable licensing route. [Official ordinance](https://bdlaws.minlaw.gov.bd/act-print-620.html), [DGHS registration guidance](https://git.dghs.gov.bd/mahfuj/chatbot-knowledge/src/commit/28ad646bdd0e6a57b5277e95395ce8a198dc7f5d/PrivateHospitalRegistration.md).
+The 1982 Medical Practice and Private Clinics and Laboratories Ordinance regulates medical practice and private clinics/laboratories. Its definition of a private clinic concerns facilities where patients are admitted and kept for treatment, so an outpatient dental chamber may fall under a different category. DGHS publishes private-facility registration guidance. Confirm the actual facility category and applicable licensing route. [Official ordinance](https://bdlaws.minlaw.gov.bd/act-print-620.html), [DGHS registration guidance](https://git.dghs.gov.bd/mahfuj/chatbot-knowledge/src/commit/28ad646bdd0e6a57b5277e95395ce8a198dc7f5d/PrivateHospitalRegistration.md).
 
 Local launch decisions still required: operating entity and trade permissions, tax/VAT applicability, clinic registration/renewal, equipment/radiology and waste permissions where relevant, clinician supervision, records/cash receipts, advertised charges, cancellation/refunds and complaint contacts. These are a review inventory, not a finding that each permit applies to every deployment.
 
@@ -41,8 +41,8 @@ Local launch decisions still required: operating entity and trade permissions, t
 
 Proposed architecture keeps clinical data segregated from public CDN delivery and records all transfer/backup paths. Select regions only after the legal data-classification decision. Assess whether scale changes regulatory classification, audit/officer requirements or risk-assessment scope. A million-user target cannot be used to justify collecting extra identity data.
 
-Verify payment-provider country availability, merchant eligibility, currency/settlement, refund rules and contracts before implementation. The preserved Stripe prototype is not evidence that a Bangladesh operator can onboard to Stripe. Use provider sandbox tests only until the commercial and clinical release gates are approved.
+Verify payment-provider country availability, merchant eligibility, currency/settlement, refund rules and contracts before implementation. The preserved Stripe code is not evidence that a Bangladesh operator can onboard to Stripe. Use provider sandbox tests only until the commercial and clinical release gates are approved.
 
 ## Open decisions before launch
 
-A named operator must approve the final statutory version/commencement register, implementing-rule review, data classification/transfer position, professional/facility licensing, rights/incident deadlines, notices, retention, vendor terms and clinical escalation. This task does not establish those operator-specific approvals. Recheck the official legal database at each launch and material scope change; the 2025-to-2026 replacement shows why old checklists can become unsafe.
+A named operator must approve the statutory versions and commencement dates in force, implementing rules, data classification and transfer position, professional and facility licensing, rights and incident deadlines, notices, retention, vendor terms and clinical escalation. Recheck the official legal database before launch and after any change in scope; the replacement of the 2025 ordinances by 2026 Acts shows how quickly checklists go out of date.

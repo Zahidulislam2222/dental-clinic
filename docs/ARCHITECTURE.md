@@ -1,41 +1,74 @@
 # Architecture
 
-## Current release
+## Current system
 
-An HTTPS gateway/CDN serves the static React application and local media. Lazy routes render clinic presentation. Synthetic actions call pure policy/state functions in browser memory. Intake is read-only, the clinical client is disabled, and all eleven preserved Edge Functions return a fixed guard. The public release has no clinical runtime dependency. A separate [patient messaging service](PATIENT-MESSAGING.md) (Python, Postgres, containerized) receives signed events from a synthetic patient-record feed and projects campaign decisions into the HighLevel CRM; it shares no database with the website.
+```mermaid
+flowchart LR
+    Visitor[Visitor browser] --> CDN[CDN and TLS gateway]
+    CDN --> Nginx[nginx container<br/>static files only]
+    Nginx --> SPA[React single-page app]
+    SPA --> Journey[Patient journey<br/>sample data in memory]
+    Feed[Patient-record feed] -- HMAC-signed events --> Messaging[Messaging service<br/>Python + Postgres]
+    Messaging --> CRM[HighLevel CRM]
+    Supabase[Supabase Edge Functions] --> Guard[503: disabled]
+```
 
-## Proposed clinical design
+**Public website.** A static React single-page app served by a hardened nginx container behind a TLS gateway and CDN. Routes are lazy-loaded. There is no server-side code and no database behind the site, so it can be cached aggressively and cannot leak patient data it never receives.
+
+**Patient journey.** The `/experience` page runs a simplified version of the planned clinical access rules as pure functions in the browser (`src/lib/demo-policy.js`), against a fixed sample record. It omits care assignment and tenant membership, so any clinician can see the sample record. State lives in memory and resets on reload.
+
+**Messaging service.** A separate Python service with its own Postgres database. It receives signed events from a patient-record feed, decides which campaign each patient belongs in, and projects that state into HighLevel CRM workflows. It shares no database or code with the website. See [Patient messaging](PATIENT-MESSAGING.md).
+
+**Clinical backend (early build).** Eleven Supabase Edge Functions and eleven SQL migrations for intake, records, consent, FHIR export, notifications and payments. Every function returns `503 Service Unavailable` before running any logic, and the frontend has no client configured for it. It stays disabled until the [clinical release gates](CLINICAL-RELEASE.md) pass.
+
+## Target clinical architecture
+
+The design below is the target for a real clinical release. It is not built yet.
 
 ```mermaid
 flowchart TD
-    Public[Public reader] --> CDN[CDN: public content]
-    User[Patient / staff] --> Identity[Identity and MFA]
-    Identity --> API[Regional API: authorization and validation]
+    Public[Public visitor] --> CDN[CDN: public content only]
+    User[Patient or staff] --> Identity[Identity provider with MFA]
+    Identity --> API[Regional API:<br/>authorization and validation]
     API --> Pool[Bounded connection pool]
-    Pool --> DB[(Authoritative clinical database)]
+    Pool --> DB[(Clinical database<br/>with row-level security)]
     API --> Outbox[Transactional outbox]
-    Outbox --> Queue[Bounded queues]
-    Queue --> Workers[Export / notification workers]
-    Workers --> Storage[Private encrypted storage]
-    API --> Audit[Restricted audit pipeline]
-    DB --> Backup[Encrypted backups and recovery]
+    Outbox --> Queue[Bounded job queues]
+    Queue --> Workers[Export and notification workers]
+    Workers --> Storage[Encrypted private storage]
+    API --> Audit[Restricted audit log]
+    DB --> Backup[Encrypted backups]
 ```
 
-Separate cacheable public traffic from health-data workflows. Derive subject, tenant, care assignment and role from verified server identity. Browser identifiers never authorize access. Database constraints and RLS add enforcement; service credentials require narrowly scoped operations.
+Principles:
 
-| Decision | Reason and tradeoff |
-|---|---|
-| Static delivery | Efficient public caching; does not establish clinical capacity |
-| Stateless API | Replaceable workers; durable state moves to database/queues |
-| Regional ownership | Residency and consistency boundaries; cross-region writes need conflict design |
-| Database booking constraint | Prevents double bookings under concurrency; test transactions and retries |
-| Transactional outbox | Couples committed state with eventual jobs; consumers need deduplication |
-| Bounded concurrency | Prevents cascading overload; admission control may reject excess traffic |
-| Least privilege plus RLS | Multiple barriers; privileged paths require extra tests |
-| Central config/data | Provider/content changes avoid business-code edits; validate unsafe settings |
+- **Separate public and clinical traffic.** Public pages are cached at the edge; patient data never enters a shared cache.
+- **The server decides access.** Patient, tenant, care assignment and role come from the verified identity on the server, never from the browser. Row-level security in the database is a second, independent layer.
+- **Commit first, then notify.** A booking is confirmed by the database commit. Emails and SMS are sent afterwards from an outbox, so a failed notification never undoes or duplicates a booking.
+- **Keep health data out of side channels.** No clinical details in URLs, logs, analytics, public caches or ordinary notifications.
+
+## Key decisions
+
+| Decision | Why | Trade-off |
+|---|---|---|
+| Static delivery for the public site | Cheap, fast and cacheable; no attack surface for patient data | Says nothing about clinical capacity |
+| Stateless API workers | Workers can be replaced and scaled freely | Durable state must live in the database and queues |
+| Regional data ownership | Meets data-residency rules and keeps consistency simple | Cross-region writes need explicit conflict handling |
+| Database constraint on bookings | Prevents double bookings under concurrent requests | Requires transaction and retry testing |
+| Transactional outbox | Jobs are created only for committed changes | Consumers must handle duplicates |
+| Bounded concurrency and queues | Prevents cascading overload | Excess traffic is rejected instead of queued forever |
+| Least privilege plus row-level security | Two independent barriers against data exposure | Privileged service paths need extra tests |
+| Central configuration | Providers and content change without code changes | Settings need validation at startup |
 
 ## Clinical data lifecycle
 
-Minimize collection → verify identity and scope → commit controlled records → emit redacted audit events → process approved jobs → serve scoped reads/exports → apply retention/holds and rights decisions → reconcile recovery with deletion/consent restrictions.
+1. Collect only the fields each purpose needs.
+2. Verify identity and scope on every request.
+3. Commit records under database constraints.
+4. Write redacted audit events.
+5. Run approved background jobs from the outbox.
+6. Serve scoped reads and exports.
+7. Apply retention schedules, legal holds and patient rights requests.
+8. After any restore, re-apply deletions, consent withdrawals and holds before serving data.
 
-Keep health information out of URLs, public caches, ordinary notifications and general logs. A notification failure must not reverse or duplicate a committed booking. Tenant keys, constraints, queues, typed settings and region-aware recovery are proposed implementation work governed by [clinical gates](CLINICAL-RELEASE.md), [capacity](CAPACITY-PLAN.md) and [governance](GOVERNANCE.md).
+Related: [API](API.md) · [Scalability](SCALABILITY.md) · [Operations](OPERATIONS.md) · [Threat model](THREAT-MODEL.md)

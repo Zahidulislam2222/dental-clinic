@@ -7,7 +7,7 @@ page explains how to use them and does not repeat them.
 
 | Token group | Owner |
 |---|---|
-| Colour scales `navy`, `teal`, `gold`, plus `slate`, `gray`, `offwhite` | `tailwind.config.js` → `theme.extend.colors` |
+| Color scales `navy`, `teal`, `gold`, plus `slate`, `gray`, `offwhite` | `tailwind.config.js` → `theme.extend.colors` |
 | Font families `heading`, `body` | `tailwind.config.js` → `theme.extend.fontFamily` |
 | Keyframes (marquee, float, shimmer, pulse-teal, glow-pulse) | `tailwind.config.js` → `theme.extend.keyframes` / `animation` |
 | Glass-morphism utilities and base layers | `src/index.css` |
@@ -15,7 +15,7 @@ page explains how to use them and does not repeat them.
 ## Usage
 
 - **Navy** is the base: page backgrounds in dark sections, headings on light sections.
-- **Teal** is the action colour: primary buttons, links, focus rings, active states.
+- **Teal** is the action color: primary buttons, links, focus rings, active states.
 - **Gold** is an accent only (badges, highlights). Never body text — contrast is too low on white.
 - **Offwhite** is the light-section background; avoid pure white blocks next to it.
 - Headings use `font-heading`; body copy uses `font-body`.

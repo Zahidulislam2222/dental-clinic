@@ -1,7 +1,7 @@
 // @ts-check
 import demo from '../data/demo.json' with { type: 'json' };
 
-/** Demonstration policy only. Never use a browser-selected role as server authorization.
+/** Sample policy only. Never use a browser-selected role as server authorization.
  * @param {string} role @param {string} action @param {string} subject
  */
 export function canAccess(role, action, subject) {

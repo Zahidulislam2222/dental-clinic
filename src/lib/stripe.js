@@ -6,7 +6,7 @@
 
 import { supabase, isSupabaseConfigured } from './supabase';
 
-const STRIPE_PK = null; // Payments are outside the synthetic release boundary.
+const STRIPE_PK = null; // Payments are outside the sample-data release boundary.
 
 export const isStripeConfigured = false;
 

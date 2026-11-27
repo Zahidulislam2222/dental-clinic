@@ -6,7 +6,9 @@ for (const route of paths) test(`route ${route}: no external traffic, no active 
  page.on('request',r=>{if(!r.url().startsWith('data:') && !r.url().startsWith('blob:') && new URL(r.url()).origin!==new URL(test.info().project.use.baseURL).origin)requests.push(r.url());});
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto(route); await expect(page.getByRole('main')).toBeVisible();
- await expect(page.getByLabel('Demonstration notice')).toBeVisible();
+ await expect(page.getByLabel('Site notice')).toBeVisible();
+ // Walk the whole page so lazy-loaded media below the fold is requested too.
+ await page.evaluate(async()=>{for(let y=0;y<document.documentElement.scrollHeight;y+=600){window.scrollTo(0,y);await new Promise(r=>setTimeout(r,60));}});
  await page.waitForTimeout(1100);
  expect(errors).toEqual([]);expect(requests).toEqual([]);
  expect(await page.locator('form').count()).toBe(0);
@@ -20,9 +22,9 @@ test('patient workflow: deny role, hold, erase, reset and export',async({page})=
  await page.getByLabel('View as').selectOption('admin');await page.getByRole('button',{name:'Toggle sample legal hold'}).click();
  await page.getByLabel('View as').selectOption('patient');await page.getByRole('button',{name:'Request sample erasure'}).click();
  await expect(page.getByRole('status')).toContainText('erased');
- await page.getByRole('button',{name:'Reset demonstration'}).click();
+ await page.getByRole('button',{name:'Reset example'}).click();
  const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Export sample FHIR JSON'}).click();
- const download=await downloadPromise;expect(download.suggestedFilename()).toBe('synthetic-patient.fhir.json');
+ const download=await downloadPromise;expect(download.suggestedFilename()).toBe('sample-patient.fhir.json');
  expect(await page.evaluate(()=>Object.keys(localStorage))).not.toContain('eds-appointments');
  await page.reload();await expect(page.getByText('Legal hold:')).toContainText('Active');
 });

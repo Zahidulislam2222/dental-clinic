@@ -1,7 +1,9 @@
 # Support
 
-Use repository issues for reproducible bugs, documentation corrections and roadmap proposals. Include the affected commit, expected/actual behavior, browser/runtime version and sanitized reproduction. Keep credentials, patient information and private infrastructure details out of reports.
+- **Questions and bugs:** open a GitHub issue with the commit, browser or Node version, expected and actual behavior, and steps to reproduce.
+- **Security issues:** follow [SECURITY.md](SECURITY.md); do not open a public issue.
+- **Getting started:** see the [README](README.md) and the [development guide](docs/DEVELOPMENT.md).
 
-Security issues follow [SECURITY.md](SECURITY.md). The public release runs on sample records and does not provide clinical advice, appointments, payment support or emergency care. No staffed support hours or response SLA are currently committed.
+Everyday Dental Surgery is not a real practice. The site cannot book appointments or give dental advice; in an emergency, contact a local dental or medical service.
 
-For local setup start with [README](README.md), [frontend](src/README.md) and [testing](docs/TESTING.md). A 503 from the clinical guard is expected; do not remove it as a support workaround.
+A `503 Service Unavailable` response from the clinical API is expected: the backend is intentionally disabled.

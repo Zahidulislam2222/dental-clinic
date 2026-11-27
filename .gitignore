@@ -52,7 +52,7 @@ AUDIT_REPORT.docx
 *.pdf
 
 # Signed BAA PDFs (sensitive legal documents — do NOT commit)
-docs/baa/*.pdf
+docs/templates/*.pdf
 
 # Private recovery and operational evidence
 CREDENTIALS.md
@@ -72,7 +72,7 @@ my-project-view/
 *.pem
 *.key
 
-# GHL campaign demo build plan (private working plan)
+# GHL campaign build plan (private working plan)
 GHL-CAMPAIGN-DEMO-PLAN.md
 ghl-demo/
 # Private agent context (Rule 25/21): rules mirror, tracker, study notes

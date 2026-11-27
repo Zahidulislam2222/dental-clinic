@@ -829,11 +829,9 @@ const HomePage = () => {
                   className="block"
                 >
                   <div className="relative aspect-video overflow-hidden">
-                    <img
-                      src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
-                      alt={video.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      loading="lazy"
+                    <div
+                      aria-hidden="true"
+                      className="w-full h-full bg-gradient-to-br from-navy via-navy to-teal group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/20 transition-colors">
                       <div className="w-16 h-16 rounded-full bg-red-600 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">

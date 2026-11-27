@@ -11,7 +11,7 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 
-const TURNSTILE_SITE_KEY = null; // No third-party challenge is loaded by the synthetic demo.
+const TURNSTILE_SITE_KEY = null; // No third-party challenge is loaded by this sample-data build.
 const SCRIPT_ID = 'cf-turnstile-script';
 
 export const isTurnstileConfigured = Boolean(TURNSTILE_SITE_KEY) && !TURNSTILE_SITE_KEY?.includes('placeholder');

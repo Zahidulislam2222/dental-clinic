@@ -1,19 +1,19 @@
-# Edge Function inventory
+# Edge Functions
 
-All entrypoints return the [503 release guard](_shared/release-boundary.ts). Descriptions below are prototype intent, not available API functionality. See [API](../../docs/API.md) and [clinical gates](../../docs/CLINICAL-RELEASE.md).
+Every entry point returns the shared [503 release guard](_shared/release-boundary.ts) before running its logic. The table describes what each function is designed to do and what must be proven before it is enabled. See [API](../../docs/API.md) and [Clinical release](../../docs/CLINICAL-RELEASE.md).
 
-| Function | Intent | Required activation evidence |
+| Function | Purpose | Required before enabling |
 |---|---|---|
-| submit-form | Contact/appointment/registration intake | Schema compatibility, validation and abuse controls |
-| get-patient-data | Patient/staff retrieval | Fixed table/column allowlists and subject/tenant denial |
-| cancel-appointment | Owned appointment cancellation | Ownership, transitions and retry/concurrency behavior |
-| admin-query | Staff queries | Least privilege, scoped columns and bounded pagination |
-| admin-manage-user | Role/user administration | MFA, no privilege escalation and audit |
-| admin-resolve-request | Data-rights processing | Identity, holds, retention and completion evidence |
-| fhir-api | FHIR-oriented read/search/write | Resource ownership and implementation-guide validation |
-| fhir-export | Patient bundle | Subject scope, bounded export and secure delivery |
-| send-notification | Transactional notifications | Authorized caller and approved recipient/template |
-| breach-check | Incident rule evaluation | Authenticated scheduler and complete rule coverage |
-| stripe-payment | Payment/webhook prototype | Server-owned amount, signature and replay checks |
+| `submit-form` | Contact, appointment and registration intake | Schema compatibility, validation and abuse protection |
+| `get-patient-data` | Patient and staff record retrieval | Fixed table and column allowlists; patient and tenant denial tests |
+| `cancel-appointment` | Cancel an appointment the caller owns | Ownership checks, valid state transitions, retry and concurrency behavior |
+| `admin-query` | Staff queries | Least privilege, scoped columns, bounded pagination |
+| `admin-manage-user` | User and role administration | MFA, no privilege escalation, audit trail |
+| `admin-resolve-request` | Process data-rights requests | Identity checks, holds, retention and completion evidence |
+| `fhir-api` | FHIR read, search and write | Resource ownership and implementation-guide validation |
+| `fhir-export` | Export a patient's FHIR bundle | Patient scope, bounded export, secure delivery |
+| `send-notification` | Transactional notifications | Authorized caller, approved recipients and templates |
+| `breach-check` | Evaluate incident-detection rules | Authenticated scheduler, complete rule coverage |
+| `stripe-payment` | Payments and webhook handling | Server-owned amounts, signature and replay checks |
 
-Shared helper existence does not prove runtime enforcement. Client rate limits and UI session timers are not server authorization. Review helper call sites and failure behavior before activation.
+Shared helpers in `_shared/` (rate limiting, sessions, CORS) exist in code, but their enforcement has not been verified end to end. Client-side rate limits and UI session timers are not server authorization.
